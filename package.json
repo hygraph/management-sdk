@@ -1,0 +1,58 @@
+{
+  "name": "@graphcms/management",
+  "version": "0.0.0-semantic-release",
+  "description": "GraphCMS Management SDK",
+  "author": "GraphCMS",
+  "repository": "graphcms/management-sdk",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "graphql-codegen && tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "generate": "graphql-codegen"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "trailingComma": "es5"
+  },
+  "size-limit": [],
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.21.3",
+    "@graphql-codegen/typescript": "1.21.1",
+    "@size-limit/preset-small-lib": "^4.10.1",
+    "@types/uuid": "8.3.0",
+    "husky": "^5.2.0",
+    "size-limit": "^4.10.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.1.0",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "graphql": "15.5.0",
+    "graphql-request": "3.4.0",
+    "uuid": "8.3.2"
+  }
+}

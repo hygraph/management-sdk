@@ -1,0 +1,7 @@
+schema: https://management-next.graphcms.com/graphql
+generates:
+  src/generated/schema.ts:
+    plugins:
+      - typescript
+    config:
+      typesPrefix: GraphQL
