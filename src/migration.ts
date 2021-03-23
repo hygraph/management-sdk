@@ -386,7 +386,7 @@ class MigrationClass implements Migration, ChangeListener {
   private async waitForMigration(migrationId: string): Promise<MigrationInfo> {
     while (true) {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         const migration = await fetchMigration(this.client, {
           projectId: this.environment.projectId,

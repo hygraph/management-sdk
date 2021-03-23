@@ -51,7 +51,7 @@ class EnumerationClass
   constructor(private mode: MutationMode, private args: EnumerationArgs) {}
 
   addValue(...apiIds: string[]) {
-    const values = apiIds.map((apiId) => {
+    const values = apiIds.map(apiId => {
       return {
         apiId,
         displayName: apiId,

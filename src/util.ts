@@ -122,18 +122,19 @@ async function submitMigration(
   ];
 
   const query = `
-        mutation (${mutationArgs.join(", ")}) {
-          submitBatchChanges(data: {
-            ${bodyArgs.join(", ")}
-          }) {
-            migration {
-              id,
-              status,
-              errors,
-            }
-          }
+    mutation (${mutationArgs.join(", ")}) {
+      submitBatchChanges(data: {
+        ${bodyArgs.join(", ")}
+      }) {
+        migration {
+          id,
+          status,
+          errors,
         }
-    `;
+      }
+    }
+  `;
+
   try {
     const variables = {
       changes: body.changes,
