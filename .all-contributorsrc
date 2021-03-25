@@ -1,0 +1,15 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "badgeTemplate": "<img src="https://img.shields.io/badge/all_contributors-1-purple.svg" alt="Contributors" />",
+  "contributors": [],
+  "contributorsPerLine": 7,
+  "projectName": "management-sdk",
+  "projectOwner": "GraphCMS",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

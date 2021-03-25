@@ -1,6 +1,27 @@
-# @graphcms/management
+<h1 align="center">@graphcms/management</h1>
 
-Programmatically manage GraphCMS project schema via migrations.
+<p align="center">Programmatically manage GraphCMS project schema via migrations.</p>
+
+<p align="center">
+  <a href="https://npmjs.org/package/@graphcms/management">
+    <img src="https://img.shields.io/npm/v/@graphcms/management.svg" alt="Version" />
+  </a>
+  <a href="https://npmjs.org/package/@graphcms/management">
+    <img src="https://img.shields.io/npm/dw/@graphcms/management.svg" alt="Downloads/week" />
+  </a>
+  <a href="https://github.com/GraphCMS/management-sdk/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@graphcms/management.svg" alt="License" />
+  </a>
+  <a href="https://github.com/GraphCMS/management-sdk/stargazers">
+    <img src="https://img.shields.io/github/stars/GraphCMS/management-sdk" alt="Forks on GitHub" />
+  </a>
+  <img src="https://badgen.net/bundlephobia/minzip/@graphcms/management" alt="minified + gzip size" />
+  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+  <img src="https://img.shields.io/badge/all_contributors-2-purple.svg" alt="Contributors" />
+  <!-- ALL-CONTRIBUTORS-BADGE:END -->
+  <br/>
+  <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
+</p>
 
 ## Quickstart
 
@@ -469,3 +490,16 @@ To delete a field
 ```js
 model.deleteField(apiId);
 ```
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
