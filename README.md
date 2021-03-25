@@ -1,27 +1,41 @@
-# @graphcms/management
+<h1 align="center">@graphcms/management</h1>
 
-GraphCMS Management SDK.
+<p align="center">Programmatically manage GraphCMS project schema via migrations.</p>
 
-## Usage
+<p align="center">
+  <a href="https://npmjs.org/package/@graphcms/management">
+    <img src="https://img.shields.io/npm/v/@graphcms/management.svg" alt="Version" />
+  </a>
+  <a href="https://npmjs.org/package/@graphcms/management">
+    <img src="https://img.shields.io/npm/dw/@graphcms/management.svg" alt="Downloads/week" />
+  </a>
+  <a href="https://github.com/GraphCMS/management-sdk/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@graphcms/management.svg" alt="License" />
+  </a>
+  <a href="https://github.com/GraphCMS/management-sdk/stargazers">
+    <img src="https://img.shields.io/github/stars/GraphCMS/management-sdk" alt="Forks on GitHub" />
+  </a>
+  <img src="https://badgen.net/bundlephobia/minzip/@graphcms/management" alt="minified + gzip size" />
+  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+  <img src="https://img.shields.io/badge/all_contributors-2-purple.svg" alt="Contributors" />
+  <!-- ALL-CONTRIBUTORS-BADGE:END -->
+  <br/>
+  <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
+</p>
 
-### Migration
+## Quickstart
 
 ```js
-// import library
 const { newMigration, FieldType } = require("@graphcms/management");
 
-// create a new migration for an environment
-// using auth token and environment endpoint url.
-const migration = newMigration({ authToken, endpoint });
+const migration = newMigration({ endpoint: "...", authToken: "..." });
 
-// create model
 const author = migration.createModel({
   apiId: "Author",
   apiIdPlural: "Authors",
   displayName: "Author",
 });
 
-// add fields
 author.addSimpleField({
   apiId: "firstName",
   displayName: "First Name",
@@ -33,47 +47,43 @@ author.addSimpleField({
   type: FieldType.String,
 });
 
-// run migration
 migration.run();
 ```
 
-## Table of Contents
+## Usage
 
-- [Migration](#migration)
-  - [New Migration](#new-migration)
-  - [Running a Migration](#run-migration)
-  - [DryRun a Migration](#dry-run-migration)
-- [Updating an Entity](#updating-entity)
-- [Locale](#locale)
-  - [Creating a Locale](#create-locale)
-  - [Updating a Locale](#update-locale)
-  - [Deleting a Locale](#delete-locale)
-- [Stage](#stage)
-  - [Creating a Stage](#create-stage)
-  - [Updating a Stage](#update-stage)
-  - [Deleting a Stage](#delete-stage)
+<details>
+  <summary>Table of contents</summary>
+
+- [New Migration](#new-migration)
+  - [Running a Migration](#running-a-migration)
+  - [Dry run a Migration](#dry-run-a-migration)
+- [Updating a Entity](#updating-a-entity)
+- [Locale](#locales)
+  - [Create a Locale](#create-a-locale)
+  - [Update a Locale](#update-a-locale)
+  - [Delete a Locale](#delete-a-locale)
+- [Stages](#stages)
+  - [Create a Stage](#create-a-stage)
+  - [Update a Stage](#update-a-stage)
+  - [Delete a Stage](#delete-a-stage)
 - [Enumerations](#enumerations)
-  - [Creating Enumeration](#create-enumation)
-  - [Updating Enumeration](#update-enumation)
-  - [Deleting Enumeration](#delete-enumation)
-- [Remote Type Definitions](#remote-type-def)
-  - [Creating Remote Type Definition](#create-remote-type-def)
-  - [Updating Remote Type Definition](#create-remote-type-def)
-  - [Deleting Remote Type Definition](#create-remote-type-def)
+  - [Create a Enumeration](#create-a-enumation)
+  - [Update a Enumeration](#update-a-enumation)
+  - [Delete a Enumeration](#delete-a-enumation)
+- [Remote Type Definitions](#remote-type-definitions)
+  - [Create Remote Type Definition](#create-remote-type-definition)
+  - [Update Remote Type Definition](#create-remote-type-definition)
+  - [Delete Remote Type Definition](#create-remote-type-definition)
 - [Models](#models)
-  - [Creating a Model](#create-model)
-  - [Updating a Model](#edit-model)
-  - [Deleting a Model](#delete-model)
+  - [Create a Model](#create-a-model)
+  - [Update a Model](#edit-a-model)
+  - [Delete a Model](#delete-a-model)
   - [Fields](#fields)
-    - [Creating a Field](#create-field)
-    - [Updating a Field](#update-field)
-    - [Deleting a Field](#delete-field)
-
-<a name="migration"></a>
-
-## Migration
-
-<a name="new-migration"></a>
+    - [Create a Field](#create-a-field)
+    - [Update a Field](#update-a-field)
+    - [Delete a Field](#delete-a-field)
+      </details>
 
 ### New Migration
 
@@ -95,14 +105,13 @@ A migration is scoped to an environment. To create a migration, the following pa
 
 ```js
 const { newMigration } = require("@graphcms/management");
+
 const migration = newMigration({
   authToken,
   endpoint,
   name, // optional
 });
 ```
-
-<a name="run-migration"></a>
 
 ### Running a Migration
 
@@ -112,7 +121,9 @@ By default, migrations run in the background. Passing an optional boolean argume
 
 ```js
 const foreground = true;
+
 const result = migration.run(foreground);
+
 if (result.errors) {
   console.log(result.errors);
 } else {
@@ -120,18 +131,15 @@ if (result.errors) {
 }
 ```
 
-<a name="dry-run-migration"></a>
-
 ### Dry Run a Migration
 
 A migration can be dry run to preview what changes would be applied.
 
 ```js
 const changes = migration.dryRun();
+
 console.log(changes);
 ```
-
-<a name="updating-entity"></a>
 
 ## Updating an Entity
 
@@ -141,13 +149,11 @@ As a special case, `apiId` is a requirement because all entities are uniquely in
 
 To update the `apiId`, specify `newApiId`.
 
-<a name="locale"></a>
+## Locales
 
-## Locale
+GraphCMS boasts a flexible localization API that you can use to publish content for all or specific locales in your project.
 
-<a name="create-locale"></a>
-
-### Creating a Locale
+### Create a Locale
 
 To create a locale
 
@@ -159,9 +165,7 @@ migration.createLocale({
 });
 ```
 
-<a name="update-locale"></a>
-
-### Updating a Locale
+### Update a Locale
 
 To update a locale
 
@@ -172,9 +176,7 @@ migration.updateLocale({
 });
 ```
 
-<a name="delete-locale"></a>
-
-### Deleting a Locale
+### Delete a Locale
 
 To delete a locale
 
@@ -182,11 +184,11 @@ To delete a locale
 migration.deleteLocale(apiId);
 ```
 
-## Stage
+## Stages
 
-<a name="create-stage"></a>
+You can create your own content stages, and query content from these stages, as well as publish to.
 
-### Creating a Stage
+### Create a Stage
 
 To create a stage
 
@@ -201,9 +203,7 @@ migration.createStage({
 });
 ```
 
-<a name="update-stage"></a>
-
-### Updating a Stage
+### Update a Stage
 
 To update a stage
 
@@ -214,9 +214,7 @@ migration.updateStage({
 });
 ```
 
-<a name="delete-stage"></a>
-
-### Deleting a Stage
+### Delete a Stage
 
 To delete a Stage
 
@@ -224,13 +222,11 @@ To delete a Stage
 migration.deleteStage(apiId);
 ```
 
-<a name="enumerations"></a>
-
 ## Enumerations
 
-<a name="create-enumation"></a>
+Enums values can only contain alphanumeric characters, and underscores.
 
-### Creating an Enumeration
+### Create a Enumeration
 
 Create an enumeration with values.
 
@@ -240,16 +236,16 @@ const colors = migration.createEnumeration({
   displayName,
   description,
 });
+
 // add values
 colors.addValue("Red");
 colors.addValue("Green");
+
 // or add multiple values at a time.
 colors.addValue("Blue", "Yellow");
 ```
 
-<a name="update-enumation"></a>
-
-### Updating an Enumeration
+### Update a Enumeration
 
 Updating an enumeration and it's values.
 
@@ -258,14 +254,13 @@ const colors = migration.updateEnumeration({
   apiId,
   ... // properties to update.
 });
+
 colors.addValue("Black"); // add a new value
 colors.updateValue("Red", "Dark Red"); // update existing value
 colors.deleteValue("Blue"); // delete value
 ```
 
-<a name="delete-enumation"></a>
-
-### Deleting Enumeration
+### Delete Enumeration
 
 To delete an enumeration and it's values
 
@@ -273,13 +268,11 @@ To delete an enumeration and it's values
 migration.deleteEnumeration(apiId);
 ```
 
-<a name="remote-type-def"></a>
-
 ## Remote Type Definitions
 
-<a name="create-remote-type-def"></a>
+Remote fields allow you to define an external resolver through the management SDK. Remote fields consist of two parts, defining any custom type that will represent the returning shape from the external resolver, defining the resolver itself.
 
-### Creating a Remote Type Definition
+### Create a Remote Type Definition
 
 Create a sample Remote Type Definition for Github API.
 
@@ -292,9 +285,7 @@ migration.createRemoteTypeDefinition({
 });
 ```
 
-<a name="update-remote-type-def"></a>
-
-### Updating a Remote Type Definition
+### Update a Remote Type Definition
 
 To update a Remote Type Definition
 
@@ -305,9 +296,7 @@ migration.updateRemoteTypeDefinition({
 });
 ```
 
-<a name="delete-remote-type-def"></a>
-
-### Deleting a Remote Type Definition
+### Delete a Remote Type Definition
 
 To delete a Remote Type Definition
 
@@ -315,13 +304,11 @@ To delete a Remote Type Definition
 migration.deleteRemoteTypeDefinition(apiId);
 ```
 
-<a name="models"></a>
-
 ## Models
 
-<a name="create-model"></a>
+Your schema is defined by the models you create, and fields you add.
 
-### Creating a Model
+### Create a Model
 
 A model can be created by passing in the required parameters.
 
@@ -334,9 +321,7 @@ const modelName = migration.createModel({
 });
 ```
 
-<a name="update-model"></a>
-
-### Updating a Model
+### Update a Model
 
 To update a model
 
@@ -347,9 +332,7 @@ migration.updateModel({
 });
 ```
 
-<a name="delete-model"></a>
-
-### Deleting a Model
+### Delete a Model
 
 To delete a model
 
@@ -357,18 +340,17 @@ To delete a model
 migration.deleteModel(apiId);
 ```
 
-<a name="fields"></a>
-
 ### Fields
 
-<a name="create-field"></a>
+Your schema is built up of GraphQL types. If you’re familiar working with GraphQL, you should feel right at home. GraphCMS supports all of the common GraphQL types you are used to, as well as some of its own.
 
-#### Create Field
+#### Create a Field
 
 To create a simple field.
 
 ```js
 const { FieldType } = require("@graphcms/management");
+
 model.addSimpleField({
   apiId,
   displayName,
@@ -390,6 +372,7 @@ To create a relational field.
 
 ```js
 const { RelationType } = require("@graphcms/management");
+
 model.addRelationalField({
   apiId,
   displayName,
@@ -424,6 +407,7 @@ To create a union field.
 
 ```js
 const { RelationType } = require("@graphcms/management");
+
 model.addUnionField({
   apiId,
   displayName,
@@ -453,9 +437,7 @@ model.addRemoteField({
 });
 ```
 
-<a name="update-field"></a>
-
-#### Update Field
+#### Update a Field
 
 To update a field, firstly retrieve the model.
 
@@ -501,8 +483,6 @@ model.updateRelationalField({
 })
 ```
 
-<a name="delete-field"></a>
-
 #### Deleting a Field
 
 To delete a field
@@ -511,10 +491,15 @@ To delete a field
 model.deleteField(apiId);
 ```
 
-## Typescript
+## Contributors
 
-The SDK is fully typed with Typescript and IDE intellisense is expected to work as desired.
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
-## More
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 
-More documentation on using the SDK is available at [https://graphcms.com/docs/develop/management-sdk](https://graphcms.com/docs/develop/management-sdk).
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
