@@ -36,32 +36,32 @@ migration.run();
 
 - [New Migration](#new-migration)
   - [Running a Migration](#running-a-migration)
-  - [Dry run a Migration](#dry-run-migration)
-- [Updating an Entity](#updating-entity)
-- [Locale](#locale)
-  - [Creating a Locale](#create-locale)
-  - [Updating a Locale](#update-locale)
-  - [Deleting a Locale](#delete-locale)
-- [Stages](#stage)
-  - [Creating a Stage](#create-stage)
-  - [Updating a Stage](#update-stage)
-  - [Deleting a Stage](#delete-stage)
+  - [Dry run a Migration](#dry-run-a-migration)
+- [Updating a Entity](#updating-a-entity)
+- [Locale](#locales)
+  - [Create a Locale](#create-a-locale)
+  - [Update a Locale](#update-a-locale)
+  - [Delete a Locale](#delete-a-locale)
+- [Stages](#stages)
+  - [Create a Stage](#create-a-stage)
+  - [Update a Stage](#update-a-stage)
+  - [Delete a Stage](#delete-a-stage)
 - [Enumerations](#enumerations)
-  - [Creating Enumeration](#create-enumation)
-  - [Updating Enumeration](#update-enumation)
-  - [Deleting Enumeration](#delete-enumation)
-- [Remote Type Definitions](#remote-type-def)
-  - [Creating Remote Type Definition](#create-remote-type-def)
-  - [Updating Remote Type Definition](#create-remote-type-def)
-  - [Deleting Remote Type Definition](#create-remote-type-def)
+  - [Create a Enumeration](#create-a-enumation)
+  - [Update a Enumeration](#update-a-enumation)
+  - [Delete a Enumeration](#delete-a-enumation)
+- [Remote Type Definitions](#remote-type-definitions)
+  - [Create Remote Type Definition](#create-remote-type-definition)
+  - [Update Remote Type Definition](#create-remote-type-definition)
+  - [Delete Remote Type Definition](#create-remote-type-definition)
 - [Models](#models)
-  - [Creating a Model](#create-model)
-  - [Updating a Model](#edit-model)
-  - [Deleting a Model](#delete-model)
+  - [Create a Model](#create-a-model)
+  - [Update a Model](#edit-a-model)
+  - [Delete a Model](#delete-a-model)
   - [Fields](#fields)
-    - [Creating a Field](#create-field)
-    - [Updating a Field](#update-field)
-    - [Deleting a Field](#delete-field)
+    - [Create a Field](#create-a-field)
+    - [Update a Field](#update-a-field)
+    - [Delete a Field](#delete-a-field)
       </details>
 
 ### New Migration
@@ -132,7 +132,7 @@ To update the `apiId`, specify `newApiId`.
 
 GraphCMS boasts a flexible localization API that you can use to publish content for all or specific locales in your project.
 
-### Creating a Locale
+### Create a Locale
 
 To create a locale
 
@@ -144,7 +144,7 @@ migration.createLocale({
 });
 ```
 
-### Updating a Locale
+### Update a Locale
 
 To update a locale
 
@@ -155,7 +155,7 @@ migration.updateLocale({
 });
 ```
 
-### Deleting a Locale
+### Delete a Locale
 
 To delete a locale
 
@@ -167,7 +167,7 @@ migration.deleteLocale(apiId);
 
 You can create your own content stages, and query content from these stages, as well as publish to.
 
-### Creating a Stage
+### Create a Stage
 
 To create a stage
 
@@ -182,7 +182,7 @@ migration.createStage({
 });
 ```
 
-### Updating a Stage
+### Update a Stage
 
 To update a stage
 
@@ -193,7 +193,7 @@ migration.updateStage({
 });
 ```
 
-### Deleting a Stage
+### Delete a Stage
 
 To delete a Stage
 
@@ -205,7 +205,7 @@ migration.deleteStage(apiId);
 
 Enums values can only contain alphanumeric characters, and underscores.
 
-### Creating an Enumeration
+### Create a Enumeration
 
 Create an enumeration with values.
 
@@ -224,7 +224,7 @@ colors.addValue("Green");
 colors.addValue("Blue", "Yellow");
 ```
 
-### Updating an Enumeration
+### Update a Enumeration
 
 Updating an enumeration and it's values.
 
@@ -239,7 +239,7 @@ colors.updateValue("Red", "Dark Red"); // update existing value
 colors.deleteValue("Blue"); // delete value
 ```
 
-### Deleting Enumeration
+### Delete Enumeration
 
 To delete an enumeration and it's values
 
@@ -251,7 +251,7 @@ migration.deleteEnumeration(apiId);
 
 Remote fields allow you to define an external resolver through the management SDK. Remote fields consist of two parts, defining any custom type that will represent the returning shape from the external resolver, defining the resolver itself.
 
-### Creating a Remote Type Definition
+### Create a Remote Type Definition
 
 Create a sample Remote Type Definition for Github API.
 
@@ -264,7 +264,7 @@ migration.createRemoteTypeDefinition({
 });
 ```
 
-### Updating a Remote Type Definition
+### Update a Remote Type Definition
 
 To update a Remote Type Definition
 
@@ -275,7 +275,7 @@ migration.updateRemoteTypeDefinition({
 });
 ```
 
-### Deleting a Remote Type Definition
+### Delete a Remote Type Definition
 
 To delete a Remote Type Definition
 
@@ -287,7 +287,7 @@ migration.deleteRemoteTypeDefinition(apiId);
 
 Your schema is defined by the models you create, and fields you add.
 
-### Creating a Model
+### Create a Model
 
 A model can be created by passing in the required parameters.
 
@@ -300,7 +300,7 @@ const modelName = migration.createModel({
 });
 ```
 
-### Updating a Model
+### Update a Model
 
 To update a model
 
@@ -311,7 +311,7 @@ migration.updateModel({
 });
 ```
 
-### Deleting a Model
+### Delete a Model
 
 To delete a model
 
@@ -323,7 +323,7 @@ migration.deleteModel(apiId);
 
 Your schema is built up of GraphQL types. If you’re familiar working with GraphQL, you should feel right at home. GraphCMS supports all of the common GraphQL types you are used to, as well as some of its own.
 
-#### Create Field
+#### Create a Field
 
 To create a simple field.
 
@@ -416,7 +416,7 @@ model.addRemoteField({
 });
 ```
 
-#### Update Field
+#### Update a Field
 
 To update a field, firstly retrieve the model.
 
