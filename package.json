@@ -34,11 +34,13 @@
     "trailingComma": "es5"
   },
   "size-limit": [],
-  "release": {
-    "branches": [
-      "main"
-    ]
-  },
+  "branches": [
+    "main",
+    {
+      "name": "next",
+      "prerelease": true
+    }
+  ],
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/typescript": "1.21.1",
@@ -55,5 +57,8 @@
     "graphql": "15.5.0",
     "graphql-request": "3.4.0",
     "uuid": "8.3.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
