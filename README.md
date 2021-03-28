@@ -50,54 +50,29 @@ author.addSimpleField({
 migration.run();
 ```
 
+## Install
+
+```bash
+npm install @graphcms/management --save-dev
+```
+
 ## Usage
 
-<details>
-  <summary>Table of contents</summary>
-
-- [New Migration](#new-migration)
-  - [Running a Migration](#running-a-migration)
-  - [Dry run a Migration](#dry-run-a-migration)
-- [Updating a Entity](#updating-a-entity)
-- [Locale](#locales)
-  - [Create a Locale](#create-a-locale)
-  - [Update a Locale](#update-a-locale)
-  - [Delete a Locale](#delete-a-locale)
-- [Stages](#stages)
-  - [Create a Stage](#create-a-stage)
-  - [Update a Stage](#update-a-stage)
-  - [Delete a Stage](#delete-a-stage)
-- [Enumerations](#enumerations)
-  - [Create a Enumeration](#create-a-enumation)
-  - [Update a Enumeration](#update-a-enumation)
-  - [Delete a Enumeration](#delete-a-enumation)
-- [Remote Type Definitions](#remote-type-definitions)
-  - [Create Remote Type Definition](#create-remote-type-definition)
-  - [Update Remote Type Definition](#create-remote-type-definition)
-  - [Delete Remote Type Definition](#create-remote-type-definition)
-- [Models](#models)
-  - [Create a Model](#create-a-model)
-  - [Update a Model](#edit-a-model)
-  - [Delete a Model](#delete-a-model)
-  - [Fields](#fields)
-    - [Create a Field](#create-a-field)
-    - [Update a Field](#update-a-field)
-    - [Delete a Field](#delete-a-field)
-      </details>
+Changes to your schema starts with a migration.
 
 ### New Migration
 
 A migration is scoped to an environment. To create a migration, the following parameters are required.
 
-- Authentication Token `authToken`.
+- **Authentication Token `authToken`.**
 
   Can be retrieved from `Settings > API Access` on https://app.graphcms.com
 
-- Environment URL `endpoint`.
+- **Environment URL `endpoint`.**
 
   Can be retrieved from `Settings > Environments` on https://app.graphcms.com
 
-- Migration Name `name` [optional].
+- **Migration Name `name` [optional].**
 
   Every migration has a unique name. If unspecified, a name would be generated and will be part of the response of a successful migration.
 
