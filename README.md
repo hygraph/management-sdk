@@ -17,7 +17,7 @@
   </a>
   <img src="https://badgen.net/bundlephobia/minzip/@graphcms/management" alt="minified + gzip size" />
   <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-  <img src="https://img.shields.io/badge/all_contributors-2-purple.svg" alt="Contributors" />
+  <img src="https://img.shields.io/badge/all_contributors-1-purple.svg" alt="Contributors" />
   <!-- ALL-CONTRIBUTORS-BADGE:END -->
   <br/>
   <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
