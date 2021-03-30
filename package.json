@@ -30,7 +30,11 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "size-limit": [],
+  "size-limit": [
+    {
+      "path": "dist/index.js"
+    }
+  ],
   "branches": [
     "main",
     {
@@ -41,19 +45,19 @@
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/typescript": "1.21.1",
-    "@size-limit/preset-small-lib": "^4.10.1",
+    "@size-limit/preset-big-lib": "^4.10.1",
     "@types/node": "14.14.35",
-    "@types/uuid": "8.3.0",
-    "husky": "^5.2.0",
-    "size-limit": "^4.10.1",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.1.0",
-    "typescript": "^4.2.3"
+    "husky": "5.2.0",
+    "size-limit": "4.10.1",
+    "tsdx": "0.14.1",
+    "tslib": "2.1.0",
+    "typescript": "4.2.3"
   },
   "dependencies": {
+    "@types/nanoid": "2.1.0",
     "graphql": "15.5.0",
     "graphql-request": "3.4.0",
-    "uuid": "8.3.2"
+    "nanoid": "3.1.22"
   },
   "publishConfig": {
     "access": "public"
