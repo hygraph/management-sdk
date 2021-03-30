@@ -33,7 +33,11 @@
   "prettier": {
     "trailingComma": "es5"
   },
-  "size-limit": [],
+  "size-limit": [
+    {
+      "path": "dist/index.js"
+    }
+  ],
   "branches": [
     "main",
     {
@@ -44,7 +48,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/typescript": "1.21.1",
-    "@size-limit/preset-small-lib": "4.10.1",
+    "@size-limit/preset-big-lib": "^4.10.1",
     "@types/node": "14.14.35",
     "husky": "5.2.0",
     "size-limit": "4.10.1",
