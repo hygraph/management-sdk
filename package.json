@@ -30,9 +30,6 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "prettier": {
-    "trailingComma": "es5"
-  },
   "size-limit": [
     {
       "path": "dist/index.js"
