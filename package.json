@@ -35,13 +35,7 @@
       "path": "dist/index.js"
     }
   ],
-  "branches": [
-    "main",
-    {
-      "name": "next",
-      "prerelease": true
-    }
-  ],
+  "branches": ["main"],
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/typescript": "1.21.1",
