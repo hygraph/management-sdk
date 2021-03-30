@@ -789,6 +789,30 @@ export type GraphQLLifecycle = {
   progress: Scalars['Float'];
 };
 
+export type GraphQLMembersAggregate = {
+  __typename?: 'MembersAggregate';
+  count: Scalars['Int'];
+};
+
+export type GraphQLPageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  pageSize: Scalars['Int'];
+};
+
+export type GraphQLMembersConnection = {
+  __typename?: 'MembersConnection';
+  pageInfo: GraphQLPageInfo;
+  edges: Array<GraphQLMemberEdge>;
+  aggregate: GraphQLMembersAggregate;
+};
+
+export type GraphQLMemberEdge = {
+  __typename?: 'MemberEdge';
+  node: GraphQLMember;
+};
+
 export type GraphQLProject = {
   __typename?: 'Project';
   id: Scalars['ID'];
@@ -816,6 +840,7 @@ export type GraphQLProject = {
   environment: GraphQLEnvironment;
   /** List of all members of the given project */
   members: Array<GraphQLMember>;
+  membersConnection: GraphQLMembersConnection;
   quotas: GraphQLQuota;
   lifecycle: GraphQLLifecycle;
   inTrial?: Maybe<Scalars['Boolean']>;
@@ -840,6 +865,12 @@ export type GraphQLProjectExistingRoleArgs = {
 
 export type GraphQLProjectEnvironmentArgs = {
   name: Scalars['String'];
+};
+
+
+export type GraphQLProjectMembersConnectionArgs = {
+  skip?: Scalars['Int'];
+  first?: Scalars['Int'];
 };
 
 
@@ -1021,11 +1052,18 @@ export type GraphQLRole = {
   managementPermissions: Array<GraphQLManagementPermission>;
   /** List of all members that have at least this role */
   members: Array<GraphQLMember>;
+  membersConnection: GraphQLMembersConnection;
 };
 
 
 export type GraphQLRoleContentPermissionsArgs = {
   environmentId?: Maybe<Scalars['ID']>;
+};
+
+
+export type GraphQLRoleMembersConnectionArgs = {
+  skip?: Scalars['Int'];
+  first?: Scalars['Int'];
 };
 
 export type GraphQLCreateRoleInput = {
