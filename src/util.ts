@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request/dist";
 import { EnvironmentInfo, MigrationChange, MigrationInfo } from "./migration";
-import { v4 as uuid } from "uuid";
+import { nanoid } from "nanoid";
 
 // Credit: https://stackoverflow.com/a/54178819/524060
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -139,7 +139,7 @@ async function submitMigration(
     const variables = {
       changes: body.changes,
       environmentId: body.environmentId,
-      name: body.name || uuid(),
+      name: body.name || nanoid(),
     };
 
     const res = await client.request(query, variables);
