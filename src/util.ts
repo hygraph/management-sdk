@@ -35,7 +35,7 @@ async function fetchEnvironment(
 ): Promise<EnvironmentInfo> {
   const query = `
     {
-      _viewer {
+      viewer {
         ... on TokenViewer {
           project {
             id
@@ -68,8 +68,8 @@ async function fetchEnvironment(
     const notFound = `environment with endpoint '${endpoint}' not found`;
     const res = await client.request(query, variables);
 
-    const project = res?._viewer?.project;
-    const projects = res?._viewer?.projects;
+    const project = res?.viewer?.project;
+    const projects = res?.viewer?.projects;
     if (!project && !projects) {
       return Promise.reject(notFound);
     }
@@ -189,7 +189,7 @@ async function fetchMigration(
 ): Promise<MigrationInfo> {
   const query = `
     query fetchMigration($projectId: ID!, $environmentName: String!, $migrationId: ID!){
-      _viewer {
+      viewer {
         project(id: $projectId) {
           environment(name: $environmentName) {
             migration(id: $migrationId) {
@@ -214,7 +214,7 @@ async function fetchMigration(
   try {
     const notFound = `migration with id '${args.migrationId}' not found`;
     const res = await client.request(query, variables);
-    const migration = res?._viewer?.project?.environment?.migration;
+    const migration = res?.viewer?.project?.environment?.migration;
     if (!migration) {
       return Promise.reject(notFound);
     }
