@@ -6,6 +6,7 @@
   "repository": "graphcms/management-sdk",
   "license": "MIT",
   "main": "dist/index.js",
+  "module": "dist/management.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -15,8 +16,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
+    "start": "tsdx watch --target node",
+    "build": "tsdx build --target node",
     "test": "tsdx test",
     "lint": "tsdx lint --ignore-pattern src/generated/**",
     "prepare": "graphql-codegen && tsdx build",
