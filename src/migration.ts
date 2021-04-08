@@ -1,4 +1,5 @@
 import { GraphQLClient } from "graphql-request";
+
 import { Model, ModelClass } from "./model";
 import {
   fetchEnvironment,
@@ -235,6 +236,7 @@ class MigrationClass implements Migration, ChangeListener {
     this.client = new GraphQLClient(endpoint, {
       headers: {
         authorization: `Bearer ${this.config.authToken}`,
+        "apollographql-client-name": "management-sdk",
       },
     });
     this.environment = await fetchEnvironment(
