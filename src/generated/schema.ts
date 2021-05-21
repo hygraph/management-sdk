@@ -2487,6 +2487,7 @@ export type GraphQLFieldExtension = GraphQLIExtension & {
   hasFormRenderer: Scalars['Boolean'];
   hasListRenderer: Scalars['Boolean'];
   hasTableRenderer: Scalars['Boolean'];
+  fields: Array<GraphQLIField>;
 };
 
 export type GraphQLCreateFieldExtensionPayload = {
@@ -2871,6 +2872,7 @@ export type GraphQLFieldConfig = {
   config: Scalars['JSON'];
   id: Scalars['String'];
   renderer: Scalars['String'];
+  extension?: Maybe<GraphQLFieldExtension>;
 };
 
 export type GraphQLMoveFieldPayload = {
@@ -3017,11 +3019,13 @@ export type GraphQLUpdateUnionFieldInput = {
 export type GraphQLFieldConfigInput = {
   renderer: Scalars['String'];
   config: Scalars['JSON'];
+  extensionId?: Maybe<Scalars['ID']>;
 };
 
 export type GraphQLFieldConfigUpdateInput = {
   renderer?: Maybe<Scalars['String']>;
   config?: Maybe<Scalars['JSON']>;
+  extensionId?: Maybe<Scalars['ID']>;
 };
 
 export type GraphQLCreateSimpleFieldInput = {
@@ -3685,6 +3689,8 @@ export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   description?: Maybe<Scalars['String']>;
   tableRenderer?: Maybe<Scalars['String']>;
   formRenderer?: Maybe<Scalars['String']>;
+  tableExtension?: Maybe<Scalars['String']>;
+  formExtension?: Maybe<Scalars['String']>;
   formConfig?: Maybe<Scalars['JSON']>;
   tableConfig?: Maybe<Scalars['JSON']>;
   isList?: Maybe<Scalars['Boolean']>;
@@ -3708,6 +3714,8 @@ export type GraphQLBatchMigrationCreateRemoteFieldInput = {
   description?: Maybe<Scalars['String']>;
   tableRenderer?: Maybe<Scalars['String']>;
   formRenderer?: Maybe<Scalars['String']>;
+  tableExtension?: Maybe<Scalars['String']>;
+  formExtension?: Maybe<Scalars['String']>;
   isList?: Maybe<Scalars['Boolean']>;
   isHidden?: Maybe<Scalars['Boolean']>;
   position?: Maybe<Scalars['Int']>;
@@ -3723,6 +3731,8 @@ export type GraphQLBatchMigrationCreateEnumerableFieldInput = {
   description?: Maybe<Scalars['String']>;
   tableRenderer?: Maybe<Scalars['String']>;
   formRenderer?: Maybe<Scalars['String']>;
+  tableExtension?: Maybe<Scalars['String']>;
+  formExtension?: Maybe<Scalars['String']>;
   isList?: Maybe<Scalars['Boolean']>;
   isLocalized?: Maybe<Scalars['Boolean']>;
   isRequired?: Maybe<Scalars['Boolean']>;
@@ -3750,6 +3760,8 @@ export type GraphQLBatchMigrationCreateUnionFieldInput = {
   description?: Maybe<Scalars['String']>;
   tableRenderer?: Maybe<Scalars['String']>;
   formRenderer?: Maybe<Scalars['String']>;
+  tableExtension?: Maybe<Scalars['String']>;
+  formExtension?: Maybe<Scalars['String']>;
   isList?: Maybe<Scalars['Boolean']>;
   isHidden?: Maybe<Scalars['Boolean']>;
   reverseField: GraphQLBatchMigrationCreateReverseUnionFieldInput;
@@ -3779,6 +3791,8 @@ export type GraphQLBatchMigrationCreateRelationalFieldInput = {
   description?: Maybe<Scalars['String']>;
   tableRenderer?: Maybe<Scalars['String']>;
   formRenderer?: Maybe<Scalars['String']>;
+  tableExtension?: Maybe<Scalars['String']>;
+  formExtension?: Maybe<Scalars['String']>;
   isList?: Maybe<Scalars['Boolean']>;
   /**
    * Marks the field as required.
@@ -3837,6 +3851,8 @@ export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
   embedsEnabled?: Maybe<Scalars['Boolean']>;
   tableRenderer?: Maybe<Scalars['String']>;
   formRenderer?: Maybe<Scalars['String']>;
+  tableExtension?: Maybe<Scalars['String']>;
+  formExtension?: Maybe<Scalars['String']>;
   formConfig?: Maybe<Scalars['JSON']>;
   tableConfig?: Maybe<Scalars['JSON']>;
 };
