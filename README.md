@@ -327,9 +327,22 @@ To create a simple field.
 const { FieldType } = require("@graphcms/management");
 
 model.addSimpleField({
-  apiId,
-  displayName,
+  apiId: '...',
+  displayName: '...',
   type: FieldType.String,
+});
+```
+
+String fields have several [form renderers](/src/renderer.ts#L4-L10), including single line, multiline, markdown, and slug. You can set the form renderer as follows:
+
+```js
+const { FieldType, Renderer } = require("@graphcms/management");
+
+model.addSimpleField({
+  apiId: '...',
+  displayName: '...',
+  type: FieldType.String,
+  formRenderer: Renderer.MultiLine
 });
 ```
 
