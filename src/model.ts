@@ -237,7 +237,8 @@ class ModelClass implements Model, ChangeItem {
       fieldArgs.validations = extractFieldValidations(fieldArgs);
     }
 
-    const field = new Field(fieldArgs, MutationMode.Update);
+    const { type, ...fieldChanges } = fieldArgs;
+    const field = new Field(fieldChanges, MutationMode.Update);
     this.listener.registerChange(field);
     return this;
   }
