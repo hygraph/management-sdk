@@ -396,7 +396,10 @@ class MigrationClass implements Migration, ChangeListener {
           environmentName: this.environment.name,
           migrationId,
         });
-        if (migration.status !== GraphQLMigrationStatus.Queued && migration.status !== GraphQLMigrationStatus.Running) {
+        if (
+          migration.status !== GraphQLMigrationStatus.Queued &&
+          migration.status !== GraphQLMigrationStatus.Running
+        ) {
           return migration;
         }
       } catch (e) {
