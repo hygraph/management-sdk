@@ -18,6 +18,7 @@ import {
   GraphQLBatchMigrationUpdateLocaleInput,
   GraphQLBatchMigrationCreateRemoteTypeDefinitionInput,
   GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput,
+  GraphQLMigrationStatus,
 } from "./generated/schema";
 import {
   EnumerationCreate,
@@ -395,7 +396,10 @@ class MigrationClass implements Migration, ChangeListener {
           environmentName: this.environment.name,
           migrationId,
         });
-        if (migration.status !== "QUEUED") {
+        if (
+          migration.status !== GraphQLMigrationStatus.Queued &&
+          migration.status !== GraphQLMigrationStatus.Running
+        ) {
           return migration;
         }
       } catch (e) {

@@ -222,16 +222,13 @@ export type GraphQLInvite = {
   issuer?: Maybe<GraphQLMember>;
   project: GraphQLProject;
   acceptedAt?: Maybe<Scalars["DateTime"]>;
-  /** @deprecated use roles instead */
-  role: GraphQLRole;
   roles: Array<GraphQLRole>;
 };
 
 export type GraphQLSendInviteInput = {
   email: Scalars["String"];
   projectId: Scalars["ID"];
-  roleId?: Maybe<Scalars["ID"]>;
-  roleIds?: Maybe<Array<Scalars["ID"]>>;
+  roleIds: Array<Scalars["ID"]>;
 };
 
 export type GraphQLRevokeInviteInput = {
@@ -279,6 +276,8 @@ export enum GraphQLLimitType {
   RemoteFieldsMaxResponseSize = "REMOTE_FIELDS_MAX_RESPONSE_SIZE",
   RemoteFieldsHttpWorkers = "REMOTE_FIELDS_HTTP_WORKERS",
   RateLimitPerSecond = "RATE_LIMIT_PER_SECOND",
+  ContentPermissions = "CONTENT_PERMISSIONS",
+  PermanentAuthTokens = "PERMANENT_AUTH_TOKENS",
 }
 
 export type GraphQLLimit = {
@@ -330,24 +329,6 @@ export type GraphQLMetricsAssetTransformationsArgs = {
   end: Scalars["DateTime"];
 };
 
-export type GraphQLNotification = {
-  __typename?: "Notification";
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLSendNotificationPayload = {
-  __typename?: "SendNotificationPayload";
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLSendMailNotificationInput = {
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLSendNotificationInput = {
-  gcms?: Maybe<Scalars["String"]>;
-};
-
 export type GraphQLPaymentAccount = {
   __typename?: "PaymentAccount";
   id: Scalars["ID"];
@@ -367,15 +348,6 @@ export type GraphQLPaymentAccount = {
 export type GraphQLPaymentAccountHostedPageUrlArgs = {
   planName: Scalars["String"];
   projectId: Scalars["ID"];
-};
-
-export type GraphQLPlanAddonInput = {
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLBookPlanAddonsPayload = {
-  __typename?: "BookPlanAddonsPayload";
-  gcms?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLStartTrialPayload = {
@@ -406,10 +378,6 @@ export type GraphQLPaymentSubscription = {
   plan: GraphQLPlan;
   billingPeriod: GraphQLBillingPeriod;
   isCanceled: Scalars["Boolean"];
-};
-
-export type GraphQLBookPlanAddonsInput = {
-  gcms?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLSwitchPaymentSubscriptionInput = {
@@ -466,16 +434,6 @@ export type GraphQLPermanentAuthTokenPermissions = {
   __typename?: "PermanentAuthTokenPermissions";
   allowMutations: Scalars["Boolean"];
   allowQueryOnStages: Array<GraphQLStage>;
-};
-
-/** deprecated use ManagementPermission instead */
-export type GraphQLPermission = {
-  __typename?: "Permission";
-  id: Scalars["ID"];
-  createdAt: Scalars["DateTime"];
-  updatedAt: Scalars["DateTime"];
-  description?: Maybe<Scalars["String"]>;
-  action: GraphQLPermissionAction;
 };
 
 export type GraphQLManagementPermission = {
@@ -715,6 +673,7 @@ export enum GraphQLAuditLogResource {
   Role = "ROLE",
   Viewgroup = "VIEWGROUP",
   Contentview = "CONTENTVIEW",
+  Extension = "EXTENSION",
 }
 
 export enum GraphQLAuditLogAction {
@@ -821,8 +780,6 @@ export type GraphQLProject = {
    * The viewers role in this project
    * @deprecated use viewerAsMember.roles instead
    */
-  role: GraphQLRole;
-  /** @deprecated use viewerAsMember.roles instead */
   roles: Array<GraphQLRole>;
   region: GraphQLRegion;
   existingRoles: Array<GraphQLRole>;
@@ -839,13 +796,9 @@ export type GraphQLProject = {
   isCloning?: Maybe<Scalars["Boolean"]>;
   meta: Scalars["JSON"];
   auditLogs: GraphQLAuditLogsPayload;
-  /**
-   * List all Permissions usable/assignable to roles in this project
-   * @deprecated use availableManagementPermissions instead
-   */
-  availablePermissions: Array<GraphQLPermission>;
   /** List all Permissions usable/assignable to roles in this project */
   availableManagementPermissions: Array<GraphQLManagementPermission>;
+  cloningProjects: Array<GraphQLCloningProject>;
 };
 
 export type GraphQLProjectExistingRoleArgs = {
@@ -878,21 +831,23 @@ export type GraphQLLeaveProjectPayload = {
   leftProjectId: Scalars["ID"];
 };
 
-export type GraphQLBlockProjectPayload = {
-  __typename?: "BlockProjectPayload";
+export type GraphQLTemplateResourceInput = {
+  title: Scalars["String"];
+  url: Scalars["String"];
+};
+
+export type GraphQLTechnologyStackInput = {
+  image: Scalars["String"];
+  title: Scalars["String"];
+  url?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLUpsertTemplateInput = {
   gcms?: Maybe<Scalars["String"]>;
 };
 
-export type GraphQLBlockProjectInput = {
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLUnblockProjectPayload = {
-  __typename?: "UnblockProjectPayload";
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLUnblockProjectInput = {
+export type GraphQLUpsertTemplatePayload = {
+  __typename?: "UpsertTemplatePayload";
   gcms?: Maybe<Scalars["String"]>;
 };
 
@@ -952,21 +907,6 @@ export type GraphQLCreateProjectInput = {
   template?: Maybe<GraphQLCreateProjectTemplateInput>;
 };
 
-export type GraphQLScheduleLegacyProjectMigrationInput = {
-  region: Scalars["String"];
-  legacyProject: Scalars["ID"];
-  skipContent?: Scalars["Boolean"];
-  skipWebhooks?: Scalars["Boolean"];
-  skipMembers?: Scalars["Boolean"];
-  skipContentViewsAndContentViewGroups?: Scalars["Boolean"];
-  askedForHelp?: Scalars["Boolean"];
-};
-
-export type GraphQLScheduleLegacyProjectMigrationPayload = {
-  __typename?: "ScheduleLegacyProjectMigrationPayload";
-  legacyProject: GraphQLLegacyProject;
-};
-
 export type GraphQLUpdateProjectInput = {
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
@@ -992,10 +932,6 @@ export type GraphQLQuota = {
   assetTraffic: GraphQLProgress;
   records: GraphQLProgress;
   seats: GraphQLProgress;
-  /** @deprecated Use locale quota provided on the environment level */
-  locales: GraphQLProgress;
-  /** @deprecated Use webhooks quota provided on the environment level */
-  webhooks: GraphQLProgress;
   environments: GraphQLProgress;
   roles: GraphQLProgress;
 };
@@ -1006,6 +942,7 @@ export type GraphQLEnvironmentLevelQuota = {
   webhooks: GraphQLProgress;
   models: GraphQLProgress;
   stages: GraphQLProgress;
+  contentPermissions: GraphQLProgress;
 };
 
 export type GraphQLRegion = {
@@ -1029,8 +966,6 @@ export type GraphQLRole = {
   isDefault: Scalars["Boolean"];
   name: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
-  /** @deprecated renamed to managementPermissions */
-  permissions: Array<GraphQLPermission>;
   /**
    * Returns contentPermissions for a role.
    * Optionally filtered by environment.
@@ -1570,78 +1505,6 @@ export type GraphQLUpdateMemberRolesInput = {
   roleIds: Array<Scalars["ID"]>;
 };
 
-/** ### SCHEMA CHANGES: */
-export enum GraphQLSchemaChangeType {
-  FieldArgumentDescriptionChanged = "FIELD_ARGUMENT_DESCRIPTION_CHANGED",
-  FieldArgumentDefaultChanged = "FIELD_ARGUMENT_DEFAULT_CHANGED",
-  FieldArgumentTypeChanged = "FIELD_ARGUMENT_TYPE_CHANGED",
-  DirectiveRemoved = "DIRECTIVE_REMOVED",
-  DirectiveAdded = "DIRECTIVE_ADDED",
-  DirectiveDescriptionChanged = "DIRECTIVE_DESCRIPTION_CHANGED",
-  DirectiveLocationAdded = "DIRECTIVE_LOCATION_ADDED",
-  DirectiveLocationRemoved = "DIRECTIVE_LOCATION_REMOVED",
-  DirectiveArgumentAdded = "DIRECTIVE_ARGUMENT_ADDED",
-  DirectiveArgumentRemoved = "DIRECTIVE_ARGUMENT_REMOVED",
-  DirectiveArgumentDescriptionChanged = "DIRECTIVE_ARGUMENT_DESCRIPTION_CHANGED",
-  DirectiveArgumentDefaultValueChanged = "DIRECTIVE_ARGUMENT_DEFAULT_VALUE_CHANGED",
-  DirectiveArgumentTypeChanged = "DIRECTIVE_ARGUMENT_TYPE_CHANGED",
-  EnumValueRemoved = "ENUM_VALUE_REMOVED",
-  EnumValueAdded = "ENUM_VALUE_ADDED",
-  EnumValueDescriptionChanged = "ENUM_VALUE_DESCRIPTION_CHANGED",
-  EnumValueDeprecationReasonChanged = "ENUM_VALUE_DEPRECATION_REASON_CHANGED",
-  FieldRemoved = "FIELD_REMOVED",
-  FieldAdded = "FIELD_ADDED",
-  FieldDescriptionChanged = "FIELD_DESCRIPTION_CHANGED",
-  FieldDescriptionAdded = "FIELD_DESCRIPTION_ADDED",
-  FieldDescriptionRemoved = "FIELD_DESCRIPTION_REMOVED",
-  FieldDeprecationAdded = "FIELD_DEPRECATION_ADDED",
-  FieldDeprecationRemoved = "FIELD_DEPRECATION_REMOVED",
-  FieldDeprecationReasonChanged = "FIELD_DEPRECATION_REASON_CHANGED",
-  FieldDeprecationReasonAdded = "FIELD_DEPRECATION_REASON_ADDED",
-  FieldDeprecationReasonRemoved = "FIELD_DEPRECATION_REASON_REMOVED",
-  FieldTypeChanged = "FIELD_TYPE_CHANGED",
-  FieldArgumentAdded = "FIELD_ARGUMENT_ADDED",
-  FieldArgumentRemoved = "FIELD_ARGUMENT_REMOVED",
-  InputFieldRemoved = "INPUT_FIELD_REMOVED",
-  InputFieldAdded = "INPUT_FIELD_ADDED",
-  InputFieldDescriptionAdded = "INPUT_FIELD_DESCRIPTION_ADDED",
-  InputFieldDescriptionRemoved = "INPUT_FIELD_DESCRIPTION_REMOVED",
-  InputFieldDescriptionChanged = "INPUT_FIELD_DESCRIPTION_CHANGED",
-  InputFieldDefaultValueChanged = "INPUT_FIELD_DEFAULT_VALUE_CHANGED",
-  InputFieldTypeChanged = "INPUT_FIELD_TYPE_CHANGED",
-  ObjectTypeInterfaceAdded = "OBJECT_TYPE_INTERFACE_ADDED",
-  ObjectTypeInterfaceRemoved = "OBJECT_TYPE_INTERFACE_REMOVED",
-  SchemaQueryTypeChanged = "SCHEMA_QUERY_TYPE_CHANGED",
-  SchemaMutationTypeChanged = "SCHEMA_MUTATION_TYPE_CHANGED",
-  SchemaSubscriptionTypeChanged = "SCHEMA_SUBSCRIPTION_TYPE_CHANGED",
-  TypeRemoved = "TYPE_REMOVED",
-  TypeAdded = "TYPE_ADDED",
-  TypeKindChanged = "TYPE_KIND_CHANGED",
-  TypeDescriptionChanged = "TYPE_DESCRIPTION_CHANGED",
-  UnionMemberRemoved = "UNION_MEMBER_REMOVED",
-  UnionMemberAdde = "UNION_MEMBER_ADDE",
-}
-
-export enum GraphQLSchemaChangeCriticalityLevel {
-  Breaking = "BREAKING",
-  NonBreaking = "NON_BREAKING",
-  Dangerous = "DANGEROUS",
-}
-
-export type GraphQLSchemaChangeCriticality = {
-  __typename?: "SchemaChangeCriticality";
-  level: GraphQLSchemaChangeCriticalityLevel;
-  reason?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLSchemaChange = {
-  __typename?: "SchemaChange";
-  message: Scalars["String"];
-  path?: Maybe<Scalars["String"]>;
-  type: GraphQLSchemaChangeType;
-  criticality: GraphQLSchemaChangeCriticality;
-};
-
 export enum GraphQLMigrationStatus {
   Queued = "QUEUED",
   Running = "RUNNING",
@@ -1659,17 +1522,10 @@ export type GraphQLMigration = {
   triggeredBy?: Maybe<GraphQLMember>;
   status: GraphQLMigrationStatus;
   errors?: Maybe<Scalars["String"]>;
+  /** @deprecated Field no longer supported */
   operationType: GraphQLMigrationOperationType;
+  /** @deprecated Field no longer supported */
   resourceId?: Maybe<Scalars["ID"]>;
-};
-
-export type GraphQLEnvironmentRevision = {
-  __typename?: "EnvironmentRevision";
-  id: Scalars["String"];
-  type: Scalars["String"];
-  createdAt: Scalars["DateTime"];
-  body?: Maybe<Scalars["JSON"]>;
-  createdBy?: Maybe<GraphQLMember>;
 };
 
 export type GraphQLEnvironment = {
@@ -1691,20 +1547,14 @@ export type GraphQLEnvironment = {
   contentViews: Array<GraphQLContentView>;
   viewGroups: Array<GraphQLViewGroup>;
   contentModel: GraphQLContentModel;
+  /** @deprecated Revisions are no longer maintained */
   revisionCount: Scalars["Int"];
-  revisions: Array<GraphQLEnvironmentRevision>;
-  revision: GraphQLEnvironmentRevision;
   migrations: Array<GraphQLMigration>;
   migration: GraphQLMigration;
   runningMigration?: Maybe<GraphQLMigration>;
   /** @deprecated use publicContentAPI.contentPermissions instead */
   permissions: GraphQLEnvironmentPermissions;
   publicContentAPI: GraphQLPublicContentApi;
-  /**
-   * all content permissions configured for this env across roles, pat and public access
-   * @deprecated not needed
-   */
-  contentPermissions: Array<GraphQLIContentPermission>;
   isCloning?: Maybe<Scalars["Boolean"]>;
   quotas: GraphQLEnvironmentLevelQuota;
   integrations: Array<GraphQLIIntegration>;
@@ -1725,15 +1575,6 @@ export type GraphQLEnvironmentContentViewArgs = {
 export type GraphQLEnvironmentContentViewsArgs = {
   includeSystemModels?: Maybe<Scalars["Boolean"]>;
   filter?: Maybe<GraphQLContentViewFilterInput>;
-};
-
-export type GraphQLEnvironmentRevisionsArgs = {
-  skip: Scalars["Int"];
-  limit: Scalars["Int"];
-};
-
-export type GraphQLEnvironmentRevisionArgs = {
-  id: Scalars["String"];
 };
 
 export type GraphQLEnvironmentMigrationArgs = {
@@ -1888,12 +1729,6 @@ export type GraphQLVercelStateTriggeredBy =
   | GraphQLPermanentAuthToken
   | GraphQLMember;
 
-export type GraphQLNetlifyModels = {
-  __typename?: "NetlifyModels";
-  all: Scalars["Boolean"];
-  selected: Array<GraphQLIModel>;
-};
-
 export enum GraphQLColorPalette {
   Pink = "PINK",
   Purple = "PURPLE",
@@ -1960,12 +1795,50 @@ export type GraphQLLegacyProject = {
   isMigrated: Scalars["Boolean"];
 };
 
-export type GraphQLTemplate = {
+export type GraphQLITemplate = {
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  picture?: Maybe<Scalars["String"]>;
+  details?: Maybe<Scalars["String"]>;
+  coverPicture?: Maybe<Scalars["String"]>;
+  resources: Array<GraphQLTemplateResource>;
+};
+
+export type GraphQLTemplate = GraphQLITemplate & {
   __typename?: "Template";
   id: Scalars["ID"];
   name: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
   picture?: Maybe<Scalars["String"]>;
+  details?: Maybe<Scalars["String"]>;
+  coverPicture?: Maybe<Scalars["String"]>;
+  resources: Array<GraphQLTemplateResource>;
+};
+
+export type GraphQLStarterTemplate = GraphQLITemplate & {
+  __typename?: "StarterTemplate";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  picture?: Maybe<Scalars["String"]>;
+  details?: Maybe<Scalars["String"]>;
+  coverPicture?: Maybe<Scalars["String"]>;
+  resources: Array<GraphQLTemplateResource>;
+  stack: Array<GraphQLTechnologyStack>;
+};
+
+export type GraphQLTemplateResource = {
+  __typename?: "TemplateResource";
+  title: Scalars["String"];
+  url: Scalars["String"];
+};
+
+export type GraphQLTechnologyStack = {
+  __typename?: "TechnologyStack";
+  image: Scalars["String"];
+  title: Scalars["String"];
+  url?: Maybe<Scalars["String"]>;
 };
 
 /**
@@ -1983,7 +1856,8 @@ export type GraphQLViewer = GraphQLIUser & {
   projects: Array<GraphQLProject>;
   plans: Array<GraphQLPlan>;
   project?: Maybe<GraphQLProject>;
-  templates: Array<GraphQLTemplate>;
+  templates: Array<GraphQLITemplate>;
+  /** @deprecated Legacy no longer supported */
   legacyProjects: Array<GraphQLLegacyProject>;
   paymentAccounts: Array<GraphQLPaymentAccount>;
   paymentAccount: GraphQLPaymentAccount;
@@ -2021,7 +1895,7 @@ export type GraphQLIViewer = {
   id: Scalars["ID"];
   project?: Maybe<GraphQLProject>;
   plans: Array<GraphQLPlan>;
-  templates: Array<GraphQLTemplate>;
+  templates: Array<GraphQLITemplate>;
   regions: Array<GraphQLRegion>;
   availableIntegrations: Array<GraphQLIntegration_Provider>;
   availableExtensionSrcTypes: Array<GraphQLExtensionSrcType>;
@@ -2046,10 +1920,9 @@ export type GraphQLUserViewer = GraphQLIViewer & {
   user: GraphQLUser;
   pendingInvites: Array<GraphQLInvite>;
   pendingInvite?: Maybe<GraphQLInvite>;
-  projects: Array<GraphQLProject>;
-  project?: Maybe<GraphQLProject>;
   plans: Array<GraphQLPlan>;
-  templates: Array<GraphQLTemplate>;
+  templates: Array<GraphQLITemplate>;
+  /** @deprecated Legacy no longer supported */
   legacyProjects: Array<GraphQLLegacyProject>;
   paymentAccounts: Array<GraphQLPaymentAccount>;
   paymentAccount: GraphQLPaymentAccount;
@@ -2057,18 +1930,21 @@ export type GraphQLUserViewer = GraphQLIViewer & {
   availableIntegrations: Array<GraphQLIntegration_Provider>;
   availableExtensionSrcTypes: Array<GraphQLExtensionSrcType>;
   availableExtensionPermissions: Array<GraphQLAvailableExtensionPermission>;
+  pendingProjects: Array<GraphQLIPendingProject>;
+  projects: Array<GraphQLProject>;
+  project?: Maybe<GraphQLProject>;
 };
 
 export type GraphQLUserViewerPendingInviteArgs = {
   code: Scalars["String"];
 };
 
-export type GraphQLUserViewerProjectArgs = {
-  id?: Maybe<Scalars["ID"]>;
-};
-
 export type GraphQLUserViewerPaymentAccountArgs = {
   id: Scalars["ID"];
+};
+
+export type GraphQLUserViewerProjectArgs = {
+  id?: Maybe<Scalars["ID"]>;
 };
 
 export type GraphQLTokenViewer = GraphQLIViewer & {
@@ -2076,7 +1952,7 @@ export type GraphQLTokenViewer = GraphQLIViewer & {
   id: Scalars["ID"];
   project?: Maybe<GraphQLProject>;
   regions: Array<GraphQLRegion>;
-  templates: Array<GraphQLTemplate>;
+  templates: Array<GraphQLITemplate>;
   plans: Array<GraphQLPlan>;
   availableIntegrations: Array<GraphQLIntegration_Provider>;
   availableExtensionSrcTypes: Array<GraphQLExtensionSrcType>;
@@ -2094,8 +1970,6 @@ export type GraphQLMember = GraphQLIUser & {
   createdAt: Scalars["DateTime"];
   updatedAt: Scalars["DateTime"];
   profile: GraphQLProfile;
-  /** @deprecated use roles instead */
-  role: GraphQLRole;
   roles: Array<GraphQLRole>;
   isOwner: Scalars["Boolean"];
 };
@@ -3961,19 +3835,33 @@ export type GraphQLBatchMigrationChangeInput = {
   updateModel?: Maybe<GraphQLBatchMigrationUpdateModelInput>;
   deleteModel?: Maybe<GraphQLBatchMigrationDeleteModelInput>;
   /** Remote type defs */
-  createRemoteTypeDefinition?: Maybe<GraphQLBatchMigrationCreateRemoteTypeDefinitionInput>;
-  updateRemoteTypeDefinition?: Maybe<GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput>;
-  deleteRemoteTypeDefinition?: Maybe<GraphQLBatchMigrationDeleteRemoteTypeDefinitionInput>;
+  createRemoteTypeDefinition?: Maybe<
+    GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
+  >;
+  updateRemoteTypeDefinition?: Maybe<
+    GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput
+  >;
+  deleteRemoteTypeDefinition?: Maybe<
+    GraphQLBatchMigrationDeleteRemoteTypeDefinitionInput
+  >;
   /** Fields */
   createSimpleField?: Maybe<GraphQLBatchMigrationCreateSimpleFieldInput>;
   createRemoteField?: Maybe<GraphQLBatchMigrationCreateRemoteFieldInput>;
   updateSimpleField?: Maybe<GraphQLBatchMigrationUpdateSimpleFieldInput>;
-  createRelationalField?: Maybe<GraphQLBatchMigrationCreateRelationalFieldInput>;
-  updateRelationalField?: Maybe<GraphQLBatchMigrationUpdateRelationalFieldInput>;
+  createRelationalField?: Maybe<
+    GraphQLBatchMigrationCreateRelationalFieldInput
+  >;
+  updateRelationalField?: Maybe<
+    GraphQLBatchMigrationUpdateRelationalFieldInput
+  >;
   createUnionField?: Maybe<GraphQLBatchMigrationCreateUnionFieldInput>;
   updateUnionField?: Maybe<GraphQLBatchMigrationUpdateUnionFieldInput>;
-  createEnumerableField?: Maybe<GraphQLBatchMigrationCreateEnumerableFieldInput>;
-  updateEnumerableField?: Maybe<GraphQLBatchMigrationUpdateEnumerableFieldInput>;
+  createEnumerableField?: Maybe<
+    GraphQLBatchMigrationCreateEnumerableFieldInput
+  >;
+  updateEnumerableField?: Maybe<
+    GraphQLBatchMigrationUpdateEnumerableFieldInput
+  >;
   deleteField?: Maybe<GraphQLBatchMigrationDeleteFieldInput>;
   /** Enumerations */
   createEnumeration?: Maybe<GraphQLBatchMigrationCreateEnumerationInput>;
@@ -4048,8 +3936,7 @@ export type GraphQLCreateGatsbyCloudIntegrationInput = {
    * Prefix of your site
    * Only lower case alphabetical characters, numbers and underscores are allowed.
    */
-  sitePrefix?: Maybe<Scalars["String"]>;
-  siteURL?: Maybe<Scalars["String"]>;
+  sitePrefix: Scalars["String"];
   /** URL to trigger a Deploy Build. */
   buildWebhookURL: Scalars["String"];
   /** URL to trigger a CMS Preview build. */
@@ -4088,7 +3975,6 @@ export type GraphQLUpdateGatsbyCloudIntegrationInput = {
   integrationId: Scalars["ID"];
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
-  siteUrl?: Maybe<Scalars["String"]>;
   /**
    * Prefix of your site
    * Only lower case alphabetical characters, numbers and underscores are allowed.
@@ -4244,7 +4130,6 @@ export type GraphQLMutation = {
   updatePermanentAuthToken: GraphQLUpdatePermanentAuthTokenPayload;
   deletePermanentAuthToken: GraphQLDeletePermanentAuthTokenPayload;
   createProject: GraphQLProject;
-  scheduleLegacyProjectMigration: GraphQLScheduleLegacyProjectMigrationPayload;
   updateProject: GraphQLProject;
   deleteProject: GraphQLDeleteProjectPayload;
   leaveProject: GraphQLLeaveProjectPayload;
@@ -4271,8 +4156,6 @@ export type GraphQLMutation = {
   removeMember: GraphQLRemoveMemberPayload;
   setUserAnalytics: GraphQLUserAnalytics;
   deleteAccount: GraphQLDeleteAccountPayload;
-  /** @deprecated Use updateUserProfile instead */
-  updateProfile: GraphQLViewer;
   updateUserProfile: GraphQLUserViewer;
   createWebhook: GraphQLCreateWebhookPayload;
   updateWebhook: GraphQLUpdateWebhookPayload;
@@ -4285,16 +4168,26 @@ export type GraphQLMutation = {
   updateFilestackSecurityOptions: GraphQLUpdateFilestackSecurityOptionsPayload;
   updatePublicEndpoint?: Maybe<GraphQLUpdatePublicPermissionsPayload>;
   createNetlifyIntegration?: Maybe<GraphQLCreateNetlifyIntegrationPayload>;
-  triggerNetlifyIntegrationBuild?: Maybe<GraphQLTriggerNetlifyIntegrationBuildPayload>;
+  triggerNetlifyIntegrationBuild?: Maybe<
+    GraphQLTriggerNetlifyIntegrationBuildPayload
+  >;
   updateNetlifyIntegration?: Maybe<GraphQLUpdateNetlifyIntegrationPayload>;
   deleteNetlifyIntegration?: Maybe<GraphQLDeleteNetlifyIntegrationPayload>;
   createVercelIntegration?: Maybe<GraphQLCreateVercelIntegrationPayload>;
-  triggerVercelIntegrationBuild?: Maybe<GraphQLTriggerVercelIntegrationBuildPayload>;
+  triggerVercelIntegrationBuild?: Maybe<
+    GraphQLTriggerVercelIntegrationBuildPayload
+  >;
   updateVercelIntegration?: Maybe<GraphQLUpdateVercelIntegrationPayload>;
   deleteVercelIntegration?: Maybe<GraphQLDeleteVercelIntegrationPayload>;
-  createGatsbyCloudIntegration?: Maybe<GraphQLCreateGatsbyCloudIntegrationPayload>;
-  updateGatsbyCloudIntegration?: Maybe<GraphQLUpdateGatsbyCloudIntegrationPayload>;
-  deleteGatsbyCloudIntegration?: Maybe<GraphQLDeleteGatsbyCloudIntegrationPayload>;
+  createGatsbyCloudIntegration?: Maybe<
+    GraphQLCreateGatsbyCloudIntegrationPayload
+  >;
+  updateGatsbyCloudIntegration?: Maybe<
+    GraphQLUpdateGatsbyCloudIntegrationPayload
+  >;
+  deleteGatsbyCloudIntegration?: Maybe<
+    GraphQLDeleteGatsbyCloudIntegrationPayload
+  >;
   createFieldExtension: GraphQLCreateFieldExtensionPayload;
   updateFieldExtension: GraphQLUpdateFieldExtensionPayload;
   deleteExtension: GraphQLDeleteExtensionPayload;
@@ -4396,10 +4289,6 @@ export type GraphQLMutationDeletePermanentAuthTokenArgs = {
 
 export type GraphQLMutationCreateProjectArgs = {
   data: GraphQLCreateProjectInput;
-};
-
-export type GraphQLMutationScheduleLegacyProjectMigrationArgs = {
-  data: GraphQLScheduleLegacyProjectMigrationInput;
 };
 
 export type GraphQLMutationUpdateProjectArgs = {
@@ -4504,10 +4393,6 @@ export type GraphQLMutationSetUserAnalyticsArgs = {
 
 export type GraphQLMutationDeleteAccountArgs = {
   data?: Maybe<GraphQLDeleteAccountInput>;
-};
-
-export type GraphQLMutationUpdateProfileArgs = {
-  data: GraphQLUpdateProfileInput;
 };
 
 export type GraphQLMutationUpdateUserProfileArgs = {
@@ -4765,17 +4650,53 @@ export enum GraphQLVercelBuildState {
 
 export type GraphQLNetlifyIntegrationCallbackPayload = {
   __typename?: "NetlifyIntegrationCallbackPayload";
+  /** @deprecated use integration instead */
   integrationId: Scalars["ID"];
+  integration: GraphQLNetlifyIntegration;
   site: GraphQLNetlifySite;
   error?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLVercelIntegrationCallbackPayload = {
   __typename?: "VercelIntegrationCallbackPayload";
+  /** @deprecated use integration instead */
   integrationId: Scalars["ID"];
+  integration: GraphQLVercelIntegration;
   project: GraphQLVercelProject;
   error?: Maybe<Scalars["String"]>;
 };
+
+/** Base pending project with common information */
+export type GraphQLIPendingProject = {
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  picture?: Maybe<Scalars["String"]>;
+};
+
+/** Can clone from project or template */
+export type GraphQLCloningFrom =
+  | GraphQLProject
+  | GraphQLTemplate
+  | GraphQLStarterTemplate;
+
+/** Cloning project with source */
+export type GraphQLCloningProject = GraphQLIPendingProject & {
+  __typename?: "CloningProject";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  picture?: Maybe<Scalars["String"]>;
+  cloningFrom: GraphQLCloningFrom;
+};
+
+/** Add subscription to notify about changes in projects */
+export type GraphQLProjectChangeCompletedCloning = {
+  __typename?: "ProjectChangeCompletedCloning";
+  clonedProject: GraphQLProject;
+};
+
+export type GraphQLProjectChangedPayload = GraphQLProjectChangeCompletedCloning;
 
 export type GraphQLSchemaMigrationSubscriptionPayload = GraphQLISchemaMigrationPayload & {
   __typename?: "SchemaMigrationSubscriptionPayload";
@@ -4785,9 +4706,11 @@ export type GraphQLSchemaMigrationSubscriptionPayload = GraphQLISchemaMigrationP
 export type GraphQLSchemaMigrationSucceededSubscriptionPayload = GraphQLISchemaMigrationPayload & {
   __typename?: "SchemaMigrationSucceededSubscriptionPayload";
   migration: GraphQLMigration;
-  affectedResourceType: GraphQLMigrationOperationType;
-  affectedResourceId: Scalars["ID"];
   environment: GraphQLEnvironment;
+  /** @deprecated Field no longer supported */
+  affectedResourceType: GraphQLMigrationOperationType;
+  /** @deprecated Field no longer supported */
+  affectedResourceId: Scalars["ID"];
 };
 
 export type GraphQLEnvironmentPromotedPayload = {
@@ -4800,6 +4723,7 @@ export type GraphQLEnvironmentPromotedPayload = {
 export type GraphQLSubscription = {
   __typename?: "Subscription";
   schemaMigration: GraphQLISchemaMigrationPayload;
+  projectChanged: GraphQLProjectChangedPayload;
   netlifyBuildNotification: GraphQLNetlifyIntegrationCallbackPayload;
   vercelBuildNotification: GraphQLVercelIntegrationCallbackPayload;
   environmentPromoted: GraphQLEnvironmentPromotedPayload;
