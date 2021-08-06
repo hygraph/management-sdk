@@ -464,7 +464,7 @@ model.updateRelationalField({
 Updating union field
 
 ```js
-model.updateRelationalField({
+model.updateUnionField({
   apiId,
   models, // list of related models
   ... // properties to update
