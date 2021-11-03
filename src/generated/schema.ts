@@ -507,6 +507,7 @@ export enum GraphQLPermissionAction {
   ContentviewCreate = "CONTENTVIEW_CREATE",
   ContentviewRead = "CONTENTVIEW_READ",
   ContentviewUpdate = "CONTENTVIEW_UPDATE",
+  ContentviewSystemUpdate = "CONTENTVIEW_SYSTEM_UPDATE",
   ContentviewDelete = "CONTENTVIEW_DELETE",
   /** Project Storage Buckets */
   StorageBucketCreate = "STORAGE_BUCKET_CREATE",
@@ -667,6 +668,7 @@ export enum GraphQLAuditLogAction {
   Delete = "DELETE",
   Publish = "PUBLISH",
   Unpublish = "UNPUBLISH",
+  Accept = "ACCEPT",
 }
 
 export enum GraphQLAuditLogTriggerType {
@@ -688,7 +690,7 @@ export type GraphQLAuditLog = {
   resource: GraphQLAuditLogResource;
   action: GraphQLAuditLogAction;
   environmentName?: Maybe<Scalars["String"]>;
-  payload: Scalars["JSON"];
+  payload?: Maybe<Scalars["JSON"]>;
   triggeredBy?: Maybe<GraphQLAuditLogTriggeredBy>;
   triggerType: GraphQLAuditLogTriggerType;
 };
@@ -1509,6 +1511,7 @@ export type GraphQLEnvironment = {
   integration: GraphQLIIntegration;
   extensions: Array<GraphQLIExtension>;
   extension: GraphQLIExtension;
+  diff: GraphQLDiffEnvironmentPayload;
 };
 
 export type GraphQLEnvironmentWebhookArgs = {
@@ -1534,6 +1537,10 @@ export type GraphQLEnvironmentIntegrationArgs = {
 
 export type GraphQLEnvironmentExtensionArgs = {
   id: Scalars["ID"];
+};
+
+export type GraphQLEnvironmentDiffArgs = {
+  environmentId: Scalars["ID"];
 };
 
 export type GraphQLPublicContentApiDefauts = {
@@ -2421,6 +2428,13 @@ export type GraphQLFieldValidationRegEx = {
   __typename?: "FieldValidationRegEx";
   regex?: Maybe<Scalars["String"]>;
   flags?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  errorMessage?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLFieldValidationIntRange = {
+  __typename?: "FieldValidationIntRange";
+  min?: Maybe<Scalars["Int"]>;
+  max?: Maybe<Scalars["Int"]>;
   errorMessage?: Maybe<Scalars["String"]>;
 };
 
@@ -3368,7 +3382,7 @@ export type GraphQLDeleteLocaleInput = {
   /** ID of Locale to delete */
   id: Scalars["ID"];
   /**
-   * Delete all localizations for this loclae.
+   * Delete all localizations for this locale.
    * This will prevent an exception from
    * being raised if documents were previously
    * localized in this locale
@@ -3514,6 +3528,7 @@ export type GraphQLBatchMigrationCreateModelInput = {
   apiIdPlural: Scalars["String"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
+  previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
 };
 
 /** Creating a remote type definition */
@@ -3575,6 +3590,7 @@ export type GraphQLBatchMigrationUpdateModelInput = {
   apiIdPlural?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
+  previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
 };
 
 /** Deleting a field. */
@@ -3897,6 +3913,40 @@ export type GraphQLBatchMigrationChangeInput = {
   createLocale?: Maybe<GraphQLBatchMigrationCreateLocaleInput>;
   deleteLocale?: Maybe<GraphQLBatchMigrationDeleteLocaleInput>;
   updateLocale?: Maybe<GraphQLBatchMigrationUpdateLocaleInput>;
+};
+
+export type GraphQLBatchMigrationChange = {
+  __typename?: "BatchMigrationChange";
+  /** Models */
+  createModel?: Maybe<Scalars["JSON"]>;
+  updateModel?: Maybe<Scalars["JSON"]>;
+  deleteModel?: Maybe<Scalars["JSON"]>;
+  /** Fields */
+  createSimpleField?: Maybe<Scalars["JSON"]>;
+  updateSimpleField?: Maybe<Scalars["JSON"]>;
+  createRelationalField?: Maybe<Scalars["JSON"]>;
+  updateRelationalField?: Maybe<Scalars["JSON"]>;
+  deleteField?: Maybe<Scalars["JSON"]>;
+  /** Locale */
+  createLocale?: Maybe<Scalars["JSON"]>;
+  deleteLocale?: Maybe<Scalars["JSON"]>;
+  updateLocale?: Maybe<Scalars["JSON"]>;
+};
+
+export type GraphQLExportEnvironmentInput = {
+  environmentId: Scalars["ID"];
+};
+
+export type GraphQLExportEnvironmentPayload = {
+  __typename?: "ExportEnvironmentPayload";
+  changes: Array<GraphQLBatchMigrationChange>;
+};
+
+export type GraphQLDiffEnvironmentPayload = {
+  __typename?: "DiffEnvironmentPayload";
+  environmentId: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  changes: Array<GraphQLBatchMigrationChange>;
 };
 
 export type GraphQLBatchMigrationInput = {
@@ -4244,6 +4294,7 @@ export type GraphQLMutation = {
   updateUnionField: GraphQLAsyncOperationPayload;
   deleteField: GraphQLAsyncOperationPayload;
   submitBatchChanges: GraphQLAsyncOperationPayload;
+  exportEnvironment: GraphQLExportEnvironmentPayload;
   enableScheduledPublishing: GraphQLProject;
 };
 
@@ -4629,6 +4680,10 @@ export type GraphQLMutationDeleteFieldArgs = {
 
 export type GraphQLMutationSubmitBatchChangesArgs = {
   data: GraphQLBatchMigrationInput;
+};
+
+export type GraphQLMutationExportEnvironmentArgs = {
+  data: GraphQLExportEnvironmentInput;
 };
 
 export type GraphQLMutationEnableScheduledPublishingArgs = {
