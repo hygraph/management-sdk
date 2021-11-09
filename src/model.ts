@@ -188,7 +188,8 @@ class ModelClass implements Model, ChangeItem {
     private args: ModelArgs
   ) {}
 
-  addSimpleField(fieldArgs: any): Model {
+  addSimpleField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
     if (fieldArgs.type === GraphQLSimpleFieldType.String) {
       fieldArgs.formRenderer = fieldArgs.formRenderer || Renderer.SingleLine;
@@ -203,7 +204,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  addRemoteField(fieldArgs: any): Model {
+  addRemoteField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
     fieldArgs.type = GraphQLRemoteFieldType.Remote;
     if (fieldArgs.remoteConfig.headers) {
@@ -230,7 +232,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  updateSimpleField(fieldArgs: any): Model {
+  updateSimpleField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
 
     if (fieldArgs.validations) {
@@ -243,7 +246,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  addRelationalField(fieldArgs: any): Model {
+  addRelationalField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
     if (
       (fieldArgs.type && fieldArgs.type === "ASSET") ||
@@ -296,7 +300,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  addUnionField(fieldArgs: any): Model {
+  addUnionField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
     if (!fieldArgs.models || fieldArgs.models.length === 0) {
       throw new Error(`models cannot be empty`);
@@ -330,7 +335,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  updateRelationalField(fieldArgs: any): Model {
+  updateRelationalField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
 
     const field = new Field(
@@ -342,7 +348,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  updateUnionField(fieldArgs: any): Model {
+  updateUnionField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
     fieldArgs.reverseField = {
       modelApiIds: fieldArgs.models,
@@ -361,7 +368,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  addEnumerableField(fieldArgs: any): Model {
+  addEnumerableField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     if (!fieldArgs.enumerationApiId) {
       throw new Error("enumerationApiId is required for enumerable field");
     }
@@ -375,7 +383,8 @@ class ModelClass implements Model, ChangeItem {
     return this;
   }
 
-  updateEnumerableField(fieldArgs: any): Model {
+  updateEnumerableField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
 
     const field = new Field(
