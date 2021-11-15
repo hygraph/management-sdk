@@ -40,8 +40,12 @@ interface RelationalFieldArgs
   model: string;
   reverseField?: Omit<
     GraphQLBatchMigrationCreateReverseRelationalFieldInput,
-    "modelApiId" | "isList"
-  >;
+    "modelApiId" | "isList" | "isHidden"
+  > & {
+    /**
+     * @deprecated Use visibility instead.
+     */
+    isHidden?: GraphQLBatchMigrationCreateReverseRelationalFieldInput["isHidden"]};
 }
 
 /**
@@ -53,8 +57,12 @@ interface CreateUnionFieldArgs
   models: string[];
   reverseField?: Omit<
     GraphQLBatchMigrationCreateReverseUnionFieldInput,
-    "modelApiIds" | "isList"
-  >;
+    "modelApiIds" | "isList" | "isHidden"
+  > & {
+    /**
+     * @deprecated Use visibility instead.
+     */
+    isHidden?: GraphQLBatchMigrationCreateReverseUnionFieldInput["isHidden"]};
 }
 
 /**
@@ -79,9 +87,13 @@ interface FieldValidationArgs {
 interface CreateSimpleFieldArgs
   extends Omit<
     GraphQLBatchMigrationCreateSimpleFieldInput,
-    "validations" | "modelApiId"
+    "validations" | "modelApiId" | "isHidden"
   > {
   validations?: FieldValidationArgs;
+    /**
+     * @deprecated Use visibility instead.
+     */
+   isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
 }
 /**
  * Create Remote Field
@@ -98,6 +110,10 @@ interface UpdateSimpleFieldArgs
     "validations" | "modelApiId"
   > {
   validations?: FieldValidationArgs;
+   /**
+     * @deprecated Use visibility instead.
+     */
+    isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
 }
 
 /**
