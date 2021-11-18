@@ -57,6 +57,19 @@ export type GraphQLFilestack = GraphQLIAssetConfig & {
   security: GraphQLFilestackSecurityOptions;
 };
 
+export type GraphQLCommonFilestackSecurityOptions = {
+  __typename?: "CommonFilestackSecurityOptions";
+  enabled: Scalars["Boolean"];
+  auth?: Maybe<GraphQLFilestackSecurityAuthOptions>;
+};
+
+export type GraphQLCommonFilestack = {
+  __typename?: "CommonFilestack";
+  apiKey: Scalars["String"];
+  path: Scalars["String"];
+  security: GraphQLCommonFilestackSecurityOptions;
+};
+
 export type GraphQLUpdateFilestackSecurityOptionsInput = {
   environmentId: Scalars["ID"];
   enabled?: Maybe<Scalars["Boolean"]>;
@@ -833,6 +846,15 @@ export type GraphQLUpsertTemplatePayload = {
   gcms?: Maybe<Scalars["String"]>;
 };
 
+export type GraphQLMaxComplexityInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLMaxComplexityPayload = {
+  __typename?: "MaxComplexityPayload";
+  gcms?: Maybe<Scalars["String"]>;
+};
+
 export type GraphQL_BookOverLimitInput = {
   gcms?: Maybe<Scalars["String"]>;
 };
@@ -951,6 +973,7 @@ export type GraphQLRegion = {
   name: Scalars["String"];
   isBeta: Scalars["Boolean"];
   pingUrl?: Maybe<Scalars["String"]>;
+  isReadOnly: Scalars["Boolean"];
 };
 
 export type GraphQLDeleteRolePayload = {
@@ -1870,6 +1893,7 @@ export type GraphQLUserViewer = GraphQLIViewer & {
   pendingProject?: Maybe<GraphQLIPendingProject>;
   projects: Array<GraphQLProject>;
   project?: Maybe<GraphQLProject>;
+  commonAssetConfig: GraphQLCommonFilestack;
 };
 
 export type GraphQLUserViewerPendingInviteArgs = {
@@ -1964,6 +1988,7 @@ export type GraphQLUpdateProfileInput = {
   company?: Maybe<Scalars["String"]>;
   jobTitle?: Maybe<Scalars["String"]>;
   jobRole?: Maybe<GraphQLProfileJobRole>;
+  picture?: Maybe<Scalars["String"]>;
 };
 
 export enum GraphQLProfileJobRole {
@@ -2088,26 +2113,102 @@ export type GraphQLWebhook = {
    * in the webhook payload or not
    */
   includePayload: Scalars["Boolean"];
-  /** Logs when the webhooks where called */
-  logs: Array<GraphQLWebhookLog>;
   hasSecretKey?: Maybe<Scalars["Boolean"]>;
+  logs: GraphQLWebhookLogsPayload;
+  log?: Maybe<GraphQLWebhookLog>;
 };
+
+export type GraphQLWebhookLogsArgs = {
+  where?: Maybe<GraphQLWebhookLogsWhereInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  orderBy?: Maybe<GraphQLWebhookLogOrderByInput>;
+};
+
+export type GraphQLWebhookLogArgs = {
+  id: Scalars["String"];
+};
+
+export type GraphQLWebhookLogsPayload = {
+  __typename?: "WebhookLogsPayload";
+  total: Scalars["Int"];
+  entries: Array<GraphQLWebhookLog>;
+};
+
+export type GraphQLWebhookLogsWhereInput = {
+  action_eq?: Maybe<GraphQLWebhookTriggerAction>;
+  modelId_eq?: Maybe<Scalars["ID"]>;
+  status_eq?: Maybe<Scalars["Int"]>;
+  status_in?: Maybe<Array<Maybe<Scalars["Int"]>>>;
+  status_gt?: Maybe<Scalars["Int"]>;
+  status_gte?: Maybe<Scalars["Int"]>;
+  status_lt?: Maybe<Scalars["Int"]>;
+  status_lte?: Maybe<Scalars["Int"]>;
+};
+
+export enum GraphQLWebhookLogOrderByInput {
+  CalledAtAsc = "calledAt_ASC",
+  CalledAtDesc = "calledAt_DESC",
+}
 
 export type GraphQLWebhookLog = {
   __typename?: "WebhookLog";
   id: Scalars["String"];
-  /** Duration the request call took in milliseconds */
-  duration: Scalars["Float"];
-  /** Time when the webhook was called */
+  /**
+   * """
+   * Payload that was send as the payload
+   * """
+   */
+  requestPayload?: Maybe<Scalars["JSON"]>;
+  /**
+   * """
+   * Payload that was return by the webhook
+   * """
+   */
+  responsePayload?: Maybe<Scalars["String"]>;
+  /**
+   * """
+   *  Size of the response payload in bytes
+   * """
+   */
+  responsePayloadSize?: Maybe<Scalars["Int"]>;
+  /**
+   * """
+   *  Time when the webhook was called
+   * """
+   */
   calledAt: Scalars["DateTime"];
-  /** Body that was send as the payload */
-  requestBody: Scalars["JSON"];
-  /** Body that was returned from the webhook */
-  responseBody?: Maybe<Scalars["String"]>;
-  /** Status code of the response */
-  responseStatusCode: Scalars["Int"];
-  /** Headers of the response */
-  responseHeaders?: Maybe<Scalars["JSON"]>;
+  /**
+   * """
+   *  Status code of the response
+   * """
+   */
+  statusCode: Scalars["Int"];
+  /**
+   * """
+   * Model on which the webhook was triggered
+   * """
+   */
+  model?: Maybe<GraphQLIModel>;
+  /**
+   * """
+   * Action which triggered the webhook
+   * """
+   */
+  triggerAction: GraphQLWebhookTriggerAction;
+  /**
+   * """
+   *  In case of errors shows how many retry attempts happened
+   * """
+   */
+  attempts: Scalars["Int"];
+  /**
+   * """
+   *  Duration the request call took in milliseconds
+   * """
+   */
+  duration: Scalars["Float"];
 };
 
 export type GraphQLCreateWebhookPayload = {
@@ -2187,6 +2288,16 @@ export type GraphQLUpdateWebhookInput = {
 
 export type GraphQLDeleteWebhookInput = {
   webhookId: Scalars["ID"];
+};
+
+export type GraphQLRetriggerWebhookInput = {
+  webhookId: Scalars["ID"];
+  logId: Scalars["String"];
+};
+
+export type GraphQLRetriggerWebhookPayload = {
+  __typename?: "RetriggerWebhookPayload";
+  logId: Scalars["String"];
 };
 
 export enum GraphQLAvailableExtensionSrcType {
@@ -4186,6 +4297,11 @@ export type GraphQLEnableScheduledPublishingInput = {
   projectId: Scalars["ID"];
 };
 
+export type GraphQLMigrationEnableSchedulingInput = {
+  projectId: Scalars["ID"];
+  dryRun?: Maybe<Scalars["Boolean"]>;
+};
+
 export type GraphQLMutation = {
   __typename?: "Mutation";
   createContentView: GraphQLCreateContentViewPayload;
@@ -4237,6 +4353,7 @@ export type GraphQLMutation = {
   createWebhook: GraphQLCreateWebhookPayload;
   updateWebhook: GraphQLUpdateWebhookPayload;
   deleteWebhook: GraphQLDeleteWebhookPayload;
+  retriggerWebhook: GraphQLRetriggerWebhookPayload;
   moveField: GraphQLMoveFieldPayload;
   createEnvironment: GraphQLCreateEnvironmentPayload;
   updateEnvironment: GraphQLUpdateEnvironmentPayload;
@@ -4492,6 +4609,10 @@ export type GraphQLMutationUpdateWebhookArgs = {
 
 export type GraphQLMutationDeleteWebhookArgs = {
   data: GraphQLDeleteWebhookInput;
+};
+
+export type GraphQLMutationRetriggerWebhookArgs = {
+  data: GraphQLRetriggerWebhookInput;
 };
 
 export type GraphQLMutationMoveFieldArgs = {
