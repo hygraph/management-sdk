@@ -2116,6 +2116,7 @@ export type GraphQLWebhook = {
   hasSecretKey?: Maybe<Scalars["Boolean"]>;
   logs: GraphQLWebhookLogsPayload;
   log?: Maybe<GraphQLWebhookLog>;
+  triggerSources?: Maybe<Array<GraphQLWebhookTriggerSource>>;
 };
 
 export type GraphQLWebhookLogsArgs = {
@@ -2129,6 +2130,12 @@ export type GraphQLWebhookLogsArgs = {
 export type GraphQLWebhookLogArgs = {
   id: Scalars["String"];
 };
+
+export enum GraphQLWebhookTriggerSource {
+  Pat = "PAT",
+  Member = "MEMBER",
+  Public = "PUBLIC",
+}
 
 export type GraphQLWebhookLogsPayload = {
   __typename?: "WebhookLogsPayload";
@@ -2269,6 +2276,7 @@ export type GraphQLCreateWebhookInput = {
   triggerType: GraphQLWebhookTriggerType;
   triggerActions: Array<GraphQLWebhookTriggerAction>;
   secretKey?: Maybe<Scalars["String"]>;
+  triggerSources?: Maybe<Array<GraphQLWebhookTriggerSource>>;
 };
 
 export type GraphQLUpdateWebhookInput = {
@@ -2284,6 +2292,7 @@ export type GraphQLUpdateWebhookInput = {
   triggerType?: Maybe<GraphQLWebhookTriggerType>;
   triggerActions?: Maybe<Array<GraphQLWebhookTriggerAction>>;
   secretKey?: Maybe<Scalars["String"]>;
+  triggerSources?: Maybe<Array<GraphQLWebhookTriggerSource>>;
 };
 
 export type GraphQLDeleteWebhookInput = {
@@ -2668,6 +2677,8 @@ export type GraphQLSimpleField = GraphQLIField &
     validations?: Maybe<GraphQLSimpleFieldValidations>;
     meta?: Maybe<Scalars["JSON"]>;
     embedsEnabled?: Maybe<Scalars["Boolean"]>;
+    /** list of embeddable models */
+    embeddableModels?: Maybe<Array<GraphQLIModel>>;
   };
 
 export type GraphQLRemoteTypeDefinition = {
@@ -2892,6 +2903,11 @@ export type GraphQLSimpleFieldValidationsInput = {
   String?: Maybe<GraphQLStringFieldValidationsInput>;
 };
 
+export type GraphQLEmbeddableModelsInput = {
+  modelsToAdd?: Maybe<Array<Scalars["ID"]>>;
+  modelsToRemove?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type GraphQLUpdateSimpleFieldInput = {
   id: Scalars["ID"];
   apiId?: Maybe<Scalars["String"]>;
@@ -2912,6 +2928,8 @@ export type GraphQLUpdateSimpleFieldInput = {
   validations?: Maybe<GraphQLSimpleFieldValidationsInput>;
   meta?: Maybe<Scalars["JSON"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
+  /** id's of embeddable models. */
+  embeddableModels?: Maybe<GraphQLEmbeddableModelsInput>;
 };
 
 export type GraphQLUpdateEnumerableFieldInput = {
@@ -3026,6 +3044,8 @@ export type GraphQLCreateSimpleFieldInput = {
   meta?: Maybe<Scalars["JSON"]>;
   position?: Maybe<Scalars["Int"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
+  /** id's of embeddable models. Optional, but should be provided if embedsEnabled is true */
+  embeddableModels?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type GraphQLRemoteFieldConfigInput = {
@@ -3409,6 +3429,15 @@ export type GraphQLCreateModelInput = {
   previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
 };
 
+export type GraphQLDuplicateModelInput = {
+  modelId: Scalars["ID"];
+  apiId: Scalars["String"];
+  apiIdPlural: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
+};
+
 export type GraphQLUpdateModelInput = {
   id: Scalars["ID"];
   /**
@@ -3711,6 +3740,12 @@ export type GraphQLBatchMigrationDeleteFieldInput = {
 };
 
 /** Creating a simple field. */
+export type GraphQLBatchMigrationEmbeddableModelsInput = {
+  modelsToAdd?: Maybe<Array<Scalars["String"]>>;
+  modelsToRemove?: Maybe<Array<Scalars["String"]>>;
+};
+
+/** Creating a simple field. */
 export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   apiId: Scalars["String"];
   modelApiId: Scalars["String"];
@@ -3732,8 +3767,10 @@ export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   isTitle?: Maybe<Scalars["Boolean"]>;
   position?: Maybe<Scalars["Int"]>;
   validations?: Maybe<GraphQLSimpleFieldValidationsInput>;
-  embedsEnabled?: Maybe<Scalars["Boolean"]>;
   migrationValue?: Maybe<Scalars["String"]>;
+  embedsEnabled?: Maybe<Scalars["Boolean"]>;
+  /** id's of embeddable models. Optional, but should be provided if embedsEnabled is true */
+  embeddableModels?: Maybe<Array<Scalars["String"]>>;
 };
 
 /** Creating a remote field. */
@@ -3894,6 +3931,8 @@ export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
   formExtension?: Maybe<Scalars["String"]>;
   formConfig?: Maybe<Scalars["JSON"]>;
   tableConfig?: Maybe<Scalars["JSON"]>;
+  /** id's of embeddable models. */
+  embeddableModels?: Maybe<GraphQLBatchMigrationEmbeddableModelsInput>;
 };
 
 /** Updating enumerable field */
@@ -4297,6 +4336,10 @@ export type GraphQLEnableScheduledPublishingInput = {
   projectId: Scalars["ID"];
 };
 
+export type GraphQLMigrateRichTextEmbedsInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
 export type GraphQLMigrationEnableSchedulingInput = {
   projectId: Scalars["ID"];
   dryRun?: Maybe<Scalars["Boolean"]>;
@@ -4392,6 +4435,7 @@ export type GraphQLMutation = {
   updateLocale: GraphQLAsyncOperationPayload;
   deleteLocale: GraphQLAsyncOperationPayload;
   createModel: GraphQLAsyncOperationPayload;
+  duplicateModel: GraphQLAsyncOperationPayload;
   updateModel: GraphQLAsyncOperationPayload;
   deleteModel: GraphQLAsyncOperationPayload;
   createRemoteTypeDefinition: GraphQLAsyncOperationPayload;
@@ -4725,6 +4769,10 @@ export type GraphQLMutationDeleteLocaleArgs = {
 
 export type GraphQLMutationCreateModelArgs = {
   data: GraphQLCreateModelInput;
+};
+
+export type GraphQLMutationDuplicateModelArgs = {
+  data: GraphQLDuplicateModelInput;
 };
 
 export type GraphQLMutationUpdateModelArgs = {
