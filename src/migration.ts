@@ -19,6 +19,7 @@ import {
   GraphQLBatchMigrationCreateRemoteTypeDefinitionInput,
   GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput,
   GraphQLMigrationStatus,
+  GraphQLBatchMigrationChangeInput,
 } from "./generated/schema";
 import {
   EnumerationCreate,
@@ -203,6 +204,12 @@ interface Migration {
    * @param apiId the `apiId` of the locale to delete.
    */
   deleteLocale(apiId: string): void;
+
+  /**
+   * Add changes to the migration
+   * @param changes the `changes` input to add to the migration.
+   */
+  registerChanges(changes: GraphQLBatchMigrationChangeInput[]): void;
 }
 
 /**
@@ -418,6 +425,12 @@ class MigrationClass implements Migration, ChangeListener {
 
   registerChange(change: ChangeItem) {
     this.changeItems.push(change);
+  }
+
+  registerChanges(changes: GraphQLBatchMigrationChangeInput[]) {
+    for (const item of changes) {
+      changes.push(item);
+    }
   }
 }
 
