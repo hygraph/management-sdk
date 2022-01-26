@@ -491,3 +491,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## Local Development
+
+To update the Management API schema this SDK depends on you must run `npm run generate`.
+
+PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) to publish to NPM automatically.

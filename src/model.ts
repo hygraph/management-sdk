@@ -34,27 +34,48 @@ type ModelArgs =
 interface RelationalFieldArgs
   extends Omit<
     GraphQLBatchMigrationCreateRelationalFieldInput,
-    "reverseField"
+    "reverseField" | "isHidden"
   > {
   relationType: RelationType;
   model: string;
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden: GraphQLBatchMigrationCreateRelationalFieldInput["isHidden"];
   reverseField?: Omit<
     GraphQLBatchMigrationCreateReverseRelationalFieldInput,
-    "modelApiId" | "isList"
-  >;
+    "modelApiId" | "isList" | "isHidden"
+  > & {
+    /**
+     * @deprecated Use visibility instead.
+     */
+    isHidden?: GraphQLBatchMigrationCreateReverseRelationalFieldInput["isHidden"];
+  };
 }
 
 /**
  * Create Union Field
  */
 interface CreateUnionFieldArgs
-  extends Omit<GraphQLBatchMigrationCreateUnionFieldInput, "reverseField"> {
+  extends Omit<
+    GraphQLBatchMigrationCreateUnionFieldInput,
+    "reverseField" | "isHidden"
+  > {
   relationType: RelationType;
   models: string[];
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden: GraphQLBatchMigrationCreateRelationalFieldInput["isHidden"];
   reverseField?: Omit<
     GraphQLBatchMigrationCreateReverseUnionFieldInput,
-    "modelApiIds" | "isList"
-  >;
+    "modelApiIds" | "isList" | "isHidden"
+  > & {
+    /**
+     * @deprecated Use visibility instead.
+     */
+    isHidden?: GraphQLBatchMigrationCreateReverseUnionFieldInput["isHidden"];
+  };
 }
 
 /**
@@ -79,9 +100,13 @@ interface FieldValidationArgs {
 interface CreateSimpleFieldArgs
   extends Omit<
     GraphQLBatchMigrationCreateSimpleFieldInput,
-    "validations" | "modelApiId"
+    "validations" | "modelApiId" | "isHidden"
   > {
   validations?: FieldValidationArgs;
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
 }
 /**
  * Create Remote Field
@@ -89,15 +114,57 @@ interface CreateSimpleFieldArgs
 interface CreateRemoteFieldArgs
   extends Omit<
     GraphQLBatchMigrationCreateRemoteFieldInput,
-    "modelApiId" | "type"
-  > {}
+    "modelApiId" | "type" | "isHidden"
+  > {
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden?: GraphQLBatchMigrationCreateRemoteFieldInput["isHidden"];
+}
 
 interface UpdateSimpleFieldArgs
   extends Omit<
     GraphQLBatchMigrationUpdateSimpleFieldInput,
-    "validations" | "modelApiId"
+    "validations" | "modelApiId" | "isHidden"
   > {
   validations?: FieldValidationArgs;
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
+}
+
+interface UpdateRelationalFieldArgs
+  extends Omit<
+    GraphQLBatchMigrationUpdateRelationalFieldInput,
+    "modelApiId" | "isHidden"
+  > {
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden?: GraphQLBatchMigrationUpdateRelationalFieldInput["isHidden"];
+}
+
+interface CreateEnumerableFieldArgs
+  extends Omit<
+    GraphQLBatchMigrationCreateEnumerableFieldInput,
+    "modelApiId" | "isHidden"
+  > {
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden?: GraphQLBatchMigrationCreateEnumerableFieldInput["isHidden"];
+}
+
+interface UpdateEnumerableFieldArgs
+  extends Omit<
+    GraphQLBatchMigrationUpdateEnumerableFieldInput,
+    "modelApiId" | "isHidden"
+  > {
+  /**
+   * @deprecated Use visibility instead.
+   */
+  isHidden?: GraphQLBatchMigrationUpdateEnumerableFieldInput["isHidden"];
 }
 
 /**
@@ -137,9 +204,7 @@ interface Model {
    * Update a relational field
    * @param field options for the relational field.
    */
-  updateRelationalField(
-    field: Omit<GraphQLBatchMigrationUpdateRelationalFieldInput, "modelApiId">
-  ): Model;
+  updateRelationalField(field: UpdateRelationalFieldArgs): Model;
 
   /**
    * Add a union field
@@ -159,17 +224,13 @@ interface Model {
    * Create an enumerable field.
    * @param field options for the enumerable field.
    */
-  addEnumerableField(
-    field: Omit<GraphQLBatchMigrationCreateEnumerableFieldInput, "modelApiId">
-  ): Model;
+  addEnumerableField(field: CreateEnumerableFieldArgs): Model;
 
   /**
    * Update an enumerable field
    * @param field options for the enumerable field.
    */
-  updateEnumerableField(
-    field: Omit<GraphQLBatchMigrationUpdateEnumerableFieldInput, "modelApiId">
-  ): Model;
+  updateEnumerableField(field: UpdateEnumerableFieldArgs): Model;
 
   /**
    * Delete a field
