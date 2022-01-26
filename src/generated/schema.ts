@@ -57,6 +57,19 @@ export type GraphQLFilestack = GraphQLIAssetConfig & {
   security: GraphQLFilestackSecurityOptions;
 };
 
+export type GraphQLCommonFilestackSecurityOptions = {
+  __typename?: "CommonFilestackSecurityOptions";
+  enabled: Scalars["Boolean"];
+  auth?: Maybe<GraphQLFilestackSecurityAuthOptions>;
+};
+
+export type GraphQLCommonFilestack = {
+  __typename?: "CommonFilestack";
+  apiKey: Scalars["String"];
+  path: Scalars["String"];
+  security: GraphQLCommonFilestackSecurityOptions;
+};
+
 export type GraphQLUpdateFilestackSecurityOptionsInput = {
   environmentId: Scalars["ID"];
   enabled?: Maybe<Scalars["Boolean"]>;
@@ -80,7 +93,9 @@ export type GraphQLUpdateFilestackSecurityOptionsPayload = {
 export type GraphQLContentModel = {
   __typename?: "ContentModel";
   models: Array<GraphQLIModel>;
+  components: Array<GraphQLComponent>;
   model: GraphQLIModel;
+  component: GraphQLComponent;
   assetModel: GraphQLIModel;
   enumerations: Array<GraphQLEnumeration>;
   locales: Array<GraphQLLocale>;
@@ -93,7 +108,15 @@ export type GraphQLContentModelModelsArgs = {
   includeSystemModels?: Maybe<Scalars["Boolean"]>;
 };
 
+export type GraphQLContentModelComponentsArgs = {
+  includeSystemComponents?: Maybe<Scalars["Boolean"]>;
+};
+
 export type GraphQLContentModelModelArgs = {
+  id: Scalars["ID"];
+};
+
+export type GraphQLContentModelComponentArgs = {
   id: Scalars["ID"];
 };
 
@@ -127,7 +150,6 @@ export type GraphQLContentView = {
   model: GraphQLIModel;
   type: GraphQLContentViewType;
   isSystem: Scalars["Boolean"];
-  createdBy?: Maybe<GraphQLMember>;
   orderBy?: Maybe<GraphQLOrderBy>;
   columns: Array<GraphQLContentViewColumn>;
   viewGroup: GraphQLViewGroup;
@@ -478,6 +500,11 @@ export enum GraphQLPermissionAction {
   ModelRead = "MODEL_READ",
   ModelUpdate = "MODEL_UPDATE",
   ModelDelete = "MODEL_DELETE",
+  /** Components */
+  ComponentCreate = "COMPONENT_CREATE",
+  ComponentRead = "COMPONENT_READ",
+  ComponentUpdate = "COMPONENT_UPDATE",
+  ComponentDelete = "COMPONENT_DELETE",
   /** Locales */
   LocaleCreate = "LOCALE_CREATE",
   LocaleRead = "LOCALE_READ",
@@ -559,6 +586,10 @@ export enum GraphQLPermissionAction {
   ExtensionRead = "EXTENSION_READ",
   ExtensionUpdate = "EXTENSION_UPDATE",
   ExtensionDelete = "EXTENSION_DELETE",
+  /** Sidebar elements */
+  SidebarElementCreate = "SIDEBAR_ELEMENT_CREATE",
+  SidebarElementUpdate = "SIDEBAR_ELEMENT_UPDATE",
+  SidebarElementDelete = "SIDEBAR_ELEMENT_DELETE",
 }
 
 export type GraphQLPermanentAuthTokenDefaultsInput = {
@@ -702,13 +733,10 @@ export type GraphQLAuditLogsPayload = {
 };
 
 export enum GraphQLLifecycleStepType {
-  ModelCreated = "MODEL_CREATED",
-  FieldCreated = "FIELD_CREATED",
-  WebhookCreated = "WEBHOOK_CREATED",
-  UserInvited = "USER_INVITED",
-  ContentAdded = "CONTENT_ADDED",
-  ApiPermissionsSet = "API_PERMISSIONS_SET",
   SchemaSetup = "SCHEMA_SETUP",
+  ContentAdded = "CONTENT_ADDED",
+  ExploreContentApi = "EXPLORE_CONTENT_API",
+  ApiPermissionsSet = "API_PERMISSIONS_SET",
   ExternalTraffic = "EXTERNAL_TRAFFIC",
 }
 
@@ -833,6 +861,15 @@ export type GraphQLUpsertTemplatePayload = {
   gcms?: Maybe<Scalars["String"]>;
 };
 
+export type GraphQLMaxComplexityInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLMaxComplexityPayload = {
+  __typename?: "MaxComplexityPayload";
+  gcms?: Maybe<Scalars["String"]>;
+};
+
 export type GraphQL_BookOverLimitInput = {
   gcms?: Maybe<Scalars["String"]>;
 };
@@ -951,6 +988,7 @@ export type GraphQLRegion = {
   name: Scalars["String"];
   isBeta: Scalars["Boolean"];
   pingUrl?: Maybe<Scalars["String"]>;
+  isReadOnly: Scalars["Boolean"];
 };
 
 export type GraphQLDeleteRolePayload = {
@@ -1540,7 +1578,7 @@ export type GraphQLEnvironmentExtensionArgs = {
 };
 
 export type GraphQLEnvironmentDiffArgs = {
-  environmentId: Scalars["ID"];
+  environmentName: Scalars["String"];
 };
 
 export type GraphQLPublicContentApiDefauts = {
@@ -1870,6 +1908,7 @@ export type GraphQLUserViewer = GraphQLIViewer & {
   pendingProject?: Maybe<GraphQLIPendingProject>;
   projects: Array<GraphQLProject>;
   project?: Maybe<GraphQLProject>;
+  commonAssetConfig: GraphQLCommonFilestack;
 };
 
 export type GraphQLUserViewerPendingInviteArgs = {
@@ -1959,11 +1998,29 @@ export type GraphQLSetUserAnalyticsInput = {
   hubspotutk?: Maybe<Scalars["String"]>;
 };
 
+export enum GraphQLTrackEvent {
+  CreatedContent = "CREATED_CONTENT",
+  UsedPlayground = "USED_PLAYGROUND",
+  CheckedQuickstart = "CHECKED_QUICKSTART",
+}
+
+export type GraphQLTrackInput = {
+  projectId: Scalars["ID"];
+  event: GraphQLTrackEvent;
+  meta?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLTrackPayload = {
+  __typename?: "TrackPayload";
+  success: Scalars["Boolean"];
+};
+
 export type GraphQLUpdateProfileInput = {
   name?: Maybe<Scalars["String"]>;
   company?: Maybe<Scalars["String"]>;
   jobTitle?: Maybe<Scalars["String"]>;
   jobRole?: Maybe<GraphQLProfileJobRole>;
+  picture?: Maybe<Scalars["String"]>;
 };
 
 export enum GraphQLProfileJobRole {
@@ -2088,26 +2145,109 @@ export type GraphQLWebhook = {
    * in the webhook payload or not
    */
   includePayload: Scalars["Boolean"];
-  /** Logs when the webhooks where called */
-  logs: Array<GraphQLWebhookLog>;
   hasSecretKey?: Maybe<Scalars["Boolean"]>;
+  logs: GraphQLWebhookLogsPayload;
+  log?: Maybe<GraphQLWebhookLog>;
+  triggerSources?: Maybe<Array<GraphQLWebhookTriggerSource>>;
 };
+
+export type GraphQLWebhookLogsArgs = {
+  where?: Maybe<GraphQLWebhookLogsWhereInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  orderBy?: Maybe<GraphQLWebhookLogOrderByInput>;
+};
+
+export type GraphQLWebhookLogArgs = {
+  id: Scalars["String"];
+};
+
+export enum GraphQLWebhookTriggerSource {
+  Pat = "PAT",
+  Member = "MEMBER",
+  Public = "PUBLIC",
+}
+
+export type GraphQLWebhookLogsPayload = {
+  __typename?: "WebhookLogsPayload";
+  total: Scalars["Int"];
+  entries: Array<GraphQLWebhookLog>;
+};
+
+export type GraphQLWebhookLogsWhereInput = {
+  action_eq?: Maybe<GraphQLWebhookTriggerAction>;
+  modelId_eq?: Maybe<Scalars["ID"]>;
+  status_eq?: Maybe<Scalars["Int"]>;
+  status_in?: Maybe<Array<Maybe<Scalars["Int"]>>>;
+  status_gt?: Maybe<Scalars["Int"]>;
+  status_gte?: Maybe<Scalars["Int"]>;
+  status_lt?: Maybe<Scalars["Int"]>;
+  status_lte?: Maybe<Scalars["Int"]>;
+};
+
+export enum GraphQLWebhookLogOrderByInput {
+  CalledAtAsc = "calledAt_ASC",
+  CalledAtDesc = "calledAt_DESC",
+}
 
 export type GraphQLWebhookLog = {
   __typename?: "WebhookLog";
   id: Scalars["String"];
-  /** Duration the request call took in milliseconds */
-  duration: Scalars["Float"];
-  /** Time when the webhook was called */
+  /**
+   * """
+   * Payload that was send as the payload
+   * """
+   */
+  requestPayload?: Maybe<Scalars["JSON"]>;
+  /**
+   * """
+   * Payload that was return by the webhook
+   * """
+   */
+  responsePayload?: Maybe<Scalars["String"]>;
+  /**
+   * """
+   *  Size of the response payload in bytes
+   * """
+   */
+  responsePayloadSize?: Maybe<Scalars["Int"]>;
+  /**
+   * """
+   *  Time when the webhook was called
+   * """
+   */
   calledAt: Scalars["DateTime"];
-  /** Body that was send as the payload */
-  requestBody: Scalars["JSON"];
-  /** Body that was returned from the webhook */
-  responseBody?: Maybe<Scalars["String"]>;
-  /** Status code of the response */
-  responseStatusCode: Scalars["Int"];
-  /** Headers of the response */
-  responseHeaders?: Maybe<Scalars["JSON"]>;
+  /**
+   * """
+   *  Status code of the response
+   * """
+   */
+  statusCode: Scalars["Int"];
+  /**
+   * """
+   * Model on which the webhook was triggered
+   * """
+   */
+  model?: Maybe<GraphQLIModel>;
+  /**
+   * """
+   * Action which triggered the webhook
+   * """
+   */
+  triggerAction: GraphQLWebhookTriggerAction;
+  /**
+   * """
+   *  In case of errors shows how many retry attempts happened
+   * """
+   */
+  attempts: Scalars["Int"];
+  /**
+   * """
+   *  Duration the request call took in milliseconds
+   * """
+   */
+  duration: Scalars["Float"];
 };
 
 export type GraphQLCreateWebhookPayload = {
@@ -2168,6 +2308,7 @@ export type GraphQLCreateWebhookInput = {
   triggerType: GraphQLWebhookTriggerType;
   triggerActions: Array<GraphQLWebhookTriggerAction>;
   secretKey?: Maybe<Scalars["String"]>;
+  triggerSources?: Maybe<Array<GraphQLWebhookTriggerSource>>;
 };
 
 export type GraphQLUpdateWebhookInput = {
@@ -2183,10 +2324,21 @@ export type GraphQLUpdateWebhookInput = {
   triggerType?: Maybe<GraphQLWebhookTriggerType>;
   triggerActions?: Maybe<Array<GraphQLWebhookTriggerAction>>;
   secretKey?: Maybe<Scalars["String"]>;
+  triggerSources?: Maybe<Array<GraphQLWebhookTriggerSource>>;
 };
 
 export type GraphQLDeleteWebhookInput = {
   webhookId: Scalars["ID"];
+};
+
+export type GraphQLRetriggerWebhookInput = {
+  webhookId: Scalars["ID"];
+  logId: Scalars["String"];
+};
+
+export type GraphQLRetriggerWebhookPayload = {
+  __typename?: "RetriggerWebhookPayload";
+  logId: Scalars["String"];
 };
 
 export enum GraphQLAvailableExtensionSrcType {
@@ -2246,6 +2398,7 @@ export type GraphQLIExtension = {
   updatedBy?: Maybe<GraphQLMember>;
   name?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
   /** The type indicating where the source for the extension will be obtained from */
   srcType: GraphQLExtensionSrcType;
   /** Location for the source if the source type is an external one */
@@ -2266,6 +2419,7 @@ export type GraphQLFieldExtension = GraphQLIExtension & {
   updatedBy?: Maybe<GraphQLMember>;
   name?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
   /** The type indicating where the source for the extension will be obtained from */
   srcType: GraphQLExtensionSrcType;
   /** Location for the source if the source type is an external one */
@@ -2282,6 +2436,28 @@ export type GraphQLFieldExtension = GraphQLIExtension & {
   fields: Array<GraphQLIField>;
 };
 
+export type GraphQLSidebarExtension = GraphQLIExtension & {
+  __typename?: "SidebarExtension";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  createdBy?: Maybe<GraphQLMember>;
+  updatedBy?: Maybe<GraphQLMember>;
+  name?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
+  /** The type indicating where the source for the extension will be obtained from */
+  srcType: GraphQLExtensionSrcType;
+  /** Location for the source if the source type is an external one */
+  src: Scalars["String"];
+  environment: GraphQLEnvironment;
+  config: Scalars["JSON"];
+  isActive: Scalars["Boolean"];
+  meta?: Maybe<Scalars["JSON"]>;
+  neededPermissions: Array<GraphQLAvailableExtensionPermission>;
+  sidebarElements: Array<GraphQLISidebarElement>;
+};
+
 export type GraphQLCreateFieldExtensionPayload = {
   __typename?: "CreateFieldExtensionPayload";
   createdExtension: GraphQLFieldExtension;
@@ -2290,6 +2466,16 @@ export type GraphQLCreateFieldExtensionPayload = {
 export type GraphQLUpdateFieldExtensionPayload = {
   __typename?: "UpdateFieldExtensionPayload";
   updatedExtension: GraphQLFieldExtension;
+};
+
+export type GraphQLCreateSidebarExtensionPayload = {
+  __typename?: "CreateSidebarExtensionPayload";
+  createdExtension: GraphQLSidebarExtension;
+};
+
+export type GraphQLUpdateSidebarExtensionPayload = {
+  __typename?: "UpdateSidebarExtensionPayload";
+  updatedExtension: GraphQLSidebarExtension;
 };
 
 export type GraphQLDeleteExtensionPayload = {
@@ -2301,6 +2487,7 @@ export type GraphQLCreateFieldExtensionInput = {
   environmentId: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
   srcTypeId: Scalars["ID"];
   src: Scalars["String"];
   config: Scalars["JSON"];
@@ -2317,6 +2504,7 @@ export type GraphQLUpdateFieldExtensionInput = {
   extensionId: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
   srcTypeId?: Maybe<Scalars["ID"]>;
   src?: Maybe<Scalars["String"]>;
   config?: Maybe<Scalars["JSON"]>;
@@ -2326,6 +2514,32 @@ export type GraphQLUpdateFieldExtensionInput = {
   hasFormRenderer?: Maybe<Scalars["Boolean"]>;
   hasListRenderer?: Maybe<Scalars["Boolean"]>;
   hasTableRenderer?: Maybe<Scalars["Boolean"]>;
+  neededPermissions?: Maybe<Array<GraphQLAvailableExtensionPermissionAction>>;
+};
+
+export type GraphQLCreateSidebarExtensionInput = {
+  environmentId: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
+  srcTypeId: Scalars["ID"];
+  src: Scalars["String"];
+  config: Scalars["JSON"];
+  isActive: Scalars["Boolean"];
+  meta?: Maybe<Scalars["JSON"]>;
+  neededPermissions?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type GraphQLUpdateSidebarExtensionInput = {
+  extensionId: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  apiId: Scalars["String"];
+  srcTypeId?: Maybe<Scalars["ID"]>;
+  src?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  isActive?: Maybe<Scalars["Boolean"]>;
+  meta?: Maybe<Scalars["JSON"]>;
   neededPermissions?: Maybe<Array<GraphQLAvailableExtensionPermissionAction>>;
 };
 
@@ -2427,7 +2641,7 @@ export type GraphQLFieldValidationRange = {
 export type GraphQLFieldValidationRegEx = {
   __typename?: "FieldValidationRegEx";
   regex?: Maybe<Scalars["String"]>;
-  flags?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  flags?: Maybe<Array<Scalars["String"]>>;
   errorMessage?: Maybe<Scalars["String"]>;
 };
 
@@ -2476,7 +2690,12 @@ export type GraphQLIField = {
   /** @deprecated Use visibility instead */
   isHidden: Scalars["Boolean"];
   visibility: GraphQLVisibilityTypes;
+  /**
+   * This will throw a runtime error for fields that are on a component instead of model!
+   * @deprecated Use parent instead
+   */
   model: GraphQLIModel;
+  parent: GraphQLIFieldParent;
   tableConfig: GraphQLFieldConfig;
   formConfig: GraphQLFieldConfig;
   extensions?: Maybe<Scalars["JSON"]>;
@@ -2509,6 +2728,10 @@ export enum GraphQLEnumerableFieldType {
 export enum GraphQLRelationalFieldType {
   Relation = "RELATION",
   Asset = "ASSET",
+}
+
+export enum GraphQLComponentFieldType {
+  Component = "COMPONENT",
 }
 
 export enum GraphQLUnionFieldType {
@@ -2549,7 +2772,12 @@ export type GraphQLSimpleField = GraphQLIField &
     visibility: GraphQLVisibilityTypes;
     isLocalized: Scalars["Boolean"];
     initialValue?: Maybe<Scalars["String"]>;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
     model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
     isTitle: Scalars["Boolean"];
     tableConfig: GraphQLFieldConfig;
     formConfig: GraphQLFieldConfig;
@@ -2557,6 +2785,8 @@ export type GraphQLSimpleField = GraphQLIField &
     validations?: Maybe<GraphQLSimpleFieldValidations>;
     meta?: Maybe<Scalars["JSON"]>;
     embedsEnabled?: Maybe<Scalars["Boolean"]>;
+    /** list of embeddable models */
+    embeddableModels?: Maybe<Array<GraphQLIModel>>;
   };
 
 export type GraphQLRemoteTypeDefinition = {
@@ -2594,7 +2824,12 @@ export type GraphQLRemoteField = GraphQLIField & {
   isHidden: Scalars["Boolean"];
   visibility: GraphQLVisibilityTypes;
   isList: Scalars["Boolean"];
+  /**
+   * This will throw a runtime error for fields that are on a component instead of model!
+   * @deprecated Use parent instead
+   */
   model: GraphQLIModel;
+  parent: GraphQLIFieldParent;
   tableConfig: GraphQLFieldConfig;
   formConfig: GraphQLFieldConfig;
   extensions?: Maybe<Scalars["JSON"]>;
@@ -2625,7 +2860,12 @@ export type GraphQLEnumerableField = GraphQLIField &
     visibility: GraphQLVisibilityTypes;
     isLocalized: Scalars["Boolean"];
     initialValue?: Maybe<GraphQLEnumerationValue>;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
     model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
     isTitle: Scalars["Boolean"];
     tableConfig: GraphQLFieldConfig;
     formConfig: GraphQLFieldConfig;
@@ -2651,7 +2891,12 @@ export type GraphQLRelationalField = GraphQLIField &
     /** @deprecated Use visibility instead */
     isHidden: Scalars["Boolean"];
     visibility: GraphQLVisibilityTypes;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
     model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
     tableConfig: GraphQLFieldConfig;
     formConfig: GraphQLFieldConfig;
     relatedModel: GraphQLIModel;
@@ -2677,7 +2922,12 @@ export type GraphQLUniDirectionalRelationalField = GraphQLIField &
     /** @deprecated Use visibility instead */
     isHidden: Scalars["Boolean"];
     visibility: GraphQLVisibilityTypes;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
     model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
     tableConfig: GraphQLFieldConfig;
     formConfig: GraphQLFieldConfig;
     relatedModel: GraphQLIModel;
@@ -2685,6 +2935,38 @@ export type GraphQLUniDirectionalRelationalField = GraphQLIField &
     meta?: Maybe<Scalars["JSON"]>;
   };
 
+export type GraphQLComponentField = GraphQLIField &
+  GraphQLIRequireableField & {
+    __typename?: "ComponentField";
+    id: Scalars["ID"];
+    createdAt: Scalars["DateTime"];
+    updatedAt: Scalars["DateTime"];
+    type: GraphQLComponentFieldType;
+    apiId: Scalars["String"];
+    displayName: Scalars["String"];
+    description?: Maybe<Scalars["String"]>;
+    isSystem: Scalars["Boolean"];
+    isList: Scalars["Boolean"];
+    isRequired: Scalars["Boolean"];
+    position: Scalars["Int"];
+    /** @deprecated Use visibility instead */
+    isHidden: Scalars["Boolean"];
+    visibility: GraphQLVisibilityTypes;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
+    model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
+    hasEmptyValues: Scalars["Boolean"];
+    tableConfig: GraphQLFieldConfig;
+    formConfig: GraphQLFieldConfig;
+    component: GraphQLComponent;
+    extensions?: Maybe<Scalars["JSON"]>;
+    meta?: Maybe<Scalars["JSON"]>;
+  };
+
+/** rename to RelationUnionField maybe at some point */
 export type GraphQLUnionField = GraphQLIField &
   GraphQLIUnionField & {
     __typename?: "UnionField";
@@ -2701,12 +2983,47 @@ export type GraphQLUnionField = GraphQLIField &
     /** @deprecated Use visibility instead */
     isHidden: Scalars["Boolean"];
     visibility: GraphQLVisibilityTypes;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
     model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
     tableConfig: GraphQLFieldConfig;
     formConfig: GraphQLFieldConfig;
     /** True if this field is the reverse side of the initally created union field */
     isMemberType: Scalars["Boolean"];
     union: GraphQLUnion;
+    extensions?: Maybe<Scalars["JSON"]>;
+    meta?: Maybe<Scalars["JSON"]>;
+  };
+
+/** TODO: ModularComponentField is the name the designs use right now?! */
+export type GraphQLComponentUnionField = GraphQLIField &
+  GraphQLIRequireableField & {
+    __typename?: "ComponentUnionField";
+    id: Scalars["ID"];
+    createdAt: Scalars["DateTime"];
+    updatedAt: Scalars["DateTime"];
+    apiId: Scalars["String"];
+    displayName: Scalars["String"];
+    description?: Maybe<Scalars["String"]>;
+    isSystem: Scalars["Boolean"];
+    isList: Scalars["Boolean"];
+    isRequired: Scalars["Boolean"];
+    position: Scalars["Int"];
+    /** @deprecated Use visibility instead */
+    isHidden: Scalars["Boolean"];
+    visibility: GraphQLVisibilityTypes;
+    /**
+     * This will throw a runtime error for fields that are on a component instead of model!
+     * @deprecated Use parent instead
+     */
+    model: GraphQLIModel;
+    parent: GraphQLIFieldParent;
+    tableConfig: GraphQLFieldConfig;
+    formConfig: GraphQLFieldConfig;
+    components: Array<GraphQLComponent>;
     extensions?: Maybe<Scalars["JSON"]>;
     meta?: Maybe<Scalars["JSON"]>;
   };
@@ -2738,6 +3055,11 @@ export type GraphQLFieldConfig = {
 export type GraphQLMoveFieldPayload = {
   __typename?: "MoveFieldPayload";
   movedFields: Array<GraphQLIField>;
+};
+
+export type GraphQLMoveSidebarElementPayload = {
+  __typename?: "MoveSidebarElementPayload";
+  movedSidebarElements: Array<GraphQLISidebarElement>;
 };
 
 export type GraphQLFieldValidationIntRangeInput = {
@@ -2781,6 +3103,11 @@ export type GraphQLSimpleFieldValidationsInput = {
   String?: Maybe<GraphQLStringFieldValidationsInput>;
 };
 
+export type GraphQLEmbeddableModelsInput = {
+  modelsToAdd?: Maybe<Array<Scalars["ID"]>>;
+  modelsToRemove?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type GraphQLUpdateSimpleFieldInput = {
   id: Scalars["ID"];
   apiId?: Maybe<Scalars["String"]>;
@@ -2801,6 +3128,8 @@ export type GraphQLUpdateSimpleFieldInput = {
   validations?: Maybe<GraphQLSimpleFieldValidationsInput>;
   meta?: Maybe<Scalars["JSON"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
+  /** id's of embeddable models. */
+  embeddableModels?: Maybe<GraphQLEmbeddableModelsInput>;
 };
 
 export type GraphQLUpdateEnumerableFieldInput = {
@@ -2836,6 +3165,20 @@ export type GraphQLUpdateRelationalFieldInput = {
    * Marks the field as required.
    * Note: This is only supported for RelationFieldType ASSET!
    */
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  tableConfig?: Maybe<GraphQLFieldConfigInput>;
+  formConfig?: Maybe<GraphQLFieldConfigInput>;
+  extensions?: Maybe<Scalars["JSON"]>;
+  meta?: Maybe<Scalars["JSON"]>;
+};
+
+export type GraphQLUpdateComponentFieldInput = {
+  id: Scalars["ID"];
+  apiId?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  isList?: Maybe<Scalars["Boolean"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
   isRequired?: Maybe<Scalars["Boolean"]>;
   tableConfig?: Maybe<GraphQLFieldConfigInput>;
   formConfig?: Maybe<GraphQLFieldConfigInput>;
@@ -2894,7 +3237,12 @@ export type GraphQLFieldConfigUpdateInput = {
 };
 
 export type GraphQLCreateSimpleFieldInput = {
-  modelId: Scalars["ID"];
+  modelId?: Maybe<Scalars["ID"]>;
+  /**
+   * This can be a model or component id, modelId must be empty when parentId is used
+   * either modelId or parentId needs to be set and is required via validation, it will be made required.
+   */
+  parentId?: Maybe<Scalars["ID"]>;
   apiId: Scalars["String"];
   type: GraphQLSimpleFieldType;
   displayName: Scalars["String"];
@@ -2915,6 +3263,8 @@ export type GraphQLCreateSimpleFieldInput = {
   meta?: Maybe<Scalars["JSON"]>;
   position?: Maybe<Scalars["Int"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
+  /** id's of embeddable models. Optional, but should be provided if embedsEnabled is true */
+  embeddableModels?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type GraphQLRemoteFieldConfigInput = {
@@ -2981,7 +3331,12 @@ export type GraphQLBatchMigrationRemoteFieldConfigInput = {
 };
 
 export type GraphQLCreateRemoteFieldInput = {
-  modelId: Scalars["ID"];
+  modelId?: Maybe<Scalars["ID"]>;
+  /**
+   * This can be a model or component id, modelId must be empty when parentId is used
+   * either modelId or parentId needs to be set and is required via validation, it will be made required.
+   */
+  parentId?: Maybe<Scalars["ID"]>;
   apiId: Scalars["String"];
   type: GraphQLRemoteFieldType;
   remoteConfig: GraphQLRemoteFieldConfigInput;
@@ -2997,7 +3352,12 @@ export type GraphQLCreateRemoteFieldInput = {
 };
 
 export type GraphQLCreateEnumerableFieldInput = {
-  modelId: Scalars["ID"];
+  modelId?: Maybe<Scalars["ID"]>;
+  /**
+   * This can be a model or component id, modelId must be empty when parentId is used
+   * either modelId or parentId needs to be set and is required via validation, it will be made required.
+   */
+  parentId?: Maybe<Scalars["ID"]>;
   enumerationId: Scalars["ID"];
   type: GraphQLEnumerableFieldType;
   apiId: Scalars["String"];
@@ -3038,7 +3398,12 @@ export type GraphQLCreateReverseRelationSide = {
 };
 
 export type GraphQLCreateRelationalFieldInput = {
-  modelId: Scalars["ID"];
+  modelId?: Maybe<Scalars["ID"]>;
+  /**
+   * This can be a model or component id, modelId must be empty when parentId is used
+   * either modelId or parentId needs to be set and is required via validation, it will be made required.
+   */
+  parentId?: Maybe<Scalars["ID"]>;
   type: GraphQLRelationalFieldType;
   relationApiId?: Maybe<Scalars["String"]>;
   apiId: Scalars["String"];
@@ -3069,7 +3434,12 @@ export type GraphQLCreateUnionInput = {
 };
 
 export type GraphQLCreateUnionFieldInput = {
-  modelId: Scalars["ID"];
+  modelId?: Maybe<Scalars["ID"]>;
+  /**
+   * This can be a model or component id, modelId must be empty when parentId is used
+   * either modelId or parentId needs to be set and is required via validation, it will be made required.
+   */
+  parentId?: Maybe<Scalars["ID"]>;
   type: GraphQLUnionFieldType;
   union: GraphQLCreateUnionInput;
   apiId: Scalars["String"];
@@ -3086,9 +3456,80 @@ export type GraphQLCreateUnionFieldInput = {
   position?: Maybe<Scalars["Int"]>;
 };
 
+export type GraphQLCreateComponentFieldInput = {
+  /** This can be a model or component id */
+  parentId: Scalars["ID"];
+  apiId: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  isList: Scalars["Boolean"];
+  visibility?: GraphQLVisibilityTypes;
+  isRequired: Scalars["Boolean"];
+  component: Scalars["ID"];
+  tableConfig?: Maybe<GraphQLFieldConfigInput>;
+  formConfig?: Maybe<GraphQLFieldConfigInput>;
+  extensions?: Maybe<Scalars["JSON"]>;
+  meta?: Maybe<Scalars["JSON"]>;
+  position?: Maybe<Scalars["Int"]>;
+};
+
 export type GraphQLMoveFieldInput = {
   id: Scalars["ID"];
   position: Scalars["Int"];
+};
+
+export type GraphQLMoveSidebarElementInput = {
+  id: Scalars["ID"];
+  position: Scalars["Int"];
+};
+
+export type GraphQLUpdateSidebarElementInput = {
+  id: Scalars["ID"];
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+};
+
+export type GraphQLResetSidebarElementsInput = {
+  modelId: Scalars["ID"];
+};
+
+export type GraphQLResetSidebarElementsPayload = {
+  __typename?: "ResetSidebarElementsPayload";
+  model?: Maybe<GraphQLIModel>;
+};
+
+export type GraphQLUpdateSidebarElementPayload = {
+  __typename?: "UpdateSidebarElementPayload";
+  updatedSidebarElement: GraphQLISidebarElement;
+};
+
+export type GraphQLCreateCustomSidebarElementInput = {
+  modelId: Scalars["ID"];
+  extensionId: Scalars["ID"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+};
+
+export type GraphQLCreateSystemSidebarElementInput = {
+  modelId: Scalars["ID"];
+  type: GraphQLSystemSidebarElementType;
+  config?: Maybe<Scalars["JSON"]>;
+};
+
+export type GraphQLCreateSidebarElementPayload = {
+  __typename?: "CreateSidebarElementPayload";
+  createdSidebarElement?: Maybe<GraphQLISidebarElement>;
+};
+
+export type GraphQLDeleteSidebarElementInput = {
+  sidebarElementId: Scalars["ID"];
+};
+
+export type GraphQLDeleteSidebarElementPayload = {
+  __typename?: "DeleteSidebarElementPayload";
+  deletedSidebarElementId: Scalars["ID"];
 };
 
 export type GraphQLDeleteFieldInput = {
@@ -3129,6 +3570,12 @@ export type GraphQLModelViewerPermission = {
   content: GraphQLModelViewerContentPermission;
 };
 
+export type GraphQLIFieldParent = {
+  id: Scalars["ID"];
+  apiId: Scalars["String"];
+  displayName: Scalars["String"];
+};
+
 export type GraphQLIModel = {
   id: Scalars["ID"];
   createdAt: Scalars["DateTime"];
@@ -3141,6 +3588,7 @@ export type GraphQLIModel = {
   isLocalized: Scalars["Boolean"];
   titleFields: Array<GraphQLIField>;
   fields: Array<GraphQLIField>;
+  field: GraphQLIField;
   environment: GraphQLEnvironment;
   contentViews: Array<GraphQLContentView>;
   /** Model has at least one document */
@@ -3148,6 +3596,7 @@ export type GraphQLIModel = {
   isVersioned: Scalars["Boolean"];
   previewURLs: Array<GraphQLPreviewUrl>;
   viewerPermission: GraphQLModelViewerPermission;
+  sidebarElements: Array<GraphQLISidebarElement>;
 };
 
 export type GraphQLIModelFieldsArgs = {
@@ -3155,37 +3604,101 @@ export type GraphQLIModelFieldsArgs = {
   includeApiOnlyFields?: Maybe<Scalars["Boolean"]>;
 };
 
+export type GraphQLIModelFieldArgs = {
+  id: Scalars["ID"];
+};
+
 export type GraphQLIModelContentViewsArgs = {
   includeSystemContentViews?: Maybe<Scalars["Boolean"]>;
   filter?: Maybe<GraphQLContentViewFilterInput>;
 };
 
-export type GraphQLModel = GraphQLIModel & {
-  __typename?: "Model";
+export type GraphQLSidebarElements =
+  | GraphQLSystemSidebarElement
+  | GraphQLCustomSidebarElement;
+
+export type GraphQLISidebarElement = {
   id: Scalars["ID"];
   createdAt: Scalars["DateTime"];
   updatedAt: Scalars["DateTime"];
-  apiId: Scalars["String"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
-  isSystem: Scalars["Boolean"];
-  apiIdPlural: Scalars["String"];
-  /** Is true when at least one field is marked as localized */
-  isLocalized: Scalars["Boolean"];
-  titleFields: Array<GraphQLIField>;
-  fields: Array<GraphQLIField>;
-  environment: GraphQLEnvironment;
-  contentViews: Array<GraphQLContentView>;
-  /** Model has at least one document */
-  hasContent: Scalars["Boolean"];
-  isVersioned: Scalars["Boolean"];
-  previewURLs: Array<GraphQLPreviewUrl>;
-  viewerPermission: GraphQLModelViewerPermission;
+  config?: Maybe<Scalars["JSON"]>;
+  position: Scalars["Int"];
+  isEnabled: Scalars["Boolean"];
+  model: GraphQLIModel;
 };
+
+export enum GraphQLSystemSidebarElementType {
+  Information = "INFORMATION",
+  Stages = "STAGES",
+  Localizations = "LOCALIZATIONS",
+  Versions = "VERSIONS",
+  PreviewUrls = "PREVIEW_URLS",
+  Releases = "RELEASES",
+}
+
+export type GraphQLSystemSidebarElement = GraphQLISidebarElement & {
+  __typename?: "SystemSidebarElement";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  position: Scalars["Int"];
+  isEnabled: Scalars["Boolean"];
+  model: GraphQLIModel;
+  type: GraphQLSystemSidebarElementType;
+};
+
+export type GraphQLCustomSidebarElement = GraphQLISidebarElement & {
+  __typename?: "CustomSidebarElement";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  position: Scalars["Int"];
+  isEnabled: Scalars["Boolean"];
+  model: GraphQLIModel;
+  extension: GraphQLSidebarExtension;
+};
+
+export type GraphQLModel = GraphQLIModel &
+  GraphQLIFieldParent & {
+    __typename?: "Model";
+    id: Scalars["ID"];
+    createdAt: Scalars["DateTime"];
+    updatedAt: Scalars["DateTime"];
+    apiId: Scalars["String"];
+    displayName: Scalars["String"];
+    description?: Maybe<Scalars["String"]>;
+    isSystem: Scalars["Boolean"];
+    apiIdPlural: Scalars["String"];
+    /** Is true when at least one field is marked as localized */
+    isLocalized: Scalars["Boolean"];
+    titleFields: Array<GraphQLIField>;
+    fields: Array<GraphQLIField>;
+    field: GraphQLIField;
+    environment: GraphQLEnvironment;
+    contentViews: Array<GraphQLContentView>;
+    /** Model has at least one document */
+    hasContent: Scalars["Boolean"];
+    isVersioned: Scalars["Boolean"];
+    previewURLs: Array<GraphQLPreviewUrl>;
+    viewerPermission: GraphQLModelViewerPermission;
+    sidebarElements: Array<GraphQLISidebarElement>;
+  };
 
 export type GraphQLModelFieldsArgs = {
   includeHiddenFields?: Maybe<Scalars["Boolean"]>;
   includeApiOnlyFields?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLModelFieldArgs = {
+  id: Scalars["ID"];
 };
 
 export type GraphQLModelContentViewsArgs = {
@@ -3193,31 +3706,62 @@ export type GraphQLModelContentViewsArgs = {
   filter?: Maybe<GraphQLContentViewFilterInput>;
 };
 
-export type GraphQLAssetModel = GraphQLIModel & {
-  __typename?: "AssetModel";
+export type GraphQLComponent = GraphQLIFieldParent & {
+  __typename?: "Component";
   id: Scalars["ID"];
   createdAt: Scalars["DateTime"];
   updatedAt: Scalars["DateTime"];
   apiId: Scalars["String"];
+  apiIdPlural: Scalars["String"];
+  isSystem: Scalars["Boolean"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
-  isSystem: Scalars["Boolean"];
-  apiIdPlural: Scalars["String"];
+  /** Is true when at least one field is marked as localized */
   isLocalized: Scalars["Boolean"];
   titleFields: Array<GraphQLIField>;
   fields: Array<GraphQLIField>;
   environment: GraphQLEnvironment;
-  contentViews: Array<GraphQLContentView>;
-  /** Model has at least one document */
+  /** Component has at least one instance in any of its usages */
   hasContent: Scalars["Boolean"];
-  isVersioned: Scalars["Boolean"];
-  previewURLs: Array<GraphQLPreviewUrl>;
-  viewerPermission: GraphQLModelViewerPermission;
 };
+
+export type GraphQLComponentFieldsArgs = {
+  includeHiddenFields?: Maybe<Scalars["Boolean"]>;
+  includeApiOnlyFields?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLAssetModel = GraphQLIModel &
+  GraphQLIFieldParent & {
+    __typename?: "AssetModel";
+    id: Scalars["ID"];
+    createdAt: Scalars["DateTime"];
+    updatedAt: Scalars["DateTime"];
+    apiId: Scalars["String"];
+    displayName: Scalars["String"];
+    description?: Maybe<Scalars["String"]>;
+    isSystem: Scalars["Boolean"];
+    apiIdPlural: Scalars["String"];
+    isLocalized: Scalars["Boolean"];
+    titleFields: Array<GraphQLIField>;
+    fields: Array<GraphQLIField>;
+    field: GraphQLIField;
+    environment: GraphQLEnvironment;
+    contentViews: Array<GraphQLContentView>;
+    /** Model has at least one document */
+    hasContent: Scalars["Boolean"];
+    isVersioned: Scalars["Boolean"];
+    previewURLs: Array<GraphQLPreviewUrl>;
+    viewerPermission: GraphQLModelViewerPermission;
+    sidebarElements: Array<GraphQLISidebarElement>;
+  };
 
 export type GraphQLAssetModelFieldsArgs = {
   includeHiddenFields?: Maybe<Scalars["Boolean"]>;
   includeApiOnlyFields?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLAssetModelFieldArgs = {
+  id: Scalars["ID"];
 };
 
 export type GraphQLAssetModelContentViewsArgs = {
@@ -3225,31 +3769,38 @@ export type GraphQLAssetModelContentViewsArgs = {
   filter?: Maybe<GraphQLContentViewFilterInput>;
 };
 
-export type GraphQLUserModel = GraphQLIModel & {
-  __typename?: "UserModel";
-  id: Scalars["ID"];
-  createdAt: Scalars["DateTime"];
-  updatedAt: Scalars["DateTime"];
-  apiId: Scalars["String"];
-  displayName: Scalars["String"];
-  description?: Maybe<Scalars["String"]>;
-  isSystem: Scalars["Boolean"];
-  apiIdPlural: Scalars["String"];
-  isLocalized: Scalars["Boolean"];
-  titleFields: Array<GraphQLIField>;
-  fields: Array<GraphQLIField>;
-  environment: GraphQLEnvironment;
-  contentViews: Array<GraphQLContentView>;
-  /** Model has at least one document */
-  hasContent: Scalars["Boolean"];
-  isVersioned: Scalars["Boolean"];
-  previewURLs: Array<GraphQLPreviewUrl>;
-  viewerPermission: GraphQLModelViewerPermission;
-};
+export type GraphQLUserModel = GraphQLIModel &
+  GraphQLIFieldParent & {
+    __typename?: "UserModel";
+    id: Scalars["ID"];
+    createdAt: Scalars["DateTime"];
+    updatedAt: Scalars["DateTime"];
+    apiId: Scalars["String"];
+    displayName: Scalars["String"];
+    description?: Maybe<Scalars["String"]>;
+    isSystem: Scalars["Boolean"];
+    apiIdPlural: Scalars["String"];
+    isLocalized: Scalars["Boolean"];
+    titleFields: Array<GraphQLIField>;
+    fields: Array<GraphQLIField>;
+    field: GraphQLIField;
+    environment: GraphQLEnvironment;
+    contentViews: Array<GraphQLContentView>;
+    /** Model has at least one document */
+    hasContent: Scalars["Boolean"];
+    isVersioned: Scalars["Boolean"];
+    previewURLs: Array<GraphQLPreviewUrl>;
+    viewerPermission: GraphQLModelViewerPermission;
+    sidebarElements: Array<GraphQLISidebarElement>;
+  };
 
 export type GraphQLUserModelFieldsArgs = {
   includeHiddenFields?: Maybe<Scalars["Boolean"]>;
   includeApiOnlyFields?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLUserModelFieldArgs = {
+  id: Scalars["ID"];
 };
 
 export type GraphQLUserModelContentViewsArgs = {
@@ -3257,31 +3808,38 @@ export type GraphQLUserModelContentViewsArgs = {
   filter?: Maybe<GraphQLContentViewFilterInput>;
 };
 
-export type GraphQLSchedulingModel = GraphQLIModel & {
-  __typename?: "SchedulingModel";
-  id: Scalars["ID"];
-  createdAt: Scalars["DateTime"];
-  updatedAt: Scalars["DateTime"];
-  apiId: Scalars["String"];
-  displayName: Scalars["String"];
-  description?: Maybe<Scalars["String"]>;
-  isSystem: Scalars["Boolean"];
-  apiIdPlural: Scalars["String"];
-  isLocalized: Scalars["Boolean"];
-  titleFields: Array<GraphQLIField>;
-  fields: Array<GraphQLIField>;
-  environment: GraphQLEnvironment;
-  contentViews: Array<GraphQLContentView>;
-  /** Model has at least one document */
-  hasContent: Scalars["Boolean"];
-  isVersioned: Scalars["Boolean"];
-  previewURLs: Array<GraphQLPreviewUrl>;
-  viewerPermission: GraphQLModelViewerPermission;
-};
+export type GraphQLSchedulingModel = GraphQLIModel &
+  GraphQLIFieldParent & {
+    __typename?: "SchedulingModel";
+    id: Scalars["ID"];
+    createdAt: Scalars["DateTime"];
+    updatedAt: Scalars["DateTime"];
+    apiId: Scalars["String"];
+    displayName: Scalars["String"];
+    description?: Maybe<Scalars["String"]>;
+    isSystem: Scalars["Boolean"];
+    apiIdPlural: Scalars["String"];
+    isLocalized: Scalars["Boolean"];
+    titleFields: Array<GraphQLIField>;
+    fields: Array<GraphQLIField>;
+    field: GraphQLIField;
+    environment: GraphQLEnvironment;
+    contentViews: Array<GraphQLContentView>;
+    /** Model has at least one document */
+    hasContent: Scalars["Boolean"];
+    isVersioned: Scalars["Boolean"];
+    previewURLs: Array<GraphQLPreviewUrl>;
+    viewerPermission: GraphQLModelViewerPermission;
+    sidebarElements: Array<GraphQLISidebarElement>;
+  };
 
 export type GraphQLSchedulingModelFieldsArgs = {
   includeHiddenFields?: Maybe<Scalars["Boolean"]>;
   includeApiOnlyFields?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLSchedulingModelFieldArgs = {
+  id: Scalars["ID"];
 };
 
 export type GraphQLSchedulingModelContentViewsArgs = {
@@ -3291,6 +3849,15 @@ export type GraphQLSchedulingModelContentViewsArgs = {
 
 export type GraphQLCreateModelInput = {
   environmentId: Scalars["ID"];
+  apiId: Scalars["String"];
+  apiIdPlural: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
+};
+
+export type GraphQLDuplicateModelInput = {
+  modelId: Scalars["ID"];
   apiId: Scalars["String"];
   apiIdPlural: Scalars["String"];
   displayName: Scalars["String"];
@@ -3316,6 +3883,42 @@ export type GraphQLUpdateModelInput = {
 };
 
 export type GraphQLDeleteModelInput = {
+  id: Scalars["ID"];
+};
+
+export type GraphQLCreateComponentInput = {
+  environmentId: Scalars["ID"];
+  apiId: Scalars["String"];
+  apiIdPlural: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLDuplicateComponentInput = {
+  componentId: Scalars["ID"];
+  apiId: Scalars["String"];
+  apiIdPlural: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLUpdateComponentInput = {
+  id: Scalars["ID"];
+  /**
+   * Rename singular API ID to
+   * specified value
+   */
+  apiId?: Maybe<Scalars["String"]>;
+  /**
+   * Rename plural API ID to
+   * specified value
+   */
+  apiIdPlural?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLDeleteComponentInput = {
   id: Scalars["ID"];
 };
 
@@ -3517,11 +4120,6 @@ export type GraphQLDeleteEnvironmentPayload = {
   deletedEnvironmentId: Scalars["ID"];
 };
 
-/** Deleting a model. */
-export type GraphQLBatchMigrationDeleteModelInput = {
-  apiId: Scalars["String"];
-};
-
 /** Creating a model. */
 export type GraphQLBatchMigrationCreateModelInput = {
   apiId: Scalars["String"];
@@ -3529,6 +4127,43 @@ export type GraphQLBatchMigrationCreateModelInput = {
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
   previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
+};
+
+/** Updating a model. */
+export type GraphQLBatchMigrationUpdateModelInput = {
+  apiId: Scalars["String"];
+  newApiId?: Maybe<Scalars["String"]>;
+  apiIdPlural?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
+};
+
+/** Deleting a model. */
+export type GraphQLBatchMigrationDeleteModelInput = {
+  apiId: Scalars["String"];
+};
+
+/** Creating a component. */
+export type GraphQLBatchMigrationCreateComponentInput = {
+  apiId: Scalars["String"];
+  apiIdPlural: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+};
+
+/** Updating a component. */
+export type GraphQLBatchMigrationUpdateComponentInput = {
+  apiId: Scalars["String"];
+  newApiId?: Maybe<Scalars["String"]>;
+  apiIdPlural?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+};
+
+/** Deleting a component. */
+export type GraphQLBatchMigrationDeleteComponentInput = {
+  apiId: Scalars["String"];
 };
 
 /** Creating a remote type definition */
@@ -3583,26 +4218,26 @@ export type GraphQLBatchMigrationCreateStageInput = {
   position?: Maybe<Scalars["Int"]>;
 };
 
-/** Updating a model. */
-export type GraphQLBatchMigrationUpdateModelInput = {
-  apiId: Scalars["String"];
-  newApiId?: Maybe<Scalars["String"]>;
-  apiIdPlural?: Maybe<Scalars["String"]>;
-  displayName?: Maybe<Scalars["String"]>;
-  description?: Maybe<Scalars["String"]>;
-  previewURLs?: Maybe<Array<GraphQLPreviewUrlInput>>;
-};
-
 /** Deleting a field. */
 export type GraphQLBatchMigrationDeleteFieldInput = {
   apiId: Scalars["String"];
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
+};
+
+/** Creating a simple field. */
+export type GraphQLBatchMigrationEmbeddableModelsInput = {
+  modelsToAdd?: Maybe<Array<Scalars["String"]>>;
+  modelsToRemove?: Maybe<Array<Scalars["String"]>>;
 };
 
 /** Creating a simple field. */
 export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   apiId: Scalars["String"];
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   type: GraphQLSimpleFieldType;
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
@@ -3621,14 +4256,18 @@ export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   isTitle?: Maybe<Scalars["Boolean"]>;
   position?: Maybe<Scalars["Int"]>;
   validations?: Maybe<GraphQLSimpleFieldValidationsInput>;
-  embedsEnabled?: Maybe<Scalars["Boolean"]>;
   migrationValue?: Maybe<Scalars["String"]>;
+  embedsEnabled?: Maybe<Scalars["Boolean"]>;
+  /** id's of embeddable models. Optional, but should be provided if embedsEnabled is true */
+  embeddableModels?: Maybe<Array<Scalars["String"]>>;
 };
 
 /** Creating a remote field. */
 export type GraphQLBatchMigrationCreateRemoteFieldInput = {
   apiId: Scalars["String"];
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   type: GraphQLRemoteFieldType;
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
@@ -3646,7 +4285,9 @@ export type GraphQLBatchMigrationCreateRemoteFieldInput = {
 /** Creating an enumerable field. */
 export type GraphQLBatchMigrationCreateEnumerableFieldInput = {
   apiId: Scalars["String"];
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   enumerationApiId: Scalars["String"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
@@ -3668,16 +4309,21 @@ export type GraphQLBatchMigrationCreateEnumerableFieldInput = {
 export type GraphQLBatchMigrationUpdateUnionFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
-  reverseField: GraphQLBatchMigrationUpdateReverseUnionFieldInput;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
+  reverseField?: Maybe<GraphQLBatchMigrationUpdateReverseUnionFieldInput>;
 };
 
 /** Creating a union field */
 export type GraphQLBatchMigrationCreateUnionFieldInput = {
   apiId: Scalars["String"];
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
   tableRenderer?: Maybe<Scalars["String"]>;
@@ -3709,7 +4355,9 @@ export type GraphQLBatchMigrationUpdateReverseUnionFieldInput = {
 /** Creating a relational field */
 export type GraphQLBatchMigrationCreateRelationalFieldInput = {
   apiId: Scalars["String"];
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   type: GraphQLRelationalFieldType;
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
@@ -3728,6 +4376,24 @@ export type GraphQLBatchMigrationCreateRelationalFieldInput = {
   reverseField: GraphQLBatchMigrationCreateReverseRelationalFieldInput;
 };
 
+/** Creating a component field */
+export type GraphQLBatchMigrationCreateComponentFieldInput = {
+  apiId: Scalars["String"];
+  /** model or content */
+  parentApiId: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  tableRenderer?: Maybe<Scalars["String"]>;
+  formRenderer?: Maybe<Scalars["String"]>;
+  tableExtension?: Maybe<Scalars["String"]>;
+  formExtension?: Maybe<Scalars["String"]>;
+  isList?: Maybe<Scalars["Boolean"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
+  componentApiId: Scalars["String"];
+  position?: Maybe<Scalars["Int"]>;
+};
+
 /** reverse field args */
 export type GraphQLBatchMigrationCreateReverseRelationalFieldInput = {
   apiId: Scalars["String"];
@@ -3744,7 +4410,9 @@ export type GraphQLBatchMigrationCreateReverseRelationalFieldInput = {
 export type GraphQLBatchMigrationUpdateRelationalFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
   isList?: Maybe<Scalars["Boolean"]>;
@@ -3758,11 +4426,25 @@ export type GraphQLBatchMigrationUpdateRelationalFieldInput = {
   isRequired?: Maybe<Scalars["Boolean"]>;
 };
 
+/** Updating component field */
+export type GraphQLBatchMigrationUpdateComponentFieldInput = {
+  apiId: Scalars["String"];
+  newApiId?: Maybe<Scalars["String"]>;
+  parentApiId: Scalars["String"];
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  isList?: Maybe<Scalars["Boolean"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+};
+
 /** Updating simple field */
 export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
   isList?: Maybe<Scalars["Boolean"]>;
@@ -3783,13 +4465,17 @@ export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
   formExtension?: Maybe<Scalars["String"]>;
   formConfig?: Maybe<Scalars["JSON"]>;
   tableConfig?: Maybe<Scalars["JSON"]>;
+  /** id's of embeddable models. */
+  embeddableModels?: Maybe<GraphQLBatchMigrationEmbeddableModelsInput>;
 };
 
 /** Updating enumerable field */
 export type GraphQLBatchMigrationUpdateEnumerableFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  modelApiId: Scalars["String"];
+  /** either modelApiId or parentApiId needs to be set */
+  modelApiId?: Maybe<Scalars["String"]>;
+  parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
   isList?: Maybe<Scalars["Boolean"]>;
@@ -3841,8 +4527,8 @@ export type GraphQLBatchMigrationCreateEnumerationValueInput = {
 /** update enumeration value */
 export type GraphQLBatchMigrationUpdateEnumerationValueInput = {
   apiId: Scalars["String"];
-  newApiId: Scalars["String"];
-  displayName: Scalars["String"];
+  newApiId?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
 };
 
 /** Creating locale */
@@ -3872,6 +4558,10 @@ export type GraphQLBatchMigrationChangeInput = {
   createModel?: Maybe<GraphQLBatchMigrationCreateModelInput>;
   updateModel?: Maybe<GraphQLBatchMigrationUpdateModelInput>;
   deleteModel?: Maybe<GraphQLBatchMigrationDeleteModelInput>;
+  /** Components */
+  createComponent?: Maybe<GraphQLBatchMigrationCreateComponentInput>;
+  updateComponent?: Maybe<GraphQLBatchMigrationUpdateComponentInput>;
+  deleteComponent?: Maybe<GraphQLBatchMigrationDeleteComponentInput>;
   /** Remote type defs */
   createRemoteTypeDefinition?: Maybe<
     GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
@@ -3894,6 +4584,8 @@ export type GraphQLBatchMigrationChangeInput = {
   >;
   createUnionField?: Maybe<GraphQLBatchMigrationCreateUnionFieldInput>;
   updateUnionField?: Maybe<GraphQLBatchMigrationUpdateUnionFieldInput>;
+  createComponentField?: Maybe<GraphQLBatchMigrationCreateComponentFieldInput>;
+  updateComponentField?: Maybe<GraphQLBatchMigrationUpdateComponentFieldInput>;
   createEnumerableField?: Maybe<
     GraphQLBatchMigrationCreateEnumerableFieldInput
   >;
@@ -3905,7 +4597,7 @@ export type GraphQLBatchMigrationChangeInput = {
   createEnumeration?: Maybe<GraphQLBatchMigrationCreateEnumerationInput>;
   updateEnumeration?: Maybe<GraphQLBatchMigrationUpdateEnumerationInput>;
   deleteEnumeration?: Maybe<GraphQLBatchMigrationDeleteEnumerationInput>;
-  /** State */
+  /** Stage */
   createStage?: Maybe<GraphQLBatchMigrationCreateStageInput>;
   deleteStage?: Maybe<GraphQLBatchMigrationDeleteStageInput>;
   updateStage?: Maybe<GraphQLBatchMigrationUpdateStageInput>;
@@ -3915,38 +4607,11 @@ export type GraphQLBatchMigrationChangeInput = {
   updateLocale?: Maybe<GraphQLBatchMigrationUpdateLocaleInput>;
 };
 
-export type GraphQLBatchMigrationChange = {
-  __typename?: "BatchMigrationChange";
-  /** Models */
-  createModel?: Maybe<Scalars["JSON"]>;
-  updateModel?: Maybe<Scalars["JSON"]>;
-  deleteModel?: Maybe<Scalars["JSON"]>;
-  /** Fields */
-  createSimpleField?: Maybe<Scalars["JSON"]>;
-  updateSimpleField?: Maybe<Scalars["JSON"]>;
-  createRelationalField?: Maybe<Scalars["JSON"]>;
-  updateRelationalField?: Maybe<Scalars["JSON"]>;
-  deleteField?: Maybe<Scalars["JSON"]>;
-  /** Locale */
-  createLocale?: Maybe<Scalars["JSON"]>;
-  deleteLocale?: Maybe<Scalars["JSON"]>;
-  updateLocale?: Maybe<Scalars["JSON"]>;
-};
-
-export type GraphQLExportEnvironmentInput = {
-  environmentId: Scalars["ID"];
-};
-
-export type GraphQLExportEnvironmentPayload = {
-  __typename?: "ExportEnvironmentPayload";
-  changes: Array<GraphQLBatchMigrationChange>;
-};
-
 export type GraphQLDiffEnvironmentPayload = {
   __typename?: "DiffEnvironmentPayload";
   environmentId: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
-  changes: Array<GraphQLBatchMigrationChange>;
+  changes: Array<Scalars["JSON"]>;
 };
 
 export type GraphQLBatchMigrationInput = {
@@ -4186,6 +4851,15 @@ export type GraphQLEnableScheduledPublishingInput = {
   projectId: Scalars["ID"];
 };
 
+export type GraphQLMigrateRichTextEmbedsInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLMigrationEnableSchedulingInput = {
+  projectId: Scalars["ID"];
+  dryRun?: Maybe<Scalars["Boolean"]>;
+};
+
 export type GraphQLMutation = {
   __typename?: "Mutation";
   createContentView: GraphQLCreateContentViewPayload;
@@ -4232,11 +4906,13 @@ export type GraphQLMutation = {
   updateMemberRoles: GraphQLMember;
   removeMember: GraphQLRemoveMemberPayload;
   setUserAnalytics: GraphQLUserAnalytics;
+  track: GraphQLTrackPayload;
   deleteAccount: GraphQLDeleteAccountPayload;
   updateUserProfile: GraphQLUserViewer;
   createWebhook: GraphQLCreateWebhookPayload;
   updateWebhook: GraphQLUpdateWebhookPayload;
   deleteWebhook: GraphQLDeleteWebhookPayload;
+  retriggerWebhook: GraphQLRetriggerWebhookPayload;
   moveField: GraphQLMoveFieldPayload;
   createEnvironment: GraphQLCreateEnvironmentPayload;
   updateEnvironment: GraphQLUpdateEnvironmentPayload;
@@ -4267,7 +4943,15 @@ export type GraphQLMutation = {
   >;
   createFieldExtension: GraphQLCreateFieldExtensionPayload;
   updateFieldExtension: GraphQLUpdateFieldExtensionPayload;
+  createSidebarExtension: GraphQLCreateSidebarExtensionPayload;
+  updateSidebarExtension: GraphQLUpdateSidebarExtensionPayload;
   deleteExtension: GraphQLDeleteExtensionPayload;
+  createCustomSidebarElement: GraphQLCreateSidebarElementPayload;
+  createSystemSidebarElement: GraphQLCreateSidebarElementPayload;
+  deleteSidebarElement: GraphQLDeleteSidebarElementPayload;
+  moveSidebarElement: GraphQLMoveSidebarElementPayload;
+  updateSidebarElement: GraphQLUpdateSidebarElementPayload;
+  resetSidebarElements: GraphQLResetSidebarElementsPayload;
   createStage: GraphQLAsyncOperationPayload;
   updateStage: GraphQLAsyncOperationPayload;
   deleteStage: GraphQLAsyncOperationPayload;
@@ -4275,8 +4959,13 @@ export type GraphQLMutation = {
   updateLocale: GraphQLAsyncOperationPayload;
   deleteLocale: GraphQLAsyncOperationPayload;
   createModel: GraphQLAsyncOperationPayload;
+  duplicateModel: GraphQLAsyncOperationPayload;
   updateModel: GraphQLAsyncOperationPayload;
   deleteModel: GraphQLAsyncOperationPayload;
+  createComponent: GraphQLAsyncOperationPayload;
+  duplicateComponent: GraphQLAsyncOperationPayload;
+  updateComponent: GraphQLAsyncOperationPayload;
+  deleteComponent: GraphQLAsyncOperationPayload;
   createRemoteTypeDefinition: GraphQLAsyncOperationPayload;
   updateRemoteTypeDefinition: GraphQLAsyncOperationPayload;
   deleteRemoteTypeDefinition: GraphQLAsyncOperationPayload;
@@ -4288,13 +4977,14 @@ export type GraphQLMutation = {
   createEnumerableField: GraphQLAsyncOperationPayload;
   createRelationalField: GraphQLAsyncOperationPayload;
   createUnionField: GraphQLAsyncOperationPayload;
+  createComponentField: GraphQLAsyncOperationPayload;
   updateSimpleField: GraphQLAsyncOperationPayload;
   updateEnumerableField: GraphQLAsyncOperationPayload;
   updateRelationalField: GraphQLAsyncOperationPayload;
   updateUnionField: GraphQLAsyncOperationPayload;
+  updateComponentField: GraphQLAsyncOperationPayload;
   deleteField: GraphQLAsyncOperationPayload;
   submitBatchChanges: GraphQLAsyncOperationPayload;
-  exportEnvironment: GraphQLExportEnvironmentPayload;
   enableScheduledPublishing: GraphQLProject;
 };
 
@@ -4474,6 +5164,10 @@ export type GraphQLMutationSetUserAnalyticsArgs = {
   data: GraphQLSetUserAnalyticsInput;
 };
 
+export type GraphQLMutationTrackArgs = {
+  data: GraphQLTrackInput;
+};
+
 export type GraphQLMutationDeleteAccountArgs = {
   data?: Maybe<GraphQLDeleteAccountInput>;
 };
@@ -4492,6 +5186,10 @@ export type GraphQLMutationUpdateWebhookArgs = {
 
 export type GraphQLMutationDeleteWebhookArgs = {
   data: GraphQLDeleteWebhookInput;
+};
+
+export type GraphQLMutationRetriggerWebhookArgs = {
+  data: GraphQLRetriggerWebhookInput;
 };
 
 export type GraphQLMutationMoveFieldArgs = {
@@ -4574,8 +5272,40 @@ export type GraphQLMutationUpdateFieldExtensionArgs = {
   data: GraphQLUpdateFieldExtensionInput;
 };
 
+export type GraphQLMutationCreateSidebarExtensionArgs = {
+  data: GraphQLCreateSidebarExtensionInput;
+};
+
+export type GraphQLMutationUpdateSidebarExtensionArgs = {
+  data: GraphQLUpdateSidebarExtensionInput;
+};
+
 export type GraphQLMutationDeleteExtensionArgs = {
   data: GraphQLDeleteExtensionInput;
+};
+
+export type GraphQLMutationCreateCustomSidebarElementArgs = {
+  data: GraphQLCreateCustomSidebarElementInput;
+};
+
+export type GraphQLMutationCreateSystemSidebarElementArgs = {
+  data: GraphQLCreateSystemSidebarElementInput;
+};
+
+export type GraphQLMutationDeleteSidebarElementArgs = {
+  data: GraphQLDeleteSidebarElementInput;
+};
+
+export type GraphQLMutationMoveSidebarElementArgs = {
+  data: GraphQLMoveSidebarElementInput;
+};
+
+export type GraphQLMutationUpdateSidebarElementArgs = {
+  data: GraphQLUpdateSidebarElementInput;
+};
+
+export type GraphQLMutationResetSidebarElementsArgs = {
+  data: GraphQLResetSidebarElementsInput;
 };
 
 export type GraphQLMutationCreateStageArgs = {
@@ -4606,12 +5336,32 @@ export type GraphQLMutationCreateModelArgs = {
   data: GraphQLCreateModelInput;
 };
 
+export type GraphQLMutationDuplicateModelArgs = {
+  data: GraphQLDuplicateModelInput;
+};
+
 export type GraphQLMutationUpdateModelArgs = {
   data: GraphQLUpdateModelInput;
 };
 
 export type GraphQLMutationDeleteModelArgs = {
   data: GraphQLDeleteModelInput;
+};
+
+export type GraphQLMutationCreateComponentArgs = {
+  data: GraphQLCreateComponentInput;
+};
+
+export type GraphQLMutationDuplicateComponentArgs = {
+  data: GraphQLDuplicateComponentInput;
+};
+
+export type GraphQLMutationUpdateComponentArgs = {
+  data: GraphQLUpdateComponentInput;
+};
+
+export type GraphQLMutationDeleteComponentArgs = {
+  data: GraphQLDeleteComponentInput;
 };
 
 export type GraphQLMutationCreateRemoteTypeDefinitionArgs = {
@@ -4658,6 +5408,10 @@ export type GraphQLMutationCreateUnionFieldArgs = {
   data: GraphQLCreateUnionFieldInput;
 };
 
+export type GraphQLMutationCreateComponentFieldArgs = {
+  data: GraphQLCreateComponentFieldInput;
+};
+
 export type GraphQLMutationUpdateSimpleFieldArgs = {
   data: GraphQLUpdateSimpleFieldInput;
 };
@@ -4674,16 +5428,16 @@ export type GraphQLMutationUpdateUnionFieldArgs = {
   data: GraphQLUpdateUnionFieldInput;
 };
 
+export type GraphQLMutationUpdateComponentFieldArgs = {
+  data: GraphQLUpdateComponentFieldInput;
+};
+
 export type GraphQLMutationDeleteFieldArgs = {
   data: GraphQLDeleteFieldInput;
 };
 
 export type GraphQLMutationSubmitBatchChangesArgs = {
   data: GraphQLBatchMigrationInput;
-};
-
-export type GraphQLMutationExportEnvironmentArgs = {
-  data: GraphQLExportEnvironmentInput;
 };
 
 export type GraphQLMutationEnableScheduledPublishingArgs = {
