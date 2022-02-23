@@ -1,7 +1,7 @@
 import { Field, FieldArgs, FieldType } from './field';
-import { MutationMode, PartialBy, RelationType } from "./util";
-import { ChangeItem, ChangeListener, MigrationChange } from "./migration";
-import { Renderer } from "./renderer";
+import { MutationMode, PartialBy, RelationType } from './util';
+import { ChangeItem, ChangeListener, MigrationChange } from './migration';
+import { Renderer } from './renderer';
 import {
   GraphQLBatchMigrationCreateEnumerableFieldInput,
   GraphQLBatchMigrationCreateModelInput,
@@ -19,11 +19,11 @@ import {
   GraphQLFieldValidationFloatRangeInput,
   GraphQLFieldValidationIntRangeInput,
   GraphQLFieldValidationRegExInput,
+  GraphQLRelationalFieldType,
   GraphQLRemoteFieldType,
   GraphQLSimpleFieldType,
   GraphQLSimpleFieldValidationsInput,
-} from "./generated/schema";
-import { ASSET_MODEL_ID, RELATION_MODEL_ID } from './utils/constants';
+} from './generated/schema';
 
 type ModelArgs =
   | GraphQLBatchMigrationCreateModelInput
@@ -33,24 +33,20 @@ type ModelArgs =
  * Relational Fields
  */
 interface RelationalFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationCreateRelationalFieldInput,
-    "reverseField" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationCreateRelationalFieldInput,
+    'reverseField' | 'isHidden'> {
   relationType: RelationType;
   model: string;
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden: GraphQLBatchMigrationCreateRelationalFieldInput["isHidden"];
-  reverseField?: Omit<
-    GraphQLBatchMigrationCreateReverseRelationalFieldInput,
-    "modelApiId" | "isList" | "isHidden"
-  > & {
+  isHidden: GraphQLBatchMigrationCreateRelationalFieldInput['isHidden'];
+  reverseField?: Omit<GraphQLBatchMigrationCreateReverseRelationalFieldInput,
+    'modelApiId' | 'isList' | 'isHidden'> & {
     /**
      * @deprecated Use visibility instead.
      */
-    isHidden?: GraphQLBatchMigrationCreateReverseRelationalFieldInput["isHidden"];
+    isHidden?: GraphQLBatchMigrationCreateReverseRelationalFieldInput['isHidden'];
   };
 }
 
@@ -58,24 +54,20 @@ interface RelationalFieldArgs
  * Create Union Field
  */
 interface CreateUnionFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationCreateUnionFieldInput,
-    "reverseField" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationCreateUnionFieldInput,
+    'reverseField' | 'isHidden'> {
   relationType: RelationType;
   models: string[];
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden: GraphQLBatchMigrationCreateRelationalFieldInput["isHidden"];
-  reverseField?: Omit<
-    GraphQLBatchMigrationCreateReverseUnionFieldInput,
-    "modelApiIds" | "isList" | "isHidden"
-  > & {
+  isHidden: GraphQLBatchMigrationCreateRelationalFieldInput['isHidden'];
+  reverseField?: Omit<GraphQLBatchMigrationCreateReverseUnionFieldInput,
+    'modelApiIds' | 'isList' | 'isHidden'> & {
     /**
      * @deprecated Use visibility instead.
      */
-    isHidden?: GraphQLBatchMigrationCreateReverseUnionFieldInput["isHidden"];
+    isHidden?: GraphQLBatchMigrationCreateReverseUnionFieldInput['isHidden'];
   };
 }
 
@@ -83,7 +75,7 @@ interface CreateUnionFieldArgs
  * Update Union Field
  */
 interface UpdateUnionFieldArgs
-  extends Omit<GraphQLBatchMigrationUpdateUnionFieldInput, "reverseField"> {
+  extends Omit<GraphQLBatchMigrationUpdateUnionFieldInput, 'reverseField'> {
   models?: string[];
 }
 
@@ -99,73 +91,62 @@ interface FieldValidationArgs {
  * Create Simple Field
  */
 interface CreateSimpleFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationCreateSimpleFieldInput,
-    "validations" | "modelApiId" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationCreateSimpleFieldInput,
+    'validations' | 'modelApiId' | 'isHidden'> {
   validations?: FieldValidationArgs;
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
+  isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput['isHidden'];
 }
+
 /**
  * Create Remote Field
  */
 interface CreateRemoteFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationCreateRemoteFieldInput,
-    "modelApiId" | "type" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationCreateRemoteFieldInput,
+    'modelApiId' | 'type' | 'isHidden'> {
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden?: GraphQLBatchMigrationCreateRemoteFieldInput["isHidden"];
+  isHidden?: GraphQLBatchMigrationCreateRemoteFieldInput['isHidden'];
 }
 
 interface UpdateSimpleFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationUpdateSimpleFieldInput,
-    "validations" | "modelApiId" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationUpdateSimpleFieldInput,
+    'validations' | 'modelApiId' | 'isHidden'> {
   validations?: FieldValidationArgs;
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
+  isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput['isHidden'];
 }
 
 interface UpdateRelationalFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationUpdateRelationalFieldInput,
-    "modelApiId" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationUpdateRelationalFieldInput,
+    'modelApiId' | 'isHidden'> {
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden?: GraphQLBatchMigrationUpdateRelationalFieldInput["isHidden"];
+  isHidden?: GraphQLBatchMigrationUpdateRelationalFieldInput['isHidden'];
 }
 
 interface CreateEnumerableFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationCreateEnumerableFieldInput,
-    "modelApiId" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationCreateEnumerableFieldInput,
+    'modelApiId' | 'isHidden'> {
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden?: GraphQLBatchMigrationCreateEnumerableFieldInput["isHidden"];
+  isHidden?: GraphQLBatchMigrationCreateEnumerableFieldInput['isHidden'];
 }
 
 interface UpdateEnumerableFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationUpdateEnumerableFieldInput,
-    "modelApiId" | "isHidden"
-  > {
+  extends Omit<GraphQLBatchMigrationUpdateEnumerableFieldInput,
+    'modelApiId' | 'isHidden'> {
   /**
    * @deprecated Use visibility instead.
    */
-  isHidden?: GraphQLBatchMigrationUpdateEnumerableFieldInput["isHidden"];
+  isHidden?: GraphQLBatchMigrationUpdateEnumerableFieldInput['isHidden'];
 }
 
 /**
@@ -195,10 +176,8 @@ interface Model {
    * @param field options for the relational field.
    */
   addRelationalField(
-    field: Omit<
-      PartialBy<RelationalFieldArgs, "reverseField" | "type">,
-      "modelApiId"
-    >
+    field: Omit<PartialBy<RelationalFieldArgs, 'reverseField' | 'type'>,
+      'modelApiId'>
   ): Model;
 
   /**
@@ -212,14 +191,14 @@ interface Model {
    * @param field options for the union field.
    */
   addUnionField(
-    field: Omit<PartialBy<CreateUnionFieldArgs, "reverseField">, "modelApiId">
+    field: Omit<PartialBy<CreateUnionFieldArgs, 'reverseField'>, 'modelApiId'>
   ): Model;
 
   /**
    * Update a union field.
    * @param field options for the union field.
    */
-  updateUnionField(field: Omit<UpdateUnionFieldArgs, "modelApiId">): Model;
+  updateUnionField(field: Omit<UpdateUnionFieldArgs, 'modelApiId'>): Model;
 
   /**
    * Create an enumerable field.
@@ -248,7 +227,8 @@ class ModelClass implements Model, ChangeItem {
     private listener: ChangeListener,
     private mode: MutationMode,
     private args: ModelArgs
-  ) {}
+  ) {
+  }
 
   addSimpleField(passedFieldArgs: any): Model {
     const fieldArgs = { ...passedFieldArgs };
@@ -271,8 +251,8 @@ class ModelClass implements Model, ChangeItem {
     fieldArgs.modelApiId = this.args.apiId;
     fieldArgs.type = GraphQLRemoteFieldType.Remote;
     if (fieldArgs.remoteConfig.headers) {
-      if (fieldArgs.remoteConfig.headers.constructor.name !== "Object") {
-        throw new Error("Headers in remote config has to be an object");
+      if (fieldArgs.remoteConfig.headers.constructor.name !== 'Object') {
+        throw new Error('Headers in remote config has to be an object');
       }
       for (const [k, v] of Object.entries(fieldArgs.remoteConfig.headers)) {
         // wrap non-array values into arrays
@@ -283,7 +263,7 @@ class ModelClass implements Model, ChangeItem {
     }
     fieldArgs.remoteConfig.payloadFieldApiIds =
       fieldArgs.remoteConfig.payloadFieldApiIds || [];
-    fieldArgs.remoteConfig.method = fieldArgs.remoteConfig.method || "GET";
+    fieldArgs.remoteConfig.method = fieldArgs.remoteConfig.method || 'GET';
 
     const field = new Field(
       fieldArgs,
@@ -316,12 +296,12 @@ class ModelClass implements Model, ChangeItem {
     const fieldModelUpper = fieldArgs.model?.toUpperCase();
 
     if (
-      (fieldTypeUpper && fieldTypeUpper === ASSET_MODEL_ID) ||
-      (fieldModelUpper && fieldModelUpper === ASSET_MODEL_ID)
+      (fieldTypeUpper && fieldTypeUpper === GraphQLRelationalFieldType.Asset) ||
+      (fieldModelUpper && fieldModelUpper === GraphQLRelationalFieldType.Asset)
     ) {
-      fieldArgs.type = ASSET_MODEL_ID;
+      fieldArgs.type = GraphQLRelationalFieldType.Asset;
     } else {
-      fieldArgs.type = RELATION_MODEL_ID;
+      fieldArgs.type = GraphQLRelationalFieldType.Relation;
     }
 
     if (!fieldArgs.reverseField) {
@@ -340,7 +320,7 @@ class ModelClass implements Model, ChangeItem {
       fieldArgs.relationType === RelationType.ManyToOne ||
       fieldArgs.relationType === RelationType.ManyToMany;
 
-    if (fieldArgs.type === ASSET_MODEL_ID) {
+    if (fieldArgs.type === GraphQLRelationalFieldType.Asset) {
       // Asset needs the isRequired field
       if (fieldArgs.isRequired === undefined) {
         fieldArgs.isRequired = false;
@@ -407,7 +387,7 @@ class ModelClass implements Model, ChangeItem {
     fieldArgs.modelApiId = this.args.apiId;
     fieldArgs.reverseField = passedFieldArgs?.reverseField;
 
-    if (fieldArgs.modelApiId?.toUpperCase() === ASSET_MODEL_ID && fieldArgs.isRequired !== undefined) {
+    if (fieldArgs.modelApiId?.toUpperCase() === GraphQLRelationalFieldType.Asset && fieldArgs.isRequired !== undefined) {
       fieldArgs.isRequired = Boolean(fieldArgs.isRequired);
     }
 
@@ -444,7 +424,7 @@ class ModelClass implements Model, ChangeItem {
   addEnumerableField(passedFieldArgs: any): Model {
     const fieldArgs = { ...passedFieldArgs };
     if (!fieldArgs.enumerationApiId) {
-      throw new Error("enumerationApiId is required for enumerable field");
+      throw new Error('enumerationApiId is required for enumerable field');
     }
     fieldArgs.modelApiId = this.args.apiId;
     const field = new Field(
@@ -491,13 +471,13 @@ class ModelClass implements Model, ChangeItem {
     let action: string;
     switch (this.mode) {
       case MutationMode.Create:
-        action = "createModel";
+        action = 'createModel';
         break;
       case MutationMode.Update:
-        action = "updateModel";
+        action = 'updateModel';
         break;
       case MutationMode.Delete:
-        action = "deleteModel";
+        action = 'deleteModel';
         break;
     }
 
