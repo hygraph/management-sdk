@@ -340,7 +340,7 @@ class ModelClass implements Model, ChangeItem {
       fieldArgs.relationType === RelationType.ManyToOne ||
       fieldArgs.relationType === RelationType.ManyToMany;
 
-    if (fieldArgs.type === "ASSET") {
+    if (fieldArgs.type === ASSET_MODEL_ID) {
       // Asset needs the isRequired field
       if (fieldArgs.isRequired === undefined) {
         fieldArgs.isRequired = false;
