@@ -4931,7 +4931,9 @@ export type GraphQLBatchMigrationCreateGraphQlRemoteSourceInput = {
   /** HTTP headers that will be used for introspection */
   introspectionHeaders?: Maybe<Scalars["JSON"]>;
   /** Custom GraphQL input types that can be used as arguments in remote fields that belong to this remoteSource */
-  remoteTypeDefinitions: GraphQLBatchMigrationCreateRemoteTypeDefinitionInput;
+  remoteTypeDefinitions?: Maybe<
+    GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
+  >;
   debugEnabled?: Maybe<Scalars["Boolean"]>;
 };
 

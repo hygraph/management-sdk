@@ -374,21 +374,6 @@ model.addUnionField({
 });
 ```
 
-To create a remote field.
-
-```js
-model.addRemoteField({
-  apiId,
-  displayName,
-  remoteConfig: {
-    method, // one of GET (default), POST or PUT.
-    payloadFieldApiIds, // Array<String> of field API IDs to send as part of request payload
-    returnType, // previously declared remote type definition
-    url, // url to fetch the remote data from
-  },
-});
-```
-
 #### Update a Field
 
 To update a field, firstly retrieve the model.
