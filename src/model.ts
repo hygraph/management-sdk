@@ -14,12 +14,12 @@ import {
   GraphQLBatchMigrationUpdateEnumerableFieldInput,
   GraphQLBatchMigrationUpdateModelInput,
   GraphQLBatchMigrationUpdateRelationalFieldInput,
+  GraphQLBatchMigrationUpdateRemoteFieldInput,
   GraphQLBatchMigrationUpdateSimpleFieldInput,
   GraphQLBatchMigrationUpdateUnionFieldInput,
   GraphQLFieldValidationFloatRangeInput,
   GraphQLFieldValidationIntRangeInput,
   GraphQLFieldValidationRegExInput,
-  GraphQLRemoteFieldType,
   GraphQLSimpleFieldType,
   GraphQLSimpleFieldValidationsInput,
 } from "./generated/schema";
@@ -108,19 +108,6 @@ interface CreateSimpleFieldArgs
    */
   isHidden?: GraphQLBatchMigrationCreateSimpleFieldInput["isHidden"];
 }
-/**
- * Create Remote Field
- */
-interface CreateRemoteFieldArgs
-  extends Omit<
-    GraphQLBatchMigrationCreateRemoteFieldInput,
-    "modelApiId" | "type" | "isHidden"
-  > {
-  /**
-   * @deprecated Use visibility instead.
-   */
-  isHidden?: GraphQLBatchMigrationCreateRemoteFieldInput["isHidden"];
-}
 
 interface UpdateSimpleFieldArgs
   extends Omit<
@@ -167,6 +154,11 @@ interface UpdateEnumerableFieldArgs
   isHidden?: GraphQLBatchMigrationUpdateEnumerableFieldInput["isHidden"];
 }
 
+interface CreateRemoteFieldArgs
+  extends Omit<GraphQLBatchMigrationCreateRemoteFieldInput, "parentApiId"> {}
+interface UpdateRemoteFieldArgs
+  extends Omit<GraphQLBatchMigrationUpdateRemoteFieldInput, "parentApiId"> {}
+
 /**
  * GraphCMS Model
  */
@@ -176,12 +168,6 @@ interface Model {
    * @param field options for the field.
    */
   addSimpleField(field: CreateSimpleFieldArgs): Model;
-
-  /**
-   * Add a new remote field to the model.
-   * @param field options for the field.
-   */
-  addRemoteField(field: CreateRemoteFieldArgs): Model;
 
   /**
    * Update an existing field
@@ -232,6 +218,17 @@ interface Model {
    */
   updateEnumerableField(field: UpdateEnumerableFieldArgs): Model;
 
+  /* Create an remote field.
+   * @param field options for the remote field.
+   */
+  addRemoteField(field: CreateRemoteFieldArgs): Model;
+
+  /**
+   * Update a remote field
+   * @param field options for the remote field.
+   */
+  updateRemoteField(field: UpdateRemoteFieldArgs): Model;
+
   /**
    * Delete a field
    * @param apiId the apiId of the field to delete.
@@ -261,34 +258,6 @@ class ModelClass implements Model, ChangeItem {
     }
 
     const field = new Field(fieldArgs, MutationMode.Create);
-    this.listener.registerChange(field);
-    return this;
-  }
-
-  addRemoteField(passedFieldArgs: any): Model {
-    const fieldArgs = { ...passedFieldArgs };
-    fieldArgs.modelApiId = this.args.apiId;
-    fieldArgs.type = GraphQLRemoteFieldType.Remote;
-    if (fieldArgs.remoteConfig.headers) {
-      if (fieldArgs.remoteConfig.headers.constructor.name !== "Object") {
-        throw new Error("Headers in remote config has to be an object");
-      }
-      for (const [k, v] of Object.entries(fieldArgs.remoteConfig.headers)) {
-        // wrap non-array values into arrays
-        fieldArgs.remoteConfig.headers[k] = Array.isArray(v) ? v : [v];
-      }
-    } else {
-      fieldArgs.remoteConfig.headers = {};
-    }
-    fieldArgs.remoteConfig.payloadFieldApiIds =
-      fieldArgs.remoteConfig.payloadFieldApiIds || [];
-    fieldArgs.remoteConfig.method = fieldArgs.remoteConfig.method || "GET";
-
-    const field = new Field(
-      fieldArgs,
-      MutationMode.Create,
-      FieldType.RemoteField
-    );
     this.listener.registerChange(field);
     return this;
   }
@@ -452,6 +421,32 @@ class ModelClass implements Model, ChangeItem {
       fieldArgs,
       MutationMode.Update,
       FieldType.EnumerableField
+    );
+    this.listener.registerChange(field);
+    return this;
+  }
+
+  addRemoteField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
+    fieldArgs.parentApiId = this.args.apiId;
+
+    const field = new Field(
+      fieldArgs,
+      MutationMode.Create,
+      FieldType.RemoteField
+    );
+    this.listener.registerChange(field);
+    return this;
+  }
+
+  updateRemoteField(passedFieldArgs: any): Model {
+    const fieldArgs = { ...passedFieldArgs };
+    fieldArgs.parentApiId = this.args.apiId;
+
+    const field = new Field(
+      fieldArgs,
+      MutationMode.Update,
+      FieldType.RemoteField
     );
     this.listener.registerChange(field);
     return this;
