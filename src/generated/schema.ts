@@ -101,7 +101,6 @@ export type GraphQLContentModel = {
   locales: Array<GraphQLLocale>;
   unions: Array<Maybe<GraphQLUnion>>;
   stages: Array<GraphQLStage>;
-  remoteTypeDefinitions: Array<GraphQLRemoteTypeDefinition>;
 };
 
 export type GraphQLContentModelModelsArgs = {
@@ -293,6 +292,7 @@ export enum GraphQLLimitType {
   ContentModels = "CONTENT_MODELS",
   ContentStages = "CONTENT_STAGES",
   AuditLogsRetentionPeriod = "AUDIT_LOGS_RETENTION_PERIOD",
+  RemoteSources = "REMOTE_SOURCES",
   RemoteFields = "REMOTE_FIELDS",
   RemoteFieldsMaxExecutionTime = "REMOTE_FIELDS_MAX_EXECUTION_TIME",
   RemoteFieldsMaxResponseSize = "REMOTE_FIELDS_MAX_RESPONSE_SIZE",
@@ -525,6 +525,11 @@ export enum GraphQLPermissionAction {
   FieldRead = "FIELD_READ",
   FieldUpdate = "FIELD_UPDATE",
   FieldDelete = "FIELD_DELETE",
+  /** Remote Sources */
+  RemoteSourceCreate = "REMOTE_SOURCE_CREATE",
+  RemoteSourceRead = "REMOTE_SOURCE_READ",
+  RemoteSourceUpdate = "REMOTE_SOURCE_UPDATE",
+  RemoteSourceDelete = "REMOTE_SOURCE_DELETE",
   /** PATs */
   PatCreate = "PAT_CREATE",
   PatRead = "PAT_READ",
@@ -881,6 +886,24 @@ export type GraphQLMaxComplexityPayload = {
   gcms?: Maybe<Scalars["String"]>;
 };
 
+export type GraphQL_UpdatePlanTrialInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQL_UpdatePlanTrialPayload = {
+  __typename?: "_UpdatePlanTrialPayload";
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQL_SwitchOwnerInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQL_SwitchOwnerPayload = {
+  __typename?: "_SwitchOwnerPayload";
+  gcms?: Maybe<Scalars["String"]>;
+};
+
 export type GraphQL_BookOverLimitInput = {
   gcms?: Maybe<Scalars["String"]>;
 };
@@ -1007,6 +1030,7 @@ export type GraphQLEnvironmentLevelQuota = {
   models: GraphQLProgress;
   stages: GraphQLProgress;
   contentPermissions: GraphQLProgress;
+  remoteSources: GraphQLProgress;
 };
 
 export type GraphQLRegion = {
@@ -1545,6 +1569,111 @@ export type GraphQLMigration = {
   resourceId?: Maybe<Scalars["ID"]>;
 };
 
+export enum GraphQLRemote_Graphql_Type {
+  Scalar = "SCALAR",
+  Object = "OBJECT",
+  Interface = "INTERFACE",
+  Union = "UNION",
+  Enum = "ENUM",
+  InputObject = "INPUT_OBJECT",
+}
+
+export type GraphQLIRemoteSource = {
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  /**
+   * Optional headers that will be sent to the remote source on every remote field. In case the remote field is using the same
+   * Header Keys, the values will be overridden
+   */
+  headers?: Maybe<Scalars["JSON"]>;
+  type: GraphQLRemoteSourceType;
+  remoteTypeDefinitionsConnection: GraphQLRemoteTypeDefinitionsConnection;
+  debugEnabled: Scalars["Boolean"];
+};
+
+export type GraphQLIRemoteSourceRemoteTypeDefinitionsConnectionArgs = {
+  remoteGraphQLTypes?: Maybe<Array<GraphQLRemote_Graphql_Type>>;
+  isUserDefined?: Maybe<Scalars["Boolean"]>;
+  skip?: Scalars["Int"];
+  first?: Scalars["Int"];
+};
+
+export type GraphQLGraphQlRemoteSource = GraphQLIRemoteSource & {
+  __typename?: "GraphQLRemoteSource";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  headers?: Maybe<Scalars["JSON"]>;
+  type: GraphQLRemoteSourceType;
+  remoteTypeDefinitionsConnection: GraphQLRemoteTypeDefinitionsConnection;
+  debugEnabled: Scalars["Boolean"];
+  /**
+   * Specific URL that will be used for introspection if the introspection is available on another url than the regular url.
+   * Can be ignored if the introspection url is the same as the url of the remote source.
+   */
+  introspectionUrl?: Maybe<Scalars["String"]>;
+  /** HTTP Headers that will be used when sending the introspection only */
+  introspectionHeaders?: Maybe<Scalars["JSON"]>;
+  /** HTTP method that will be used for introspection */
+  introspectionMethod: GraphQLGraphQlRemoteSourceIntrospectionMethod;
+  schema: Scalars["String"];
+};
+
+export type GraphQLGraphQlRemoteSourceRemoteTypeDefinitionsConnectionArgs = {
+  remoteGraphQLTypes?: Maybe<Array<GraphQLRemote_Graphql_Type>>;
+  isUserDefined?: Maybe<Scalars["Boolean"]>;
+  skip?: Scalars["Int"];
+  first?: Scalars["Int"];
+};
+
+export type GraphQLRestRemoteSource = GraphQLIRemoteSource & {
+  __typename?: "RESTRemoteSource";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  headers?: Maybe<Scalars["JSON"]>;
+  type: GraphQLRemoteSourceType;
+  remoteTypeDefinitionsConnection: GraphQLRemoteTypeDefinitionsConnection;
+  debugEnabled: Scalars["Boolean"];
+};
+
+export type GraphQLRestRemoteSourceRemoteTypeDefinitionsConnectionArgs = {
+  remoteGraphQLTypes?: Maybe<Array<GraphQLRemote_Graphql_Type>>;
+  isUserDefined?: Maybe<Scalars["Boolean"]>;
+  skip?: Scalars["Int"];
+  first?: Scalars["Int"];
+};
+
+export type GraphQLRemoteTypeDefinitionEdge = {
+  __typename?: "RemoteTypeDefinitionEdge";
+  node: GraphQLRemoteTypeDefinition;
+};
+
+export type GraphQLRemoteTypeDefinitionsAggregate = {
+  __typename?: "RemoteTypeDefinitionsAggregate";
+  count: Scalars["Int"];
+};
+
+export type GraphQLRemoteTypeDefinitionsConnection = {
+  __typename?: "RemoteTypeDefinitionsConnection";
+  pageInfo: GraphQLPageInfo;
+  edges: Array<GraphQLRemoteTypeDefinitionEdge>;
+  aggregate: GraphQLRemoteTypeDefinitionsAggregate;
+};
+
 export type GraphQLEnvironment = {
   __typename?: "Environment";
   id: Scalars["ID"];
@@ -1564,6 +1693,8 @@ export type GraphQLEnvironment = {
   contentViews: Array<GraphQLContentView>;
   viewGroups: Array<GraphQLViewGroup>;
   contentModel: GraphQLContentModel;
+  remoteSources: Array<GraphQLIRemoteSource>;
+  remoteSource: GraphQLIRemoteSource;
   /** @deprecated Revisions are no longer maintained */
   revisionCount: Scalars["Int"];
   migrations: Array<GraphQLMigration>;
@@ -1590,6 +1721,10 @@ export type GraphQLEnvironmentContentViewArgs = {
 export type GraphQLEnvironmentContentViewsArgs = {
   includeSystemModels?: Maybe<Scalars["Boolean"]>;
   filter?: Maybe<GraphQLContentViewFilterInput>;
+};
+
+export type GraphQLEnvironmentRemoteSourceArgs = {
+  prefix: Scalars["String"];
 };
 
 export type GraphQLEnvironmentMigrationArgs = {
@@ -2391,7 +2526,8 @@ export enum GraphQLExtensionFieldType {
   Date = "DATE",
   Location = "LOCATION",
   Color = "COLOR",
-  Remote = "REMOTE",
+  Graphql = "GRAPHQL",
+  Rest = "REST",
   Enumeration = "ENUMERATION",
   Relation = "RELATION",
   Asset = "ASSET",
@@ -2745,7 +2881,18 @@ export enum GraphQLSimpleFieldType {
 }
 
 export enum GraphQLRemoteFieldType {
-  Remote = "REMOTE",
+  Graphql = "GRAPHQL",
+  Rest = "REST",
+}
+
+export enum GraphQLRemoteFieldApiMethod {
+  Get = "GET",
+  Post = "POST",
+}
+
+export enum GraphQLGraphQlRemoteSourceIntrospectionMethod {
+  Get = "GET",
+  Post = "POST",
 }
 
 export enum GraphQLEnumerableFieldType {
@@ -2763,6 +2910,10 @@ export enum GraphQLComponentFieldType {
 
 export enum GraphQLUnionFieldType {
   Union = "UNION",
+}
+
+export enum GraphQLComponentUnionFieldType {
+  ComponentUnion = "COMPONENT_UNION",
 }
 
 export enum GraphQLVisibilityTypes {
@@ -2822,18 +2973,43 @@ export type GraphQLRemoteTypeDefinition = {
   createdAt: Scalars["DateTime"];
   updatedAt: Scalars["DateTime"];
   apiId: Scalars["String"];
-  displayName: Scalars["String"];
-  description?: Maybe<Scalars["String"]>;
-  definition: Scalars["String"];
+  sdl: Scalars["String"];
+  graphqlType: GraphQLRemote_Graphql_Type;
+  isSystem: Scalars["Boolean"];
 };
 
-export type GraphQLRemoteFieldConfig = {
-  __typename?: "RemoteFieldConfig";
-  returnType: Scalars["String"];
-  payloadFields: Array<Maybe<GraphQLSimpleField>>;
-  url: Scalars["String"];
-  method: Scalars["String"];
+export type GraphQLIRemoteFieldConfig = {
+  returnType: GraphQLRemoteTypeDefinition;
+  /** Headers that will be sent to the remote source. Those headers will override the headers defined on the remote source if setup */
   headers?: Maybe<Scalars["JSON"]>;
+  method: GraphQLRemoteFieldApiMethod;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  remoteSource: GraphQLIRemoteSource;
+  forwardClientHeaders: Scalars["Boolean"];
+};
+
+export type GraphQLGraphQlRemoteFieldConfig = GraphQLIRemoteFieldConfig & {
+  __typename?: "GraphQLRemoteFieldConfig";
+  returnType: GraphQLRemoteTypeDefinition;
+  headers?: Maybe<Scalars["JSON"]>;
+  method: GraphQLRemoteFieldApiMethod;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  forwardClientHeaders: Scalars["Boolean"];
+  /** In case of apiType GraphQL graphqlQuery contains the GraphQL query that will be sent to the remote source */
+  query?: Maybe<Scalars["String"]>;
+  operationName?: Maybe<Scalars["String"]>;
+  remoteSource: GraphQLGraphQlRemoteSource;
+};
+
+export type GraphQLRestRemoteFieldConfig = GraphQLIRemoteFieldConfig & {
+  __typename?: "RestRemoteFieldConfig";
+  returnType: GraphQLRemoteTypeDefinition;
+  headers?: Maybe<Scalars["JSON"]>;
+  method: GraphQLRemoteFieldApiMethod;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  forwardClientHeaders: Scalars["Boolean"];
+  path?: Maybe<Scalars["String"]>;
+  remoteSource: GraphQLRestRemoteSource;
 };
 
 export type GraphQLRemoteField = GraphQLIField & {
@@ -2851,6 +3027,7 @@ export type GraphQLRemoteField = GraphQLIField & {
   isHidden: Scalars["Boolean"];
   visibility: GraphQLVisibilityTypes;
   isList: Scalars["Boolean"];
+  isRequired: Scalars["Boolean"];
   /**
    * This will throw a runtime error for fields that are on a component instead of model!
    * @deprecated Use parent instead
@@ -2861,7 +3038,8 @@ export type GraphQLRemoteField = GraphQLIField & {
   formConfig: GraphQLFieldConfig;
   extensions?: Maybe<Scalars["JSON"]>;
   meta?: Maybe<Scalars["JSON"]>;
-  remoteConfig: GraphQLRemoteFieldConfig;
+  remoteConfig: GraphQLIRemoteFieldConfig;
+  inputArgs?: Maybe<Array<GraphQLFieldInputArg>>;
 };
 
 export type GraphQLEnumerableField = GraphQLIField &
@@ -3032,6 +3210,7 @@ export type GraphQLComponentUnionField = GraphQLIField &
     id: Scalars["ID"];
     createdAt: Scalars["DateTime"];
     updatedAt: Scalars["DateTime"];
+    type: GraphQLComponentUnionFieldType;
     apiId: Scalars["String"];
     displayName: Scalars["String"];
     description?: Maybe<Scalars["String"]>;
@@ -3159,6 +3338,22 @@ export type GraphQLUpdateSimpleFieldInput = {
   embeddableModels?: Maybe<GraphQLEmbeddableModelsInput>;
 };
 
+export type GraphQLUpdateRemoteFieldInput = {
+  id: Scalars["ID"];
+  apiId?: Maybe<Scalars["String"]>;
+  remoteConfig?: Maybe<GraphQLUpdateRemoteFieldConfigInput>;
+  inputArgs?: Maybe<GraphQLUpsertFieldInputArgInput>;
+  isList?: Maybe<Scalars["Boolean"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
+  formConfig?: Maybe<GraphQLFieldConfigInput>;
+  tableConfig?: Maybe<GraphQLFieldConfigInput>;
+  extensions?: Maybe<Scalars["JSON"]>;
+  meta?: Maybe<Scalars["JSON"]>;
+};
+
 export type GraphQLUpdateEnumerableFieldInput = {
   id: Scalars["ID"];
   apiId?: Maybe<Scalars["String"]>;
@@ -3207,6 +3402,19 @@ export type GraphQLUpdateComponentFieldInput = {
   isList?: Maybe<Scalars["Boolean"]>;
   visibility?: Maybe<GraphQLVisibilityTypes>;
   isRequired?: Maybe<Scalars["Boolean"]>;
+  tableConfig?: Maybe<GraphQLFieldConfigInput>;
+  formConfig?: Maybe<GraphQLFieldConfigInput>;
+  extensions?: Maybe<Scalars["JSON"]>;
+  meta?: Maybe<Scalars["JSON"]>;
+};
+
+export type GraphQLUpdateComponentUnionFieldInput = {
+  id: Scalars["ID"];
+  components?: Maybe<Array<Scalars["ID"]>>;
+  apiId?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
   tableConfig?: Maybe<GraphQLFieldConfigInput>;
   formConfig?: Maybe<GraphQLFieldConfigInput>;
   extensions?: Maybe<Scalars["JSON"]>;
@@ -3295,66 +3503,145 @@ export type GraphQLCreateSimpleFieldInput = {
 };
 
 export type GraphQLRemoteFieldConfigInput = {
-  /**
-   * GraphQL type the remote field should return.
-   *
-   * Can be any built-in scalar
-   * - ID
-   * - String
-   * - Boolean
-   * - Int
-   * - Float
-   *
-   * or any GraphCMS custom scalar
-   * - Long
-   * - Json
-   * - DateTime
-   * - Date
-   *
-   * or any GraphCMS type
-   * - Color
-   * - Location
-   * - RichText
-   *
-   * or a remote type definition
-   */
-  returnType: Scalars["String"];
-  payloadFieldIds: Array<Scalars["ID"]>;
-  url: Scalars["String"];
-  method: Scalars["String"];
+  /** Remote Type definitions apiId of the type the remote field should return. */
+  returnTypeApiId: Scalars["String"];
   headers?: Maybe<Scalars["JSON"]>;
-  requestParamFieldApiIds?: Maybe<Array<Scalars["String"]>>;
+  method: GraphQLRemoteFieldApiMethod;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  remoteSourceId: Scalars["ID"];
+  /** In case of apiType GraphQL graphqlQuery contains the GraphQL query that will be sent to the remote source */
+  graphQLQuery?: Maybe<Scalars["String"]>;
+  /** In case of apiType REST restPath contains the path that will be appended to the API base url */
+  restPath?: Maybe<Scalars["String"]>;
+  /** If true, headers that are sent by the client will be forwarded to the remote source */
+  forwardClientHeaders?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLUpdateRemoteFieldConfigInput = {
+  /** Remote Type definitions apiId of the type the remote field should return. */
+  returnTypeApiId?: Maybe<Scalars["String"]>;
+  headers?: Maybe<Scalars["JSON"]>;
+  method?: Maybe<GraphQLRemoteFieldApiMethod>;
+  forwardClientHeaders?: Maybe<Scalars["Boolean"]>;
+  /** In case of apiType GraphQL graphqlQuery contains the GraphQL query that will be sent to the remote source */
+  graphQLQuery?: Maybe<Scalars["String"]>;
+  /** In case of apiType REST restPath contains the path that will be appended to the base url of the api */
+  restPath?: Maybe<Scalars["String"]>;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  remoteSourceId?: Maybe<Scalars["ID"]>;
+};
+
+export type GraphQLUpsertFieldInputArgInputToCreateInput = {
+  remoteTypeId: Scalars["ID"];
+  apiId: Scalars["String"];
+  isRequired: Scalars["Boolean"];
+  isList: Scalars["Boolean"];
+};
+
+export type GraphQLUpsertFieldInputArgInputToUpdateInput = {
+  inputArgId: Scalars["ID"];
+  remoteTypeId?: Maybe<Scalars["ID"]>;
+  apiId?: Maybe<Scalars["String"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  isList?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLUpsertFieldInputArgInputToDeleteInput = {
+  inputArgId: Scalars["ID"];
+};
+
+export type GraphQLUpsertFieldInputArgInput = {
+  fieldInputArgsToCreate?: Maybe<
+    Array<GraphQLUpsertFieldInputArgInputToCreateInput>
+  >;
+  fieldInputArgsToDelete?: Maybe<
+    Array<GraphQLUpsertFieldInputArgInputToDeleteInput>
+  >;
+  fieldInputArgsToUpdate?: Maybe<
+    Array<GraphQLUpsertFieldInputArgInputToUpdateInput>
+  >;
+};
+
+export type GraphQLCreateFieldInputArgInput = {
+  remoteTypeId: Scalars["ID"];
+  apiId: Scalars["String"];
+  isRequired: Scalars["Boolean"];
+  isList: Scalars["Boolean"];
+};
+
+export type GraphQLFieldInputArg = {
+  __typename?: "FieldInputArg";
+  id: Scalars["ID"];
+  apiId: Scalars["String"];
+  isRequired: Scalars["Boolean"];
+  isList: Scalars["Boolean"];
+  remoteType: GraphQLRemoteTypeDefinition;
+};
+
+export type GraphQLBatchMigrationRemoteFieldInputArgInput = {
+  remoteTypeApiId: Scalars["String"];
+  apiId: Scalars["String"];
+  isRequired: Scalars["Boolean"];
+  isList: Scalars["Boolean"];
 };
 
 export type GraphQLBatchMigrationRemoteFieldConfigInput = {
-  /**
-   * GraphQL type the remote field should return.
-   *
-   * Can be any built-in scalar
-   * - ID
-   * - String
-   * - Boolean
-   * - Int
-   * - Float
-   *
-   * or any GraphCMS custom scalar
-   * - Long
-   * - Json
-   * - DateTime
-   * - Date
-   *
-   * or any GraphCMS type
-   * - Color
-   * - Location
-   * - RichText
-   *
-   * or a remote type definition
-   */
-  returnType: Scalars["String"];
-  url: Scalars["String"];
-  method: Scalars["String"];
+  returnTypeApiId: Scalars["String"];
   headers?: Maybe<Scalars["JSON"]>;
-  payloadFieldApiIds?: Maybe<Array<Scalars["String"]>>;
+  method: GraphQLRemoteFieldApiMethod;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  remoteSourcePrefix: Scalars["String"];
+  /** In case of apiType GraphQL graphqlQuery contains the GraphQL query that will be sent to the remote source */
+  graphQLQuery?: Maybe<Scalars["String"]>;
+  /** In case of apiType REST restPath contains the path that will be appended to the API base url */
+  restPath?: Maybe<Scalars["String"]>;
+  /** If true, headers that are sent by the client will be forwarded to the remote source */
+  forwardClientHeaders?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationUpdateRemoteFieldConfigInput = {
+  returnTypeApiId?: Maybe<Scalars["String"]>;
+  remoteSourcePrefix?: Maybe<Scalars["String"]>;
+  headers?: Maybe<Scalars["JSON"]>;
+  method?: Maybe<GraphQLRemoteFieldApiMethod>;
+  cacheTTLSeconds?: Maybe<Scalars["Int"]>;
+  /** In case of apiType GraphQL graphqlQuery contains the GraphQL query that will be sent to the remote source */
+  graphQLQuery?: Maybe<Scalars["String"]>;
+  /** In case of apiType REST restPath contains the path that will be appended to the API base url */
+  restPath?: Maybe<Scalars["String"]>;
+  /** If true, headers that are sent by the client will be forwarded to the remote source */
+  forwardClientHeaders?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationUpsertFieldInputArgInputToCreateInput = {
+  remoteTypeApiId: Scalars["String"];
+  apiId: Scalars["String"];
+  isRequired: Scalars["Boolean"];
+  isList: Scalars["Boolean"];
+};
+
+export type GraphQLBatchMigrationUpsertFieldInputArgInputToUpdateInput = {
+  argApiId: Scalars["String"];
+  remoteTypeApiId?: Maybe<Scalars["String"]>;
+  apiId?: Maybe<Scalars["String"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  isList?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationUpsertFieldInputArgInputToDeleteInput = {
+  argApiId: Scalars["String"];
+};
+
+export type GraphQLBatchMigrationUpsertFieldInputArgInput = {
+  fieldInputArgsToCreate?: Maybe<
+    Array<GraphQLBatchMigrationUpsertFieldInputArgInputToCreateInput>
+  >;
+  fieldInputArgsToDelete?: Maybe<
+    Array<GraphQLBatchMigrationUpsertFieldInputArgInputToDeleteInput>
+  >;
+  fieldInputArgsToUpdate?: Maybe<
+    Array<GraphQLBatchMigrationUpsertFieldInputArgInputToUpdateInput>
+  >;
 };
 
 export type GraphQLCreateRemoteFieldInput = {
@@ -3367,7 +3654,9 @@ export type GraphQLCreateRemoteFieldInput = {
   apiId: Scalars["String"];
   type: GraphQLRemoteFieldType;
   remoteConfig: GraphQLRemoteFieldConfigInput;
+  inputArgs?: Maybe<Array<GraphQLCreateFieldInputArgInput>>;
   isList: Scalars["Boolean"];
+  isRequired: Scalars["Boolean"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
   isHidden?: Maybe<Scalars["Boolean"]>;
@@ -3500,6 +3789,22 @@ export type GraphQLCreateComponentFieldInput = {
   position?: Maybe<Scalars["Int"]>;
 };
 
+export type GraphQLCreateComponentUnionFieldInput = {
+  /** This can be a model or component id */
+  parentId: Scalars["ID"];
+  apiId: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  isList: Scalars["Boolean"];
+  visibility?: GraphQLVisibilityTypes;
+  components: Array<Scalars["ID"]>;
+  tableConfig?: Maybe<GraphQLFieldConfigInput>;
+  formConfig?: Maybe<GraphQLFieldConfigInput>;
+  extensions?: Maybe<Scalars["JSON"]>;
+  meta?: Maybe<Scalars["JSON"]>;
+  position?: Maybe<Scalars["Int"]>;
+};
+
 export type GraphQLMoveFieldInput = {
   id: Scalars["ID"];
   position: Scalars["Int"];
@@ -3623,6 +3928,7 @@ export type GraphQLIModel = {
   isVersioned: Scalars["Boolean"];
   viewerPermission: GraphQLModelViewerPermission;
   sidebarElements: Array<GraphQLISidebarElement>;
+  hasLocalizedComponents: Scalars["Boolean"];
 };
 
 export type GraphQLIModelFieldsArgs = {
@@ -3715,6 +4021,7 @@ export type GraphQLModel = GraphQLIModel &
     isVersioned: Scalars["Boolean"];
     viewerPermission: GraphQLModelViewerPermission;
     sidebarElements: Array<GraphQLISidebarElement>;
+    hasLocalizedComponents: Scalars["Boolean"];
   };
 
 export type GraphQLModelFieldsArgs = {
@@ -3777,6 +4084,7 @@ export type GraphQLAssetModel = GraphQLIModel &
     isVersioned: Scalars["Boolean"];
     viewerPermission: GraphQLModelViewerPermission;
     sidebarElements: Array<GraphQLISidebarElement>;
+    hasLocalizedComponents: Scalars["Boolean"];
   };
 
 export type GraphQLAssetModelFieldsArgs = {
@@ -3815,6 +4123,7 @@ export type GraphQLUserModel = GraphQLIModel &
     isVersioned: Scalars["Boolean"];
     viewerPermission: GraphQLModelViewerPermission;
     sidebarElements: Array<GraphQLISidebarElement>;
+    hasLocalizedComponents: Scalars["Boolean"];
   };
 
 export type GraphQLUserModelFieldsArgs = {
@@ -3853,6 +4162,7 @@ export type GraphQLSchedulingModel = GraphQLIModel &
     isVersioned: Scalars["Boolean"];
     viewerPermission: GraphQLModelViewerPermission;
     sidebarElements: Array<GraphQLISidebarElement>;
+    hasLocalizedComponents: Scalars["Boolean"];
   };
 
 export type GraphQLSchedulingModelFieldsArgs = {
@@ -4172,30 +4482,27 @@ export type GraphQLBatchMigrationDeleteComponentInput = {
   apiId: Scalars["String"];
 };
 
-/** Creating a remote type definition */
-export type GraphQLBatchMigrationCreateRemoteTypeDefinitionInput = {
-  displayName: Scalars["String"];
-  description?: Maybe<Scalars["String"]>;
+/** Creating a custom type definition */
+export type GraphQLBatchMigrationCreateCustomTypeDefinitionInput = {
   /**
    * GraphQL type definition in SDL format
    * Can be enum or object type
    */
-  definition: Scalars["String"];
+  sdl: Scalars["String"];
 };
 
-/** Updating an existing remote type definition */
-export type GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput = {
+/** Creating a custom input type definition */
+export type GraphQLBatchMigrationCreateCustomInputTypeDefinitionInput = {
+  /** GraphQL type input definition in SDL format */
+  sdl: Scalars["String"];
+};
+
+/** Delete an existing custom input type definition */
+export type GraphQLBatchMigrationDeleteCustomInputTypeDefinitionInput = {
   apiId: Scalars["String"];
-  displayName?: Maybe<Scalars["String"]>;
-  description?: Maybe<Scalars["String"]>;
-  /**
-   * GraphQL type definition in SDL format
-   * Can be enum or object type
-   */
-  definition: Scalars["String"];
 };
 
-/** Delete an existing remote type definition */
+/** Delete an existing custom type definition */
 export type GraphQLBatchMigrationDeleteRemoteTypeDefinitionInput = {
   apiId: Scalars["String"];
 };
@@ -4268,12 +4575,14 @@ export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   embeddableModels?: Maybe<Array<Scalars["String"]>>;
 };
 
-/** Creating a remote field. */
+/**
+ * """
+ * Creating a remote field.
+ * """
+ */
 export type GraphQLBatchMigrationCreateRemoteFieldInput = {
   apiId: Scalars["String"];
-  /** either modelApiId or parentApiId needs to be set */
-  modelApiId?: Maybe<Scalars["String"]>;
-  parentApiId?: Maybe<Scalars["String"]>;
+  parentApiId: Scalars["String"];
   type: GraphQLRemoteFieldType;
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
@@ -4281,11 +4590,31 @@ export type GraphQLBatchMigrationCreateRemoteFieldInput = {
   formRenderer?: Maybe<Scalars["String"]>;
   tableExtension?: Maybe<Scalars["String"]>;
   formExtension?: Maybe<Scalars["String"]>;
+  formConfig?: Maybe<Scalars["JSON"]>;
+  tableConfig?: Maybe<Scalars["JSON"]>;
   isList?: Maybe<Scalars["Boolean"]>;
-  isHidden?: Maybe<Scalars["Boolean"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
   visibility?: Maybe<GraphQLVisibilityTypes>;
   position?: Maybe<Scalars["Int"]>;
   remoteConfig: GraphQLBatchMigrationRemoteFieldConfigInput;
+  inputArgs?: Maybe<Array<GraphQLBatchMigrationRemoteFieldInputArgInput>>;
+};
+
+export type GraphQLBatchMigrationUpdateRemoteFieldInput = {
+  apiId: Scalars["String"];
+  newApiId?: Maybe<Scalars["String"]>;
+  parentApiId: Scalars["String"];
+  remoteConfig?: Maybe<GraphQLBatchMigrationUpdateRemoteFieldConfigInput>;
+  inputArgs?: Maybe<GraphQLBatchMigrationUpsertFieldInputArgInput>;
+  isList?: Maybe<Scalars["Boolean"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
+  formConfig?: Maybe<GraphQLFieldConfigInput>;
+  tableConfig?: Maybe<GraphQLFieldConfigInput>;
+  extensions?: Maybe<Scalars["JSON"]>;
+  meta?: Maybe<Scalars["JSON"]>;
 };
 
 /** Creating an enumerable field. */
@@ -4340,6 +4669,32 @@ export type GraphQLBatchMigrationCreateUnionFieldInput = {
   isHidden?: Maybe<Scalars["Boolean"]>;
   visibility?: Maybe<GraphQLVisibilityTypes>;
   reverseField: GraphQLBatchMigrationCreateReverseUnionFieldInput;
+};
+
+/** updating a component-union field */
+export type GraphQLBatchMigrationUpdateComponentUnionFieldInput = {
+  apiId: Scalars["String"];
+  newApiId?: Maybe<Scalars["String"]>;
+  parentApiId: Scalars["String"];
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  componentApiIds?: Maybe<Array<Scalars["String"]>>;
+};
+
+/** Creating a component-union field */
+export type GraphQLBatchMigrationCreateComponentUnionFieldInput = {
+  apiId: Scalars["String"];
+  parentApiId: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  tableRenderer?: Maybe<Scalars["String"]>;
+  formRenderer?: Maybe<Scalars["String"]>;
+  tableExtension?: Maybe<Scalars["String"]>;
+  formExtension?: Maybe<Scalars["String"]>;
+  isList?: Maybe<Scalars["Boolean"]>;
+  isRequired?: Maybe<Scalars["Boolean"]>;
+  visibility?: Maybe<GraphQLVisibilityTypes>;
+  componentApiIds: Array<Scalars["String"]>;
 };
 
 /** reverse field args */
@@ -4559,6 +4914,78 @@ export type GraphQLBatchMigrationDeleteLocaleInput = {
   force?: Maybe<Scalars["Boolean"]>;
 };
 
+export type GraphQLBatchMigrationCreateGraphQlRemoteSourceInput = {
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  /** Unique prefix that will be prepended to all of the remote types. This value cannot be changed! */
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  headers?: Maybe<Scalars["JSON"]>;
+  /**
+   * Specific URL that will be used for introspection if the introspection is available on another url than the regular url.
+   * Can be ignored if the introspection url is the same as the url of the remote source.
+   */
+  introspectionUrl?: Maybe<Scalars["String"]>;
+  /** HTTP method that will be used for introspection */
+  introspectionMethod: GraphQLGraphQlRemoteSourceIntrospectionMethod;
+  /** HTTP headers that will be used for introspection */
+  introspectionHeaders?: Maybe<Scalars["JSON"]>;
+  /** Custom GraphQL input types that can be used as arguments in remote fields that belong to this remoteSource */
+  remoteTypeDefinitions?: Maybe<
+    GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
+  >;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationUpdateGraphQlRemoteSourceInput = {
+  prefix: Scalars["String"];
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  url?: Maybe<Scalars["String"]>;
+  headers?: Maybe<Scalars["JSON"]>;
+  introspectionUrl?: Maybe<Scalars["String"]>;
+  introspectionMethod?: Maybe<GraphQLGraphQlRemoteSourceIntrospectionMethod>;
+  introspectionHeaders?: Maybe<Scalars["JSON"]>;
+  remoteTypeDefinitionsToUpsert?: Maybe<
+    GraphQLBatchMigrationUpsertRemoteTypeDefinitionsInput
+  >;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationCreateRestRemoteSourceInput = {
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  /** Unique prefix that will be prepended to all of the remote types. This value cannot be changed! */
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  headers?: Maybe<Scalars["JSON"]>;
+  /** Remote type definitions that the remote source supports or input types that can be used by any remote field of this remote source */
+  remoteTypeDefinitions?: Maybe<
+    GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
+  >;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationUpdateRestRemoteSourceInput = {
+  prefix: Scalars["String"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  url?: Maybe<Scalars["String"]>;
+  headers?: Maybe<Scalars["JSON"]>;
+  remoteTypeDefinitionsToUpsert?: Maybe<
+    GraphQLBatchMigrationUpsertRemoteTypeDefinitionsInput
+  >;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLBatchMigrationCreateRemoteTypeDefinitionInput = {
+  sdl: Scalars["String"];
+};
+
+export type GraphQLBatchMigrationDeleteRemoteSourceInput = {
+  prefix: Scalars["String"];
+};
+
 export type GraphQLBatchMigrationChangeInput = {
   /** Models */
   createModel?: Maybe<GraphQLBatchMigrationCreateModelInput>;
@@ -4568,20 +4995,11 @@ export type GraphQLBatchMigrationChangeInput = {
   createComponent?: Maybe<GraphQLBatchMigrationCreateComponentInput>;
   updateComponent?: Maybe<GraphQLBatchMigrationUpdateComponentInput>;
   deleteComponent?: Maybe<GraphQLBatchMigrationDeleteComponentInput>;
-  /** Remote type defs */
-  createRemoteTypeDefinition?: Maybe<
-    GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
-  >;
-  updateRemoteTypeDefinition?: Maybe<
-    GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput
-  >;
-  deleteRemoteTypeDefinition?: Maybe<
-    GraphQLBatchMigrationDeleteRemoteTypeDefinitionInput
-  >;
   /** Fields */
   createSimpleField?: Maybe<GraphQLBatchMigrationCreateSimpleFieldInput>;
-  createRemoteField?: Maybe<GraphQLBatchMigrationCreateRemoteFieldInput>;
   updateSimpleField?: Maybe<GraphQLBatchMigrationUpdateSimpleFieldInput>;
+  createRemoteField?: Maybe<GraphQLBatchMigrationCreateRemoteFieldInput>;
+  updateRemoteField?: Maybe<GraphQLBatchMigrationUpdateRemoteFieldInput>;
   createRelationalField?: Maybe<
     GraphQLBatchMigrationCreateRelationalFieldInput
   >;
@@ -4592,6 +5010,12 @@ export type GraphQLBatchMigrationChangeInput = {
   updateUnionField?: Maybe<GraphQLBatchMigrationUpdateUnionFieldInput>;
   createComponentField?: Maybe<GraphQLBatchMigrationCreateComponentFieldInput>;
   updateComponentField?: Maybe<GraphQLBatchMigrationUpdateComponentFieldInput>;
+  createComponentUnionField?: Maybe<
+    GraphQLBatchMigrationCreateComponentUnionFieldInput
+  >;
+  updateComponentUnionField?: Maybe<
+    GraphQLBatchMigrationUpdateComponentUnionFieldInput
+  >;
   createEnumerableField?: Maybe<
     GraphQLBatchMigrationCreateEnumerableFieldInput
   >;
@@ -4611,6 +5035,20 @@ export type GraphQLBatchMigrationChangeInput = {
   createLocale?: Maybe<GraphQLBatchMigrationCreateLocaleInput>;
   deleteLocale?: Maybe<GraphQLBatchMigrationDeleteLocaleInput>;
   updateLocale?: Maybe<GraphQLBatchMigrationUpdateLocaleInput>;
+  /** Remote Sources */
+  createGraphQLRemoteSource?: Maybe<
+    GraphQLBatchMigrationCreateGraphQlRemoteSourceInput
+  >;
+  updateGraphQLRemoteSource?: Maybe<
+    GraphQLBatchMigrationUpdateGraphQlRemoteSourceInput
+  >;
+  createRESTRemoteSource?: Maybe<
+    GraphQLBatchMigrationCreateRestRemoteSourceInput
+  >;
+  updateRESTRemoteSource?: Maybe<
+    GraphQLBatchMigrationUpdateRestRemoteSourceInput
+  >;
+  deleteRemoteSource?: Maybe<GraphQLBatchMigrationDeleteRemoteSourceInput>;
 };
 
 export type GraphQLDiffEnvironmentPayload = {
@@ -4825,43 +5263,129 @@ export type GraphQLPromoteEnvironmentPayload = {
   previousMasterEnvironment: GraphQLEnvironment;
 };
 
+export type GraphQLUpsertRemoteTypeDefinitionsInput = {
+  remoteTypeDefinitionsToCreate?: Maybe<
+    Array<GraphQLUpsertRemoteTypeDefinitionToCreateInput>
+  >;
+  remoteTypeDefinitionsToDelete?: Maybe<
+    Array<GraphQLUpsertRemoteTypeDefinitionToDeleteInput>
+  >;
+  remoteTypeDefinitionsToUpdate?: Maybe<
+    Array<GraphQLUpsertRemoteTypeDefinitionToUpdateInput>
+  >;
+};
+
+export type GraphQLBatchMigrationUpsertRemoteTypeDefinitionsInput = {
+  remoteTypeDefinitionsToCreate?: Maybe<
+    Array<GraphQLBatchMigrationUpsertRemoteTypeDefinitionToCreateInput>
+  >;
+  remoteTypeDefinitionsToDelete?: Maybe<
+    Array<GraphQLBatchMigrationUpsertRemoteTypeDefinitionToDeleteInput>
+  >;
+  remoteTypeDefinitionsToUpdate?: Maybe<
+    Array<GraphQLBatchMigrationUpsertRemoteTypeDefinitionToUpdateInput>
+  >;
+};
+
+export type GraphQLUpsertRemoteTypeDefinitionToCreateInput = {
+  sdl: Scalars["String"];
+};
+
+export type GraphQLUpsertRemoteTypeDefinitionToDeleteInput = {
+  id: Scalars["ID"];
+};
+
+export type GraphQLUpsertRemoteTypeDefinitionToUpdateInput = {
+  id: Scalars["ID"];
+  sdl?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLBatchMigrationUpsertRemoteTypeDefinitionToCreateInput = {
+  sdl: Scalars["String"];
+};
+
+export type GraphQLBatchMigrationUpsertRemoteTypeDefinitionToDeleteInput = {
+  apiId: Scalars["String"];
+};
+
+export type GraphQLBatchMigrationUpsertRemoteTypeDefinitionToUpdateInput = {
+  apiId: Scalars["String"];
+  sdl?: Maybe<Scalars["String"]>;
+};
+
 export type GraphQLCreateRemoteTypeDefinitionInput = {
+  sdl: Scalars["String"];
+};
+
+export enum GraphQLRemoteSourceType {
+  Graphql = "GRAPHQL",
+  Rest = "REST",
+}
+
+export type GraphQLDeleteRemoteSourceInput = {
+  id: Scalars["ID"];
+};
+
+export type GraphQLCreateGraphQlRemoteSourceInput = {
   environmentId: Scalars["ID"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
+  /** Unique prefix that will be prepended to all of the remote types. This value cannot be changed! */
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  headers?: Maybe<Scalars["JSON"]>;
   /**
-   * GraphQL type definition in SDL format
-   * Can be enum or object type
+   * Specific URL that will be used for introspection if the introspection is available on another url than the regular url.
+   * Can be ignored if the introspection url is the same as the url of the remote source.
    */
-  definition: Scalars["String"];
+  introspectionUrl?: Maybe<Scalars["String"]>;
+  /** HTTP method that will be used for introspection */
+  introspectionMethod: GraphQLGraphQlRemoteSourceIntrospectionMethod;
+  /** HTTP headers that will be used for introspection */
+  introspectionHeaders?: Maybe<Scalars["JSON"]>;
+  /** Custom GraphQL input types that can be used as arguments in remote fields that belong to this remoteSource */
+  remoteTypeDefinitions?: Maybe<Array<GraphQLCreateRemoteTypeDefinitionInput>>;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
 };
 
-export type GraphQLUpdateRemoteTypeDefinitionInput = {
+export type GraphQLUpdateGraphQlRemoteSourceInput = {
   id: Scalars["ID"];
   displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
-  /**
-   * GraphQL type definition in SDL format
-   * Can be enum or object type
-   */
-  definition?: Maybe<Scalars["String"]>;
+  url?: Maybe<Scalars["String"]>;
+  headers?: Maybe<Scalars["JSON"]>;
+  introspectionUrl?: Maybe<Scalars["String"]>;
+  introspectionMethod?: Maybe<GraphQLGraphQlRemoteSourceIntrospectionMethod>;
+  introspectionHeaders?: Maybe<Scalars["JSON"]>;
+  remoteTypeDefinitionsToUpsert?: Maybe<
+    GraphQLUpsertRemoteTypeDefinitionsInput
+  >;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
 };
 
-export type GraphQLDeleteRemoteTypeDefinitionInput = {
+export type GraphQLCreateRestRemoteSourceInput = {
+  environmentId: Scalars["ID"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  /** Unique prefix that will be prepended to all of the remote types. This value cannot be changed! */
+  prefix: Scalars["String"];
+  url: Scalars["String"];
+  headers?: Maybe<Scalars["JSON"]>;
+  /** Remote type definitions that the remote source supports or input types that can be used by any remote field of this remote source */
+  remoteTypeDefinitions?: Maybe<Array<GraphQLCreateRemoteTypeDefinitionInput>>;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GraphQLUpdateRestRemoteSourceInput = {
   id: Scalars["ID"];
-};
-
-export type GraphQLEnableScheduledPublishingInput = {
-  projectId: Scalars["ID"];
-};
-
-export type GraphQLMigrateRichTextEmbedsInput = {
-  gcms?: Maybe<Scalars["String"]>;
-};
-
-export type GraphQLMigrationEnableSchedulingInput = {
-  projectId: Scalars["ID"];
-  dryRun?: Maybe<Scalars["Boolean"]>;
+  displayName?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  url?: Maybe<Scalars["String"]>;
+  headers?: Maybe<Scalars["JSON"]>;
+  remoteTypeDefinitionsToUpsert?: Maybe<
+    GraphQLUpsertRemoteTypeDefinitionsInput
+  >;
+  debugEnabled?: Maybe<Scalars["Boolean"]>;
 };
 
 export type GraphQLMutation = {
@@ -4971,9 +5495,6 @@ export type GraphQLMutation = {
   duplicateComponent: GraphQLAsyncOperationPayload;
   updateComponent: GraphQLAsyncOperationPayload;
   deleteComponent: GraphQLAsyncOperationPayload;
-  createRemoteTypeDefinition: GraphQLAsyncOperationPayload;
-  updateRemoteTypeDefinition: GraphQLAsyncOperationPayload;
-  deleteRemoteTypeDefinition: GraphQLAsyncOperationPayload;
   createEnumeration: GraphQLAsyncOperationPayload;
   deleteEnumeration: GraphQLAsyncOperationPayload;
   updateEnumeration: GraphQLAsyncOperationPayload;
@@ -4983,14 +5504,21 @@ export type GraphQLMutation = {
   createRelationalField: GraphQLAsyncOperationPayload;
   createUnionField: GraphQLAsyncOperationPayload;
   createComponentField: GraphQLAsyncOperationPayload;
+  createComponentUnionField: GraphQLAsyncOperationPayload;
   updateSimpleField: GraphQLAsyncOperationPayload;
+  updateRemoteField: GraphQLAsyncOperationPayload;
   updateEnumerableField: GraphQLAsyncOperationPayload;
   updateRelationalField: GraphQLAsyncOperationPayload;
   updateUnionField: GraphQLAsyncOperationPayload;
   updateComponentField: GraphQLAsyncOperationPayload;
+  updateComponentUnionField: GraphQLAsyncOperationPayload;
   deleteField: GraphQLAsyncOperationPayload;
   submitBatchChanges: GraphQLAsyncOperationPayload;
-  enableScheduledPublishing: GraphQLProject;
+  createGraphQLRemoteSource: GraphQLAsyncOperationPayload;
+  updateGraphQLRemoteSource: GraphQLAsyncOperationPayload;
+  createRESTRemoteSource: GraphQLAsyncOperationPayload;
+  updateRESTRemoteSource: GraphQLAsyncOperationPayload;
+  deleteRemoteSource: GraphQLAsyncOperationPayload;
 };
 
 export type GraphQLMutationCreateContentViewArgs = {
@@ -5373,18 +5901,6 @@ export type GraphQLMutationDeleteComponentArgs = {
   data: GraphQLDeleteComponentInput;
 };
 
-export type GraphQLMutationCreateRemoteTypeDefinitionArgs = {
-  data: GraphQLCreateRemoteTypeDefinitionInput;
-};
-
-export type GraphQLMutationUpdateRemoteTypeDefinitionArgs = {
-  data: GraphQLUpdateRemoteTypeDefinitionInput;
-};
-
-export type GraphQLMutationDeleteRemoteTypeDefinitionArgs = {
-  data: GraphQLDeleteRemoteTypeDefinitionInput;
-};
-
 export type GraphQLMutationCreateEnumerationArgs = {
   data: GraphQLCreateEnumerationInput;
 };
@@ -5421,8 +5937,16 @@ export type GraphQLMutationCreateComponentFieldArgs = {
   data: GraphQLCreateComponentFieldInput;
 };
 
+export type GraphQLMutationCreateComponentUnionFieldArgs = {
+  data: GraphQLCreateComponentUnionFieldInput;
+};
+
 export type GraphQLMutationUpdateSimpleFieldArgs = {
   data: GraphQLUpdateSimpleFieldInput;
+};
+
+export type GraphQLMutationUpdateRemoteFieldArgs = {
+  data: GraphQLUpdateRemoteFieldInput;
 };
 
 export type GraphQLMutationUpdateEnumerableFieldArgs = {
@@ -5441,6 +5965,10 @@ export type GraphQLMutationUpdateComponentFieldArgs = {
   data: GraphQLUpdateComponentFieldInput;
 };
 
+export type GraphQLMutationUpdateComponentUnionFieldArgs = {
+  data: GraphQLUpdateComponentUnionFieldInput;
+};
+
 export type GraphQLMutationDeleteFieldArgs = {
   data: GraphQLDeleteFieldInput;
 };
@@ -5449,8 +5977,24 @@ export type GraphQLMutationSubmitBatchChangesArgs = {
   data: GraphQLBatchMigrationInput;
 };
 
-export type GraphQLMutationEnableScheduledPublishingArgs = {
-  data: GraphQLEnableScheduledPublishingInput;
+export type GraphQLMutationCreateGraphQlRemoteSourceArgs = {
+  data: GraphQLCreateGraphQlRemoteSourceInput;
+};
+
+export type GraphQLMutationUpdateGraphQlRemoteSourceArgs = {
+  data: GraphQLUpdateGraphQlRemoteSourceInput;
+};
+
+export type GraphQLMutationCreateRestRemoteSourceArgs = {
+  data: GraphQLCreateRestRemoteSourceInput;
+};
+
+export type GraphQLMutationUpdateRestRemoteSourceArgs = {
+  data: GraphQLUpdateRestRemoteSourceInput;
+};
+
+export type GraphQLMutationDeleteRemoteSourceArgs = {
+  data: GraphQLDeleteRemoteSourceInput;
 };
 
 export enum GraphQLMigrationOperationType {

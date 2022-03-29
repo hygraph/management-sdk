@@ -243,42 +243,6 @@ To delete an enumeration and it's values
 migration.deleteEnumeration(apiId);
 ```
 
-## Remote Type Definitions
-
-Remote fields allow you to define an external resolver through the management SDK. Remote fields consist of two parts, defining any custom type that will represent the returning shape from the external resolver, defining the resolver itself.
-
-### Create a Remote Type Definition
-
-Create a sample Remote Type Definition for Github API.
-
-```js
-migration.createRemoteTypeDefinition({
-  definition:
-    "type Github { id: Int!, login: String!, name: String!, company: String, bio: String, blog: String, location: String }",
-  displayName: "Github profile",
-  description: "Developer's Github profile",
-});
-```
-
-### Update a Remote Type Definition
-
-To update a Remote Type Definition
-
-```js
-migration.updateRemoteTypeDefinition({
-  apiId:
-  ... // properties to update
-});
-```
-
-### Delete a Remote Type Definition
-
-To delete a Remote Type Definition
-
-```js
-migration.deleteRemoteTypeDefinition(apiId);
-```
-
 ## Models
 
 Your schema is defined by the models you create, and fields you add.
@@ -406,21 +370,6 @@ model.addUnionField({
   reverseField: {
     apiId,
     displayName,
-  },
-});
-```
-
-To create a remote field.
-
-```js
-model.addRemoteField({
-  apiId,
-  displayName,
-  remoteConfig: {
-    method, // one of GET (default), POST or PUT.
-    payloadFieldApiIds, // Array<String> of field API IDs to send as part of request payload
-    returnType, // previously declared remote type definition
-    url, // url to fetch the remote data from
   },
 });
 ```

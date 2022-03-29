@@ -16,9 +16,12 @@ import {
   GraphQLBatchMigrationUpdateEnumerationInput,
   GraphQLBatchMigrationCreateLocaleInput,
   GraphQLBatchMigrationUpdateLocaleInput,
-  GraphQLBatchMigrationCreateRemoteTypeDefinitionInput,
-  GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput,
   GraphQLMigrationStatus,
+  GraphQLBatchMigrationCreateGraphQlRemoteSourceInput,
+  GraphQLBatchMigrationCreateRestRemoteSourceInput,
+  GraphQLBatchMigrationUpdateGraphQlRemoteSourceInput,
+  GraphQLBatchMigrationUpdateRestRemoteSourceInput,
+  GraphQLBatchMigrationDeleteRemoteSourceInput,
 } from "./generated/schema";
 import {
   EnumerationCreate,
@@ -27,10 +30,7 @@ import {
 } from "./enumeration";
 import { Stage, StageClass } from "./stage";
 import { Locale, LocaleClass } from "./locale";
-import {
-  RemoteTypeDefinition,
-  RemoteTypeDefinitionClass,
-} from "./remoteTypeDef";
+import { RemoteSource, RemoteSourceClass } from "./remoteSource";
 
 /**
  * @ignore
@@ -125,27 +125,38 @@ interface Migration {
   deleteModel(apiId: string): void;
 
   /**
-   * Create a new remote type definition
-   * @param args options for the new type definition.
+   * Create a new GraphQL remote source
+   * @param args options for the new remote source.
    */
-  createRemoteTypeDefinition(
-    args: GraphQLBatchMigrationCreateRemoteTypeDefinitionInput
-  ): RemoteTypeDefinition;
+  createGraphQLRemoteSource(
+    args: GraphQLBatchMigrationCreateGraphQlRemoteSourceInput
+  ): RemoteSource;
 
   /**
-   * Update an existing remote type definition
-   * @param args options for remote type definition to update.
+   * Updates an existing GraphQL remote source
+   * @param args options for the new remote source.
    */
-  updateRemoteTypeDefinition(
-    args: GraphQLBatchMigrationUpdateRemoteTypeDefinitionInput
-  ): RemoteTypeDefinition;
+  updateGraphQLRemoteSource(
+    args: GraphQLBatchMigrationUpdateGraphQlRemoteSourceInput
+  ): RemoteSource;
 
   /**
-   * Delete a remote type definition
-   * @param apiId the `apiId` of the remote type definition to delete.
+   * Create a new REST remote source
+   * @param args options for the new remote source.
    */
-  deleteRemoteTypeDefinition(apiId: string): void;
+  createRESTRemoteSource(
+    args: GraphQLBatchMigrationCreateRestRemoteSourceInput
+  ): RemoteSource;
 
+  /**
+   * Updates an existing REST remote source
+   * @param args options for the new remote source.
+   */
+  updateRESTRemoteSource(
+    args: GraphQLBatchMigrationUpdateRestRemoteSourceInput
+  ): RemoteSource;
+
+  deleteRemoteSource(args: GraphQLBatchMigrationDeleteRemoteSourceInput): void;
   /**
    * Create a new enumeration
    * @param args options for the new enumeration.
@@ -269,31 +280,54 @@ class MigrationClass implements Migration, ChangeListener {
     return model;
   }
 
-  createRemoteTypeDefinition(args: any): RemoteTypeDefinition {
-    const remoteTypeDefinition = new RemoteTypeDefinitionClass(
+  createGraphQLRemoteSource(args: any): RemoteSource {
+    const remoteSource = new RemoteSourceClass(
       MutationMode.Create,
+      "GQL",
       args
     );
-    this.registerChange(remoteTypeDefinition);
-    return remoteTypeDefinition;
+    this.registerChange(remoteSource);
+    return remoteSource;
   }
 
-  updateRemoteTypeDefinition(args: any): RemoteTypeDefinition {
-    const remoteTypeDefinition = new RemoteTypeDefinitionClass(
+  updateGraphQLRemoteSource(args: any): RemoteSource {
+    const remoteSource = new RemoteSourceClass(
       MutationMode.Update,
+      "GQL",
       args
     );
-    this.registerChange(remoteTypeDefinition);
-    return remoteTypeDefinition;
+    this.registerChange(remoteSource);
+    return remoteSource;
   }
 
-  deleteRemoteTypeDefinition(apiId: string) {
-    const remoteTypeDefinition = new RemoteTypeDefinitionClass(
-      MutationMode.Delete,
-      { apiId }
+  createRESTRemoteSource(args: any): RemoteSource {
+    const remoteSource = new RemoteSourceClass(
+      MutationMode.Create,
+      "REST",
+      args
     );
-    this.registerChange(remoteTypeDefinition);
-    return remoteTypeDefinition;
+    this.registerChange(remoteSource);
+    return remoteSource;
+  }
+
+  updateRESTRemoteSource(args: any): RemoteSource {
+    const remoteSource = new RemoteSourceClass(
+      MutationMode.Update,
+      "REST",
+      args
+    );
+    this.registerChange(remoteSource);
+    return remoteSource;
+  }
+
+  deleteRemoteSource(args: any): RemoteSource {
+    const remoteSource = new RemoteSourceClass(
+      MutationMode.Delete,
+      "REST",
+      args
+    );
+    this.registerChange(remoteSource);
+    return remoteSource;
   }
 
   createEnumeration(args: any): EnumerationCreate {

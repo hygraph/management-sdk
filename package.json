@@ -19,6 +19,7 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint --ignore-pattern src/generated/**",
+    "format": "tsdx lint --ignore-pattern src/generated/** --fix",
     "prepare": "graphql-codegen && tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
