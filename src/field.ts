@@ -11,7 +11,7 @@ import {
   GraphQLBatchMigrationUpdateUnionFieldInput,
 } from "./generated/schema";
 
-type FieldArgs =
+export type FieldArgs =
   | GraphQLBatchMigrationCreateSimpleFieldInput
   | GraphQLBatchMigrationUpdateSimpleFieldInput
   | GraphQLBatchMigrationCreateRelationalFieldInput

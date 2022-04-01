@@ -20,6 +20,7 @@ import {
   GraphQLFieldValidationFloatRangeInput,
   GraphQLFieldValidationIntRangeInput,
   GraphQLFieldValidationRegExInput,
+  GraphQLRelationalFieldType,
   GraphQLSimpleFieldType,
   GraphQLSimpleFieldValidationsInput,
 } from "./generated/schema";
@@ -156,6 +157,7 @@ interface UpdateEnumerableFieldArgs
 
 interface CreateRemoteFieldArgs
   extends Omit<GraphQLBatchMigrationCreateRemoteFieldInput, "parentApiId"> {}
+
 interface UpdateRemoteFieldArgs
   extends Omit<GraphQLBatchMigrationUpdateRemoteFieldInput, "parentApiId"> {}
 
@@ -279,13 +281,17 @@ class ModelClass implements Model, ChangeItem {
   addRelationalField(passedFieldArgs: any): Model {
     const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
+
+    const fieldTypeUpper = fieldArgs.type?.toUpperCase();
+    const fieldModelUpper = fieldArgs.model?.toUpperCase();
+
     if (
-      (fieldArgs.type && fieldArgs.type === "ASSET") ||
-      (fieldArgs.model && fieldArgs.model === "Asset")
+      fieldTypeUpper === GraphQLRelationalFieldType.Asset ||
+      fieldModelUpper === GraphQLRelationalFieldType.Asset
     ) {
-      fieldArgs.type = "ASSET";
+      fieldArgs.type = GraphQLRelationalFieldType.Asset;
     } else {
-      fieldArgs.type = "RELATION";
+      fieldArgs.type = GraphQLRelationalFieldType.Relation;
     }
 
     if (!fieldArgs.reverseField) {
@@ -294,6 +300,7 @@ class ModelClass implements Model, ChangeItem {
         displayName: `Related ${fieldArgs.modelApiId}`,
       };
     }
+
     fieldArgs.reverseField.modelApiId = fieldArgs.model;
 
     fieldArgs.isList =
@@ -303,8 +310,8 @@ class ModelClass implements Model, ChangeItem {
       fieldArgs.relationType === RelationType.ManyToOne ||
       fieldArgs.relationType === RelationType.ManyToMany;
 
-    if (fieldArgs.type === "ASSET") {
-      // assets needs the isRequired field
+    if (fieldArgs.type === GraphQLRelationalFieldType.Asset) {
+      // Asset needs the isRequired field
       if (fieldArgs.isRequired === undefined) {
         fieldArgs.isRequired = false;
       }
@@ -368,6 +375,15 @@ class ModelClass implements Model, ChangeItem {
   updateRelationalField(passedFieldArgs: any): Model {
     const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
+    fieldArgs.reverseField = passedFieldArgs?.reverseField;
+
+    if (
+      fieldArgs.modelApiId?.toUpperCase() ===
+        GraphQLRelationalFieldType.Asset &&
+      fieldArgs.isRequired !== undefined
+    ) {
+      fieldArgs.isRequired = Boolean(fieldArgs.isRequired);
+    }
 
     const field = new Field(
       fieldArgs,
@@ -382,6 +398,7 @@ class ModelClass implements Model, ChangeItem {
     const fieldArgs = { ...passedFieldArgs };
     fieldArgs.modelApiId = this.args.apiId;
     fieldArgs.reverseField = {
+      ...passedFieldArgs?.reverseField,
       modelApiIds: fieldArgs.models,
     };
 
@@ -467,10 +484,7 @@ class ModelClass implements Model, ChangeItem {
       return true;
     }
     // apiId is always a requirement, length of 1 means its apiId only.
-    if (Object.keys(this.args).length > 1) {
-      return true;
-    }
-    return false;
+    return Object.keys(this.args).length > 1;
   }
 
   generateChange(): MigrationChange {
