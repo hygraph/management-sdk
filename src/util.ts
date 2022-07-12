@@ -61,13 +61,10 @@ async function fetchEnvironment(
     }
     `;
 
-  const variables = {
-    endpoint: contentAPIEndpoint,
-  };
 
   try {
     const notFound = `environment with endpoint '${contentAPIEndpoint}' not found`;
-    const res = await client.request(query, variables);
+    const res = await client.request(query);
 
     const project = res?.viewer?.project;
     const projects = res?.viewer?.projects;
