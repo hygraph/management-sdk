@@ -62,7 +62,7 @@ async function fetchEnvironment(
     `;
 
   const variables = {
-    endpoint: contentAPIEndpoint
+    endpoint: contentAPIEndpoint,
   };
 
   try {
