@@ -33,6 +33,7 @@ async function fetchEnvironment(
   client: GraphQLClient,
   endpoint: string
 ): Promise<EnvironmentInfo> {
+  const contentAPIEndpoint = endpoint.replace("graphcms.com", "hygraph.com");
   const query = `
     {
       viewer {
@@ -61,11 +62,11 @@ async function fetchEnvironment(
     `;
 
   const variables = {
-    endpoint,
+    endpoint: contentAPIEndpoint,
   };
 
   try {
-    const notFound = `environment with endpoint '${endpoint}' not found`;
+    const notFound = `environment with endpoint '${contentAPIEndpoint}' not found`;
     const res = await client.request(query, variables);
 
     const project = res?.viewer?.project;
@@ -76,7 +77,7 @@ async function fetchEnvironment(
     if (projects) {
       for (const p of projects) {
         for (const environment of p.environments) {
-          if (environment.endpoint === endpoint) {
+          if (environment.endpoint === contentAPIEndpoint) {
             environment.projectId = p.id;
             return environment;
           }
@@ -84,7 +85,7 @@ async function fetchEnvironment(
       }
     } else {
       for (const environment of project.environments) {
-        if (environment.endpoint === endpoint) {
+        if (environment.endpoint === contentAPIEndpoint) {
           environment.projectId = project.id;
           return environment;
         }
