@@ -61,7 +61,6 @@ async function fetchEnvironment(
     }
     `;
 
-
   try {
     const notFound = `environment with endpoint '${contentAPIEndpoint}' not found`;
     const res = await client.request(query);
