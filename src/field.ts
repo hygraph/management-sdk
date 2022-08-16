@@ -1,11 +1,15 @@
 import { ChangeItem, MigrationChange } from "./migration";
 import { MutationMode } from "./util";
 import {
+  GraphQLBatchMigrationCreateComponentFieldInput,
+  GraphQLBatchMigrationCreateComponentUnionFieldInput,
   GraphQLBatchMigrationCreateEnumerableFieldInput,
   GraphQLBatchMigrationCreateRelationalFieldInput,
   GraphQLBatchMigrationCreateRemoteFieldInput,
   GraphQLBatchMigrationCreateSimpleFieldInput,
   GraphQLBatchMigrationCreateUnionFieldInput,
+  GraphQLBatchMigrationUpdateComponentFieldInput,
+  GraphQLBatchMigrationUpdateComponentUnionFieldInput,
   GraphQLBatchMigrationUpdateRelationalFieldInput,
   GraphQLBatchMigrationUpdateSimpleFieldInput,
   GraphQLBatchMigrationUpdateUnionFieldInput,
@@ -19,7 +23,11 @@ export type FieldArgs =
   | GraphQLBatchMigrationCreateEnumerableFieldInput
   | GraphQLBatchMigrationCreateUnionFieldInput
   | GraphQLBatchMigrationUpdateUnionFieldInput
-  | GraphQLBatchMigrationCreateRemoteFieldInput;
+  | GraphQLBatchMigrationCreateRemoteFieldInput
+  | GraphQLBatchMigrationCreateComponentFieldInput
+  | GraphQLBatchMigrationUpdateComponentFieldInput
+  | GraphQLBatchMigrationCreateComponentUnionFieldInput
+  | GraphQLBatchMigrationUpdateComponentUnionFieldInput;
 
 enum FieldType {
   SimpleField = 1,
@@ -27,6 +35,8 @@ enum FieldType {
   EnumerableField,
   UnionField,
   RemoteField,
+  ComponentField,
+  ComponentUnionField,
 }
 
 /**

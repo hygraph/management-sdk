@@ -8,6 +8,8 @@ import {
   submitMigration,
 } from "./util";
 import {
+  GraphQLBatchMigrationCreateComponentInput,
+  GraphQLBatchMigrationUpdateComponentInput,
   GraphQLBatchMigrationCreateEnumerationInput,
   GraphQLBatchMigrationCreateModelInput,
   GraphQLBatchMigrationUpdateModelInput,
@@ -31,6 +33,7 @@ import {
 import { Stage, StageClass } from "./stage";
 import { Locale, LocaleClass } from "./locale";
 import { RemoteSource, RemoteSourceClass } from "./remoteSource";
+import { Component, ComponentClass } from "./component";
 
 /**
  * @ignore
@@ -214,6 +217,30 @@ interface Migration {
    * @param apiId the `apiId` of the locale to delete.
    */
   deleteLocale(apiId: string): void;
+
+  /**
+   * Fetch an existing component
+   * @param apiId the `apiId` for the component.
+   */
+  component(apiId: string): Component;
+
+  /**
+   * Create a new component
+   * @param args options for the new component.
+   */
+  createComponent(args: GraphQLBatchMigrationCreateComponentInput): Component;
+
+  /**
+   * Update an existing component
+   * @param args options for component update.
+   */
+  updateComponent(args: GraphQLBatchMigrationUpdateComponentInput): Component;
+
+  /**
+   * Delete a component
+   * @param apiId the `apiId` of the component to delete.
+   */
+  deleteComponent(apiId: string): void;
 }
 
 /**
@@ -278,6 +305,29 @@ class MigrationClass implements Migration, ChangeListener {
     const model = new ModelClass(this, MutationMode.Delete, { apiId });
     this.registerChange(model);
     return model;
+  }
+
+  component(apiId: string): Component {
+    const component = new ComponentClass(this, MutationMode.Update, { apiId });
+    return component;
+  }
+
+  createComponent(args: any): Component {
+    const component = new ComponentClass(this, MutationMode.Create, args);
+    this.registerChange(component);
+    return component;
+  }
+
+  updateComponent(args: any): Component {
+    const component = new ComponentClass(this, MutationMode.Update, args);
+    this.registerChange(component);
+    return component;
+  }
+
+  deleteComponent(apiId: string) {
+    const component = new ComponentClass(this, MutationMode.Delete, { apiId });
+    this.registerChange(component);
+    return component;
   }
 
   createGraphQLRemoteSource(args: any): RemoteSource {
