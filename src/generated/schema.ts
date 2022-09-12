@@ -5066,6 +5066,32 @@ export type GraphQLBatchMigrationDeleteRemoteSourceInput = {
   prefix: Scalars["String"];
 };
 
+/** Creating a custom sidebar element with app element */
+export type GraphQLBatchMigrationCreateCustomSidebarElementInput = {
+  /** Api Id of the model associated with the custom sidebar element */
+  modelApiId: Scalars["String"];
+  /** Display name for the sidebar element */
+  displayName: Scalars["String"];
+  /** Description name for the sidebar element */
+  description?: Maybe<Scalars["String"]>;
+  /** Json metadata associated with the sidebar element */
+  config?: Maybe<Scalars["JSON"]>;
+  /** Api Id of the App element to create custom sidebar element with */
+  appElementApiId: Scalars["String"];
+  /** Api Id of the App */
+  appApiId: Scalars["String"];
+};
+
+/** Deleting a custom sidebar element created by app element */
+export type GraphQLBatchMigrationDeleteCustomSidebarElementInput = {
+  /** Api Id of the App */
+  appApiId: Scalars["String"];
+  /** Api Id of the App element associated with the custom sidebar element */
+  appElementApiId: Scalars["String"];
+  /** Api Id of the model associated with the custom sidebar element */
+  modelApiId: Scalars["String"];
+};
+
 export type GraphQLBatchMigrationChangeInput = {
   /** creates a new model */
   createModel?: Maybe<GraphQLBatchMigrationCreateModelInput>;
@@ -5101,6 +5127,12 @@ export type GraphQLBatchMigrationChangeInput = {
     GraphQLBatchMigrationUpdateEnumerableFieldInput
   >;
   deleteField?: Maybe<GraphQLBatchMigrationDeleteFieldInput>;
+  createCustomSidebarElement?: Maybe<
+    GraphQLBatchMigrationCreateCustomSidebarElementInput
+  >;
+  deleteCustomSidebarElement?: Maybe<
+    GraphQLBatchMigrationDeleteCustomSidebarElementInput
+  >;
   createEnumeration?: Maybe<GraphQLBatchMigrationCreateEnumerationInput>;
   updateEnumeration?: Maybe<GraphQLBatchMigrationUpdateEnumerationInput>;
   deleteEnumeration?: Maybe<GraphQLBatchMigrationDeleteEnumerationInput>;

@@ -130,13 +130,12 @@ interface UpdateSimpleFieldArgs
 /**
  * Create Component Field
  */
-
 interface CreateComponentFieldArgs
   extends Omit<
     GraphQLBatchMigrationCreateComponentFieldInput,
     "componentApiId"
   > {
-  components?: string[];
+  component?: string;
   componentApiIds: string[];
   componentApiId: string;
 }
@@ -147,6 +146,45 @@ interface CreateComponentFieldArgs
 interface UpdateComponentFieldArgs
   extends Omit<
     GraphQLBatchMigrationUpdateComponentFieldInput,
+    "componentApiId"
+  > {
+  component?: string;
+  componentApiIds: string[];
+  componentApiId: string;
+}
+
+/**
+ * Create Component Field
+ */
+interface CreateComponentFieldArgs
+  extends Omit<
+    GraphQLBatchMigrationCreateComponentFieldInput,
+    "componentApiId"
+  > {
+  component?: string;
+  componentApiIds: string[];
+  componentApiId: string;
+}
+
+/**
+ * Update Component Union Field
+ */
+interface UpdateComponentUnionFieldArgs
+  extends Omit<
+    GraphQLBatchMigrationUpdateComponentFieldInput,
+    "componentApiId"
+  > {
+  components?: string[];
+  componentApiIds: string[];
+  componentApiId: string;
+}
+
+/**
+ * Create Component Union Field
+ */
+interface CreateComponentUnionFieldArgs
+  extends Omit<
+    GraphQLBatchMigrationCreateComponentFieldInput,
     "componentApiId"
   > {
   components?: string[];
@@ -244,13 +282,35 @@ interface Model {
    * Add a new component to the model.
    * @param field options for the field.
    */
-  addComponentField(field: Omit<CreateComponentFieldArgs, "modelApiId">): Model;
+  addComponentField(
+    field: Omit<
+      CreateComponentFieldArgs,
+      "modelApiId" | "parentApiId" | "componentApiIds"
+    >
+  ): Model;
+
+  /**
+   * Add a new component union field to the model.
+   * @param field options for the field.
+   */
+  addComponentUnionField(
+    field: Omit<
+      CreateComponentUnionFieldArgs,
+      "modelApiId" | "parentApiId" | "componentApiId"
+    >
+  ): Model;
 
   /**
    * update a component field
    * @param field options for the field.
    */
   updateComponentField(field: UpdateComponentFieldArgs): Model;
+
+  /**
+   * update a component field
+   * @param field options for the field.
+   */
+  updateComponentUnionField(field: UpdateComponentUnionFieldArgs): Model;
 
   /**
    * Create an enumerable field.
@@ -462,22 +522,18 @@ class ModelClass implements Model, ChangeItem {
   addComponentField(passedFieldArgs: CreateComponentFieldArgs): Model {
     const fieldArgs = { ...passedFieldArgs };
     fieldArgs.parentApiId = this.args.apiId;
-    if (!fieldArgs.components || fieldArgs.components.length === 0) {
+    if (!fieldArgs.component) {
       throw new Error(`components cannot be empty`);
     }
-    const isMultiple = fieldArgs?.components?.length > 1;
-    if (isMultiple) {
-      fieldArgs.componentApiIds = fieldArgs.components;
-    } else {
-      fieldArgs.componentApiId = fieldArgs?.components[0];
-    }
+
+    fieldArgs.componentApiId = fieldArgs?.component;
     // remove convenience field
-    delete fieldArgs.components;
+    delete fieldArgs.component;
 
     const field = new Field(
       fieldArgs,
       MutationMode.Create,
-      isMultiple ? FieldType.ComponentUnionField : FieldType.ComponentField
+      FieldType.ComponentField
     );
     this.listener.registerChange(field);
     return this;
@@ -486,21 +542,61 @@ class ModelClass implements Model, ChangeItem {
   updateComponentField(passedFieldArgs: UpdateComponentFieldArgs): Model {
     const fieldArgs = { ...passedFieldArgs };
     fieldArgs.parentApiId = this.args.apiId;
+    if (!fieldArgs.component) {
+      throw new Error(`components cannot be empty`);
+    }
+
+    // remove convenience field
+    delete fieldArgs.component;
+
+    const field = new Field(
+      fieldArgs,
+      MutationMode.Update,
+      FieldType.ComponentField
+    );
+    this.listener.registerChange(field);
+    return this;
+  }
+
+  addComponentUnionField(
+    passedFieldArgs: CreateComponentUnionFieldArgs
+  ): Model {
+    const fieldArgs = { ...passedFieldArgs };
+    fieldArgs.parentApiId = this.args.apiId;
     if (!fieldArgs.components || fieldArgs.components.length === 0) {
       throw new Error(`components cannot be empty`);
     }
-    const isMultiple = fieldArgs?.components.length > 1;
-    if (isMultiple) {
-      fieldArgs.componentApiIds = fieldArgs.components;
+
+    fieldArgs.componentApiIds = fieldArgs?.components;
+    // remove convenience field
+    delete fieldArgs.components;
+
+    const field = new Field(
+      fieldArgs,
+      MutationMode.Create,
+      FieldType.ComponentUnionField
+    );
+    this.listener.registerChange(field);
+    return this;
+  }
+
+  updateComponentUnionField(
+    passedFieldArgs: UpdateComponentUnionFieldArgs
+  ): Model {
+    const fieldArgs = { ...passedFieldArgs };
+    fieldArgs.parentApiId = this.args.apiId;
+    if (!fieldArgs.components || fieldArgs.components.length === 0) {
+      throw new Error(`components cannot be empty`);
     }
 
+    fieldArgs.componentApiIds = fieldArgs?.components;
     // remove convenience field
     delete fieldArgs.components;
 
     const field = new Field(
       fieldArgs,
       MutationMode.Update,
-      isMultiple ? FieldType.ComponentUnionField : FieldType.ComponentField
+      FieldType.ComponentUnionField
     );
     this.listener.registerChange(field);
     return this;
