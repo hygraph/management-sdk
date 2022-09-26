@@ -25,7 +25,7 @@
 
 ---
 
-⚠️ **@graphcms/management has been deprecated. Please use [@hygraph/management-sdk](https://www.npmjs.com/package/@hygraph/management-sdk) instead. Follow [this](https://hygraph.com/docs/api-reference/developer-tools/management-sdk#migration) guide to migrate to newer SDK. More information on newer SDK can be found [here](https://hygraph.com/docs/api-reference/developer-tools/management-sdk).** ⚠️
+⚠️ **@graphcms/management has been deprecated and will no longer receive support. Please use [@hygraph/management-sdk](https://www.npmjs.com/package/@hygraph/management-sdk) instead. Follow [this](https://hygraph.com/docs/api-reference/developer-tools/management-sdk#migration) guide to migrate to the new SDK. More information on the new SDK can be found [here](https://hygraph.com/docs/api-reference/developer-tools/management-sdk).** ⚠️
 
 ---
 
