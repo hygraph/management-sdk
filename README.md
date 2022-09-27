@@ -23,6 +23,12 @@
   <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
 </p>
 
+---
+
+⚠️ **@graphcms/management has been deprecated and will no longer receive support. Please use [@hygraph/management-sdk](https://www.npmjs.com/package/@hygraph/management-sdk) instead. Follow [this](https://hygraph.com/docs/api-reference/developer-tools/management-sdk#migration) guide to migrate to the new SDK. More information on the new SDK can be found [here](https://hygraph.com/docs/api-reference/developer-tools/management-sdk).** ⚠️
+
+---
+
 ## Quickstart
 
 ```js
