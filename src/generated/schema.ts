@@ -23,7 +23,6 @@ export enum GraphQLCacheControlScope {
   Private = "PRIVATE",
 }
 
-/** ### ASSETS: */
 export type GraphQLIAssetConfig = {
   apiKey: Scalars["String"];
 };
@@ -215,7 +214,7 @@ export type GraphQLCreateContentViewInput = {
 
 export type GraphQLUpdateContentViewInput = {
   id: Scalars["ID"];
-  name: Scalars["String"];
+  name?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
   columns: Array<GraphQLContentViewColumnInput>;
   orderBy?: Maybe<GraphQLOrderByInput>;
@@ -244,12 +243,14 @@ export type GraphQLInvite = {
   project: GraphQLProject;
   acceptedAt?: Maybe<Scalars["DateTime"]>;
   roles: Array<GraphQLRole>;
+  origin?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLSendInviteInput = {
   email: Scalars["String"];
   projectId: Scalars["ID"];
   roleIds: Array<Scalars["ID"]>;
+  origin?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLRevokeInviteInput = {
@@ -330,11 +331,8 @@ export type GraphQLStats = {
 
 export type GraphQLMetrics = {
   __typename?: "Metrics";
-  /** The number of API operations */
   apiOperations: Array<GraphQLStats>;
-  /** The asset traffic in Byte */
   assetTraffic: Array<GraphQLStats>;
-  /** The number of used asset transformations */
   assetTransformations: Array<GraphQLStats>;
 };
 
@@ -425,7 +423,6 @@ export type GraphQLLeaveTrialInput = {
   projectId: Scalars["ID"];
 };
 
-/** ### TOKENS: */
 export enum GraphQLPermanentAuthTokenAudience {
   ContentApi = "CONTENT_API",
   ManagementApi = "MANAGEMENT_API",
@@ -474,127 +471,101 @@ export type GraphQLDeletePermanentAuthTokenPayload = {
 };
 
 export enum GraphQLPermissionAction {
-  /**
-   * Project-level
-   * Virtual permission used to perform a project ownership check
-   */
   ProjectClone = "PROJECT_CLONE",
   ProjectUpdate = "PROJECT_UPDATE",
-  /** Virtual permission used to perform a project ownership check */
   ProjectDelete = "PROJECT_DELETE",
-  /** Virtual permission used to perform a project ownership check */
   ManagePayment = "MANAGE_PAYMENT",
   PlaygroundUse = "PLAYGROUND_USE",
   AuditLogsRead = "AUDIT_LOGS_READ",
-  /** View Permissions that need to be moved to a new concept eventually */
   ViewTeamMemberSettings = "VIEW_TEAM_MEMBER_SETTINGS",
   ViewRolePermissionSettings = "VIEW_ROLE_PERMISSION_SETTINGS",
-  /** Environments */
+  ViewSchema = "VIEW_SCHEMA",
   EnvironmentCreate = "ENVIRONMENT_CREATE",
   EnvironmentRead = "ENVIRONMENT_READ",
   EnvironmentUpdate = "ENVIRONMENT_UPDATE",
   EnvironmentDelete = "ENVIRONMENT_DELETE",
   EnvironmentPromote = "ENVIRONMENT_PROMOTE",
-  /** Models */
   ModelCreate = "MODEL_CREATE",
   ModelRead = "MODEL_READ",
   ModelUpdate = "MODEL_UPDATE",
   ModelDelete = "MODEL_DELETE",
-  /** Components */
   ComponentCreate = "COMPONENT_CREATE",
   ComponentRead = "COMPONENT_READ",
   ComponentUpdate = "COMPONENT_UPDATE",
   ComponentDelete = "COMPONENT_DELETE",
-  /** Locales */
   LocaleCreate = "LOCALE_CREATE",
   LocaleRead = "LOCALE_READ",
   LocaleUpdate = "LOCALE_UPDATE",
   LocaleDelete = "LOCALE_DELETE",
-  /** Stages */
   StageCreate = "STAGE_CREATE",
   StageRead = "STAGE_READ",
   StageUpdate = "STAGE_UPDATE",
   StageDelete = "STAGE_DELETE",
-  /** Enumerations */
   EnumerationCreate = "ENUMERATION_CREATE",
   EnumerationRead = "ENUMERATION_READ",
   EnumerationUpdate = "ENUMERATION_UPDATE",
   EnumerationDelete = "ENUMERATION_DELETE",
-  /** Fields */
   FieldCreate = "FIELD_CREATE",
   FieldRead = "FIELD_READ",
   FieldUpdate = "FIELD_UPDATE",
   FieldDelete = "FIELD_DELETE",
-  /** Remote Sources */
   RemoteSourceCreate = "REMOTE_SOURCE_CREATE",
   RemoteSourceRead = "REMOTE_SOURCE_READ",
   RemoteSourceUpdate = "REMOTE_SOURCE_UPDATE",
   RemoteSourceDelete = "REMOTE_SOURCE_DELETE",
-  /** PATs */
   PatCreate = "PAT_CREATE",
   PatRead = "PAT_READ",
   PatUpdate = "PAT_UPDATE",
   PatDelete = "PAT_DELETE",
-  /** Content Views */
   ContentviewCreate = "CONTENTVIEW_CREATE",
   ContentviewRead = "CONTENTVIEW_READ",
   ContentviewUpdate = "CONTENTVIEW_UPDATE",
   ContentviewSystemUpdate = "CONTENTVIEW_SYSTEM_UPDATE",
   ContentviewDelete = "CONTENTVIEW_DELETE",
-  /** Project Storage Buckets */
   StorageBucketCreate = "STORAGE_BUCKET_CREATE",
   StorageBucketRead = "STORAGE_BUCKET_READ",
   StorageBucketUpdate = "STORAGE_BUCKET_UPDATE",
   StorageBucketDelete = "STORAGE_BUCKET_DELETE",
-  /** Roles */
   RoleCreate = "ROLE_CREATE",
   RoleUpdate = "ROLE_UPDATE",
   RoleDelete = "ROLE_DELETE",
-  /** Webhooks */
   WebhookCreate = "WEBHOOK_CREATE",
   WebhookRead = "WEBHOOK_READ",
   WebhookUpdate = "WEBHOOK_UPDATE",
   WebhookDelete = "WEBHOOK_DELETE",
-  /** Users */
   UserInvite = "USER_INVITE",
   UserAssignrole = "USER_ASSIGNROLE",
   UserRemove = "USER_REMOVE",
-  /** View Groups */
   ViewGroupCreate = "VIEW_GROUP_CREATE",
   ViewGroupRead = "VIEW_GROUP_READ",
   ViewGroupUpdate = "VIEW_GROUP_UPDATE",
   ViewGroupDelete = "VIEW_GROUP_DELETE",
-  /**
-   * deprecated!
-   * Content (actual Content API permission)
-   */
   ContentCreate = "CONTENT_CREATE",
   ContentRead = "CONTENT_READ",
   ContentUpdate = "CONTENT_UPDATE",
   ContentDelete = "CONTENT_DELETE",
   ContentPublish = "CONTENT_PUBLISH",
   ContentUpdatePublished = "CONTENT_UPDATE_PUBLISHED",
-  /** Content Permissions */
   ContentPermissionCreate = "CONTENT_PERMISSION_CREATE",
   ContentPermissionRead = "CONTENT_PERMISSION_READ",
   ContentPermissionUpdate = "CONTENT_PERMISSION_UPDATE",
   ContentPermissionDelete = "CONTENT_PERMISSION_DELETE",
-  /** Integration */
   IntegrationCreate = "INTEGRATION_CREATE",
   IntegrationRead = "INTEGRATION_READ",
   IntegrationUpdate = "INTEGRATION_UPDATE",
   IntegrationDelete = "INTEGRATION_DELETE",
   NetlifyTriggerBuild = "NETLIFY_TRIGGER_BUILD",
   VercelTriggerBuild = "VERCEL_TRIGGER_BUILD",
-  /** Extension */
   ExtensionCreate = "EXTENSION_CREATE",
   ExtensionRead = "EXTENSION_READ",
   ExtensionUpdate = "EXTENSION_UPDATE",
   ExtensionDelete = "EXTENSION_DELETE",
-  /** Sidebar elements */
-  SidebarElementCreate = "SIDEBAR_ELEMENT_CREATE",
-  SidebarElementUpdate = "SIDEBAR_ELEMENT_UPDATE",
-  SidebarElementDelete = "SIDEBAR_ELEMENT_DELETE",
+  AppCreate = "APP_CREATE",
+  AppUpdate = "APP_UPDATE",
+  AppDelete = "APP_DELETE",
+  AppInstallationCreate = "APP_INSTALLATION_CREATE",
+  AppInstallationUpdate = "APP_INSTALLATION_UPDATE",
+  AppInstallationDelete = "APP_INSTALLATION_DELETE",
 }
 
 export type GraphQLPermanentAuthTokenDefaultsInput = {
@@ -795,14 +766,12 @@ export type GraphQLProject = {
   subscription: GraphQLPaymentSubscription;
   invites: Array<GraphQLInvite>;
   owner: GraphQLMember;
-  /** Will be null if viewer is not a user */
   viewerAsMember?: Maybe<GraphQLMember>;
   region: GraphQLRegion;
   existingRoles: Array<GraphQLRole>;
   existingRole: GraphQLRole;
   environments: Array<GraphQLEnvironment>;
   environment: GraphQLEnvironment;
-  /** List of all members of the given project */
   members: Array<GraphQLMember>;
   membersConnection: GraphQLMembersConnection;
   quotas: GraphQLQuota;
@@ -812,11 +781,12 @@ export type GraphQLProject = {
   isCloning?: Maybe<Scalars["Boolean"]>;
   meta: Scalars["JSON"];
   auditLogs: GraphQLAuditLogsPayload;
-  /** List all Permissions usable/assignable to roles in this project */
   availableManagementPermissions: Array<GraphQLManagementPermission>;
   cloningProjects: Array<GraphQLCloningProject>;
   /** if this is `null` it means the project is not publicly clone-able */
   publicCloneAccess?: Maybe<GraphQLPublicCloneAccess>;
+  defaultPaginationSize?: Maybe<Scalars["Int"]>;
+  maxPaginationSize?: Maybe<Scalars["Int"]>;
 };
 
 export type GraphQLProjectExistingRoleArgs = {
@@ -901,6 +871,15 @@ export type GraphQL_SwitchOwnerInput = {
 
 export type GraphQL_SwitchOwnerPayload = {
   __typename?: "_SwitchOwnerPayload";
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQL_ResetContentConfigInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQL_ResetContentConfigPayload = {
+  __typename?: "_ResetContentConfigPayload";
   gcms?: Maybe<Scalars["String"]>;
 };
 
@@ -1061,7 +1040,6 @@ export type GraphQLRole = {
    */
   contentPermissions: Array<GraphQLIContentPermission>;
   managementPermissions: Array<GraphQLManagementPermission>;
-  /** List of all members that have at least this role */
   members: Array<GraphQLMember>;
   membersConnection: GraphQLMembersConnection;
 };
@@ -1120,7 +1098,6 @@ export type GraphQLIContentPermission = {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
 };
 
@@ -1131,20 +1108,14 @@ export type GraphQLReadContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<GraphQLLocale>>;
-  /** Allows only access to specific stages. If null all stages are allowed */
   stages?: Maybe<Array<GraphQLStage>>;
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateReadContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
@@ -1170,22 +1141,15 @@ export type GraphQLCreateContentPermissionTargetInput = {
 
 export type GraphQLCreateReadContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateReadContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only access to specific stages. If null all stages are allowed */
   stages?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type GraphQLUpdateReadContentPermissionInput = {
-  /** Id of the read permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateReadContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only access to specific stages. If null all stages are allowed */
   stages?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1206,20 +1170,16 @@ export type GraphQLReadVersionContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
 };
 
 export type GraphQLCreateReadVersionContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   modelId?: Maybe<Scalars["ID"]>;
 };
 
 export type GraphQLUpdateReadVersionContentPermissionInput = {
-  /** Id of the read permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   modelId?: Maybe<Scalars["ID"]>;
 };
 
@@ -1240,35 +1200,25 @@ export type GraphQLCreateContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<GraphQLLocale>>;
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateCreateContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateCreateContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateCreateContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type GraphQLUpdateCreateContentPermissionInput = {
-  /** Id of the read permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateCreateContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1289,35 +1239,25 @@ export type GraphQLUpdateContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<GraphQLLocale>>;
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateUpdateContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateUpdateContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateUpdateContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type GraphQLUpdateUpdateContentPermissionInput = {
-  /** Id of the update permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateUpdateContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1338,35 +1278,25 @@ export type GraphQLDeleteContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<GraphQLLocale>>;
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateDeleteContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateDeleteContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateDeleteContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type GraphQLUpdateDeleteContentPermissionInput = {
-  /** Id of the delete permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateUpdateContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1387,37 +1317,23 @@ export type GraphQLPublishContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<GraphQLLocale>>;
-  /** Allows only to publish from specific stages. If null all stages are allowed */
   fromStages?: Maybe<Array<GraphQLStage>>;
-  /** Allows only to publish to specific stages. If null all stages are allowed */
   toStages?: Maybe<Array<GraphQLStage>>;
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreatePublishContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /**
-   * Allows only access to specific fields. If null, all fields are allowed
-   * Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions.
-   */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreatePublishContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreatePublishContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only to publish from specific stages. If null all stages are allowed */
   fromStages?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only to publish to specific stages. If null all stages are allowed */
   toStages?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1427,25 +1343,15 @@ export type GraphQLCreatePublishContentPermissionPayload = {
 };
 
 export type GraphQLUpdatePublishContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /**
-   * Allows only access to specific fields. If null, all fields are allowed
-   * Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions.
-   */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLUpdatePublishContentPermissionInput = {
-  /** Id of the delete permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreatePublishContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only to publish from specific stages. If null all stages are allowed */
   fromStages?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only to publish to specific stages. If null all stages are allowed */
   toStages?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1461,33 +1367,21 @@ export type GraphQLUnpublishContentPermission = GraphQLIContentPermission & {
   updatedAt: Scalars["DateTime"];
   enabled: Scalars["Boolean"];
   target: GraphQLContentPermissionTarget;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLIModel>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<GraphQLLocale>>;
-  /** Allows only to publish from specific stages. If null all stages are allowed */
   stages?: Maybe<Array<GraphQLStage>>;
-  /** Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions. */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateUnpublishContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /**
-   * Allows only access to specific fields. If null, all fields are allowed
-   * Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions.
-   */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLCreateUnpublishContentPermissionInput = {
   target: GraphQLCreateContentPermissionTargetInput;
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLCreateUnpublishContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only to publish from specific stages. If null all stages are allowed */
   stages?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1497,23 +1391,14 @@ export type GraphQLCreateUnpublishContentPermissionPayload = {
 };
 
 export type GraphQLUpdateUnpublishContentPermissionModelInput = {
-  /** model id */
   id: Scalars["ID"];
-  /**
-   * Allows only access to specific fields. If null, all fields are allowed
-   * Allows access when conditions are met. Condition is a stringified JSON matching a usual where input. Ignored if there are no conditions.
-   */
   condition?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLUpdateUnpublishContentPermissionInput = {
-  /** Id of the delete permission that should be updated. */
   permissionId: Scalars["ID"];
-  /** Allows only access to this model. If null, all models are allowed. */
   model?: Maybe<GraphQLUpdateUnpublishContentPermissionModelInput>;
-  /** Allows only access to specific locales. If null, all locales are allowed */
   locales?: Maybe<Array<Scalars["ID"]>>;
-  /** Allows only to publish from specific stages. If null all stages are allowed */
   stages?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -1674,6 +1559,13 @@ export type GraphQLRemoteTypeDefinitionsConnection = {
   aggregate: GraphQLRemoteTypeDefinitionsAggregate;
 };
 
+export type GraphQLCommentingConfig = {
+  __typename?: "CommentingConfig";
+  url: Scalars["String"];
+  token: Scalars["String"];
+  userKey: Scalars["String"];
+};
+
 export type GraphQLEnvironment = {
   __typename?: "Environment";
   id: Scalars["ID"];
@@ -1707,7 +1599,10 @@ export type GraphQLEnvironment = {
   integration: GraphQLIIntegration;
   extensions: Array<GraphQLIExtension>;
   extension: GraphQLIExtension;
+  appInstallations: Array<GraphQLAppInstallation>;
+  appInstallation: GraphQLAppInstallation;
   diff: GraphQLDiffEnvironmentPayload;
+  commentingConfig?: Maybe<GraphQLCommentingConfig>;
 };
 
 export type GraphQLEnvironmentWebhookArgs = {
@@ -1739,6 +1634,14 @@ export type GraphQLEnvironmentExtensionArgs = {
   id: Scalars["ID"];
 };
 
+export type GraphQLEnvironmentAppInstallationsArgs = {
+  status?: Maybe<GraphQLAppInstallationStatus>;
+};
+
+export type GraphQLEnvironmentAppInstallationArgs = {
+  appApiId: Scalars["String"];
+};
+
 export type GraphQLEnvironmentDiffArgs = {
   environmentName: Scalars["String"];
 };
@@ -1751,7 +1654,6 @@ export type GraphQLPublicContentApiDefauts = {
 export type GraphQLPublicContentApi = {
   __typename?: "PublicContentAPI";
   defaults: GraphQLPublicContentApiDefauts;
-  /** returns configured content permissions used for public access of the environment */
   contentPermissions: Array<GraphQLIContentPermission>;
 };
 
@@ -1907,9 +1809,14 @@ export type GraphQLStage = {
 
 export type GraphQLProfile = {
   __typename?: "Profile";
+  id: Scalars["ID"];
   email: Scalars["String"];
   name: Scalars["String"];
   picture?: Maybe<Scalars["String"]>;
+  role?: Maybe<Scalars["String"]>;
+  purpose?: Maybe<Scalars["String"]>;
+  companyName?: Maybe<Scalars["String"]>;
+  companySize?: Maybe<Scalars["String"]>;
 };
 
 export type GraphQLIUser = {
@@ -1981,10 +1888,6 @@ export type GraphQLTechnologyStack = {
   url?: Maybe<Scalars["String"]>;
 };
 
-/**
- * Represents the logged in user
- * Will be removed soon
- */
 export type GraphQLViewer = GraphQLIUser & {
   __typename?: "Viewer";
   id: Scalars["ID"];
@@ -2005,26 +1908,14 @@ export type GraphQLViewer = GraphQLIUser & {
   availableExtensionPermissions: Array<GraphQLAvailableExtensionPermission>;
 };
 
-/**
- * Represents the logged in user
- * Will be removed soon
- */
 export type GraphQLViewerPendingInviteArgs = {
   code: Scalars["String"];
 };
 
-/**
- * Represents the logged in user
- * Will be removed soon
- */
 export type GraphQLViewerProjectArgs = {
   id: Scalars["ID"];
 };
 
-/**
- * Represents the logged in user
- * Will be removed soon
- */
 export type GraphQLViewerPaymentAccountArgs = {
   id: Scalars["ID"];
 };
@@ -2071,6 +1962,8 @@ export type GraphQLUserViewer = GraphQLIViewer & {
   projects: Array<GraphQLProject>;
   project?: Maybe<GraphQLProject>;
   commonAssetConfig: GraphQLCommonFilestack;
+  apps: Array<GraphQLApp>;
+  app: GraphQLApp;
 };
 
 export type GraphQLUserViewerPendingInviteArgs = {
@@ -2089,6 +1982,10 @@ export type GraphQLUserViewerProjectArgs = {
   id?: Maybe<Scalars["ID"]>;
 };
 
+export type GraphQLUserViewerAppArgs = {
+  apiId: Scalars["String"];
+};
+
 export type GraphQLTokenViewer = GraphQLIViewer & {
   __typename?: "TokenViewer";
   id: Scalars["ID"];
@@ -2105,7 +2002,6 @@ export type GraphQLTokenViewerProjectArgs = {
   id?: Maybe<Scalars["ID"]>;
 };
 
-/** Represents a user in a project */
 export type GraphQLMember = GraphQLIUser & {
   __typename?: "Member";
   id: Scalars["ID"];
@@ -2183,6 +2079,10 @@ export type GraphQLUpdateProfileInput = {
   jobTitle?: Maybe<Scalars["String"]>;
   jobRole?: Maybe<GraphQLProfileJobRole>;
   picture?: Maybe<Scalars["String"]>;
+  role?: Maybe<Scalars["String"]>;
+  purpose?: Maybe<Scalars["String"]>;
+  companyName?: Maybe<Scalars["String"]>;
+  companySize?: Maybe<Scalars["String"]>;
 };
 
 export enum GraphQLProfileJobRole {
@@ -2356,59 +2256,14 @@ export enum GraphQLWebhookLogOrderByInput {
 export type GraphQLWebhookLog = {
   __typename?: "WebhookLog";
   id: Scalars["String"];
-  /**
-   * """
-   * Payload that was send as the payload
-   * """
-   */
   requestPayload?: Maybe<Scalars["JSON"]>;
-  /**
-   * """
-   * Payload that was return by the webhook
-   * """
-   */
   responsePayload?: Maybe<Scalars["String"]>;
-  /**
-   * """
-   *  Size of the response payload in bytes
-   * """
-   */
   responsePayloadSize?: Maybe<Scalars["Int"]>;
-  /**
-   * """
-   *  Time when the webhook was called
-   * """
-   */
   calledAt: Scalars["DateTime"];
-  /**
-   * """
-   *  Status code of the response
-   * """
-   */
   statusCode: Scalars["Int"];
-  /**
-   * """
-   * Model on which the webhook was triggered
-   * """
-   */
   model?: Maybe<GraphQLIModel>;
-  /**
-   * """
-   * Action which triggered the webhook
-   * """
-   */
   triggerAction: GraphQLWebhookTriggerAction;
-  /**
-   * """
-   *  In case of errors shows how many retry attempts happened
-   * """
-   */
   attempts: Scalars["Int"];
-  /**
-   * """
-   *  Duration the request call took in milliseconds
-   * """
-   */
   duration: Scalars["Float"];
 };
 
@@ -2710,6 +2565,203 @@ export type GraphQLDeleteExtensionInput = {
   extensionId: Scalars["ID"];
 };
 
+export enum GraphQLAppPublicationStatus {
+  Private = "PRIVATE",
+  Pending = "PENDING",
+  Public = "PUBLIC",
+}
+
+export type GraphQLApp = {
+  __typename?: "App";
+  id: Scalars["ID"];
+  author: Scalars["ID"];
+  name: Scalars["String"];
+  apiId: Scalars["String"];
+  setupUrl: Scalars["String"];
+  webhookUrl?: Maybe<Scalars["String"]>;
+  configurationUrl?: Maybe<Scalars["String"]>;
+  elements?: Maybe<Array<GraphQLIAppElement>>;
+  avatarUrl: Scalars["String"];
+  description: Scalars["String"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  publicationStatus: GraphQLAppPublicationStatus;
+};
+
+export enum GraphQLAppElementType {
+  Field = "field",
+  FormSidebar = "formSidebar",
+  Page = "page",
+}
+
+export type GraphQLIAppElement = {
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  apiId: Scalars["String"];
+  type: GraphQLAppElementType;
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  src: Scalars["String"];
+  app: GraphQLApp;
+};
+
+export enum GraphQLFieldAppElementFeature {
+  FieldRenderer = "FieldRenderer",
+  ListRenderer = "ListRenderer",
+  TableRenderer = "TableRenderer",
+}
+
+export type GraphQLFieldAppElement = GraphQLIAppElement & {
+  __typename?: "FieldAppElement";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  apiId: Scalars["String"];
+  type: GraphQLAppElementType;
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  src: Scalars["String"];
+  features: Array<GraphQLFieldAppElementFeature>;
+  fieldType: GraphQLSimpleFieldType;
+  app: GraphQLApp;
+};
+
+export type GraphQLFormSidebarAppElement = GraphQLIAppElement & {
+  __typename?: "FormSidebarAppElement";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  apiId: Scalars["String"];
+  type: GraphQLAppElementType;
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  src: Scalars["String"];
+  app: GraphQLApp;
+};
+
+export type GraphQLPageAppElement = GraphQLIAppElement & {
+  __typename?: "PageAppElement";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  apiId: Scalars["String"];
+  type: GraphQLAppElementType;
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  src: Scalars["String"];
+  app: GraphQLApp;
+};
+
+export type GraphQLCreateAppInput = {
+  name: Scalars["String"];
+  apiId: Scalars["String"];
+  setupUrl: Scalars["String"];
+  avatarUrl: Scalars["String"];
+  description: Scalars["String"];
+  webhookUrl?: Maybe<Scalars["String"]>;
+  elements?: Maybe<Array<GraphQLAppElementInput>>;
+  configurationUrl?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLAppElementInput = {
+  id: Scalars["ID"];
+  apiId: Scalars["String"];
+  name: Scalars["String"];
+  type: GraphQLAppElementType;
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  src: Scalars["String"];
+  features?: Maybe<Array<GraphQLFieldAppElementFeature>>;
+  fieldType?: Maybe<GraphQLSimpleFieldType>;
+};
+
+export type GraphQLUpdateAppInput = {
+  apiId: Scalars["String"];
+  name?: Maybe<Scalars["String"]>;
+  setupUrl?: Maybe<Scalars["String"]>;
+  webhookUrl?: Maybe<Scalars["String"]>;
+  elements?: Maybe<Array<GraphQLAppElementInput>>;
+  avatarUrl?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  configurationUrl?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLDeleteAppInput = {
+  apiId: Scalars["String"];
+};
+
+export type GraphQLCreateAppPayload = {
+  __typename?: "CreateAppPayload";
+  createdApp: GraphQLApp;
+};
+
+export type GraphQLUpdateAppPayload = {
+  __typename?: "UpdateAppPayload";
+  updatedApp: GraphQLApp;
+};
+
+export type GraphQLDeleteAppPayload = {
+  __typename?: "DeleteAppPayload";
+  deletedAppId: Scalars["ID"];
+};
+
+export enum GraphQLAppInstallationStatus {
+  Pending = "PENDING",
+  Completed = "COMPLETED",
+  Disabled = "DISABLED",
+}
+
+export type GraphQLAppInstallation = {
+  __typename?: "AppInstallation";
+  id: Scalars["ID"];
+  environment: GraphQLEnvironment;
+  fields: Array<GraphQLIField>;
+  sidebarElements: Array<GraphQLAppSidebarElement>;
+  app: GraphQLApp;
+  config: Scalars["JSON"];
+  status: GraphQLAppInstallationStatus;
+  authToken: Scalars["String"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+};
+
+export type GraphQLCreateAppInstallationInput = {
+  environment: Scalars["ID"];
+  appApiId: Scalars["String"];
+  status?: Maybe<GraphQLAppInstallationStatus>;
+  config: Scalars["JSON"];
+};
+
+export type GraphQLUpdateAppInstallationInput = {
+  appInstallationId: Scalars["ID"];
+  config: Scalars["JSON"];
+  status?: Maybe<GraphQLAppInstallationStatus>;
+};
+
+export type GraphQLDeleteAppInstallationInput = {
+  appInstallationId: Scalars["ID"];
+};
+
+export type GraphQLCreateAppInstallationPayload = {
+  __typename?: "CreateAppInstallationPayload";
+  createdAppInstallation: GraphQLAppInstallation;
+};
+
+export type GraphQLUpdateAppInstallationPayload = {
+  __typename?: "UpdateAppInstallationPayload";
+  updatedAppInstallation: GraphQLAppInstallation;
+};
+
+export type GraphQLDeleteAppInstallationPayload = {
+  __typename?: "DeleteAppInstallationPayload";
+  deletedAppInstallationId: Scalars["ID"];
+};
+
 export type GraphQLEnumerationValue = {
   __typename?: "EnumerationValue";
   id: Scalars["ID"];
@@ -2963,7 +3015,6 @@ export type GraphQLSimpleField = GraphQLIField &
     validations?: Maybe<GraphQLSimpleFieldValidations>;
     meta?: Maybe<Scalars["JSON"]>;
     embedsEnabled?: Maybe<Scalars["Boolean"]>;
-    /** list of embeddable models */
     embeddableModels?: Maybe<Array<GraphQLIModel>>;
   };
 
@@ -3171,7 +3222,6 @@ export type GraphQLComponentField = GraphQLIField &
     meta?: Maybe<Scalars["JSON"]>;
   };
 
-/** rename to RelationUnionField maybe at some point */
 export type GraphQLUnionField = GraphQLIField &
   GraphQLIUnionField & {
     __typename?: "UnionField";
@@ -3203,7 +3253,6 @@ export type GraphQLUnionField = GraphQLIField &
     meta?: Maybe<Scalars["JSON"]>;
   };
 
-/** TODO: ModularComponentField is the name the designs use right now?! */
 export type GraphQLComponentUnionField = GraphQLIField &
   GraphQLIRequireableField & {
     __typename?: "ComponentUnionField";
@@ -3256,6 +3305,8 @@ export type GraphQLFieldConfig = {
   id: Scalars["String"];
   renderer: Scalars["String"];
   extension?: Maybe<GraphQLFieldExtension>;
+  appInstallation?: Maybe<GraphQLAppInstallation>;
+  appElement?: Maybe<GraphQLFieldAppElement>;
 };
 
 export type GraphQLMoveFieldPayload = {
@@ -3334,7 +3385,6 @@ export type GraphQLUpdateSimpleFieldInput = {
   validations?: Maybe<GraphQLSimpleFieldValidationsInput>;
   meta?: Maybe<Scalars["JSON"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
-  /** id's of embeddable models. */
   embeddableModels?: Maybe<GraphQLEmbeddableModelsInput>;
 };
 
@@ -3424,8 +3474,8 @@ export type GraphQLUpdateComponentUnionFieldInput = {
 export type GraphQLCreateMemberFieldInput = {
   /** ID of member model to add */
   modelId: Scalars["ID"];
-  apiId: Scalars["String"];
-  displayName: Scalars["String"];
+  apiId?: Maybe<Scalars["String"]>;
+  displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
   isHidden?: Maybe<Scalars["Boolean"]>;
   visibility?: Maybe<GraphQLVisibilityTypes>;
@@ -3463,6 +3513,8 @@ export type GraphQLFieldConfigInput = {
   renderer: Scalars["String"];
   config: Scalars["JSON"];
   extensionId?: Maybe<Scalars["ID"]>;
+  appInstallationId?: Maybe<Scalars["ID"]>;
+  appElementId?: Maybe<Scalars["ID"]>;
 };
 
 export type GraphQLFieldConfigUpdateInput = {
@@ -3498,7 +3550,6 @@ export type GraphQLCreateSimpleFieldInput = {
   meta?: Maybe<Scalars["JSON"]>;
   position?: Maybe<Scalars["Int"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
-  /** id's of embeddable models. Optional, but should be provided if embedsEnabled is true */
   embeddableModels?: Maybe<Array<Scalars["ID"]>>;
 };
 
@@ -3764,7 +3815,7 @@ export type GraphQLCreateUnionFieldInput = {
   isList: Scalars["Boolean"];
   isHidden?: Maybe<Scalars["Boolean"]>;
   visibility?: Maybe<GraphQLVisibilityTypes>;
-  reverseSide: GraphQLCreateReverseField;
+  reverseSide?: Maybe<GraphQLCreateReverseField>;
   tableConfig?: Maybe<GraphQLFieldConfigInput>;
   formConfig?: Maybe<GraphQLFieldConfigInput>;
   extensions?: Maybe<Scalars["JSON"]>;
@@ -3838,10 +3889,12 @@ export type GraphQLUpdateSidebarElementPayload = {
 
 export type GraphQLCreateCustomSidebarElementInput = {
   modelId: Scalars["ID"];
-  extensionId: Scalars["ID"];
+  extensionId?: Maybe<Scalars["ID"]>;
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
   config?: Maybe<Scalars["JSON"]>;
+  appElementId?: Maybe<Scalars["ID"]>;
+  appInstallationId?: Maybe<Scalars["ID"]>;
 };
 
 export type GraphQLCreateSystemSidebarElementInput = {
@@ -3947,6 +4000,8 @@ export type GraphQLIModelContentViewsArgs = {
 
 export type GraphQLSidebarElements =
   | GraphQLSystemSidebarElement
+  | GraphQLAppSidebarElement
+  | GraphQLExtensionSidebarElement
   | GraphQLCustomSidebarElement;
 
 export type GraphQLISidebarElement = {
@@ -3959,6 +4014,20 @@ export type GraphQLISidebarElement = {
   position: Scalars["Int"];
   isEnabled: Scalars["Boolean"];
   model: GraphQLIModel;
+};
+
+export type GraphQLCustomSidebarElement = GraphQLISidebarElement & {
+  __typename?: "CustomSidebarElement";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  position: Scalars["Int"];
+  isEnabled: Scalars["Boolean"];
+  model: GraphQLIModel;
+  extension: GraphQLSidebarExtension;
 };
 
 export enum GraphQLSystemSidebarElementType {
@@ -3984,8 +4053,8 @@ export type GraphQLSystemSidebarElement = GraphQLISidebarElement & {
   type: GraphQLSystemSidebarElementType;
 };
 
-export type GraphQLCustomSidebarElement = GraphQLISidebarElement & {
-  __typename?: "CustomSidebarElement";
+export type GraphQLExtensionSidebarElement = GraphQLISidebarElement & {
+  __typename?: "ExtensionSidebarElement";
   id: Scalars["ID"];
   createdAt: Scalars["DateTime"];
   updatedAt: Scalars["DateTime"];
@@ -3996,6 +4065,21 @@ export type GraphQLCustomSidebarElement = GraphQLISidebarElement & {
   isEnabled: Scalars["Boolean"];
   model: GraphQLIModel;
   extension: GraphQLSidebarExtension;
+};
+
+export type GraphQLAppSidebarElement = GraphQLISidebarElement & {
+  __typename?: "AppSidebarElement";
+  id: Scalars["ID"];
+  createdAt: Scalars["DateTime"];
+  updatedAt: Scalars["DateTime"];
+  displayName: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  config?: Maybe<Scalars["JSON"]>;
+  position: Scalars["Int"];
+  isEnabled: Scalars["Boolean"];
+  model: GraphQLIModel;
+  appElement: GraphQLFormSidebarAppElement;
+  appInstallation: GraphQLAppInstallation;
 };
 
 export type GraphQLModel = GraphQLIModel &
@@ -4383,6 +4467,15 @@ export type GraphQLUpdateEnvironmentPayload = {
   updatedEnvironment: GraphQLEnvironment;
 };
 
+export type GraphQLCommentingInfoInput = {
+  gcms?: Maybe<Scalars["String"]>;
+};
+
+export type GraphQLCommentingInfoPayload = {
+  __typename?: "CommentingInfoPayload";
+  gcms?: Maybe<Scalars["String"]>;
+};
+
 export type GraphQLQuery = {
   __typename?: "Query";
   metaInfo: GraphQLMetaInfo;
@@ -4440,9 +4533,13 @@ export type GraphQLDeleteEnvironmentPayload = {
 
 /** Creating a model. */
 export type GraphQLBatchMigrationCreateModelInput = {
+  /** The model apiId  */
   apiId: Scalars["String"];
+  /** The models plural apiId. This is used for lists  */
   apiIdPlural: Scalars["String"];
+  /** Display name that is used to render the model in the webapp */
   displayName: Scalars["String"];
+  /** Optional description of the model */
   description?: Maybe<Scalars["String"]>;
 };
 
@@ -4534,7 +4631,6 @@ export type GraphQLBatchMigrationCreateStageInput = {
 /** Deleting a field. */
 export type GraphQLBatchMigrationDeleteFieldInput = {
   apiId: Scalars["String"];
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
 };
@@ -4548,7 +4644,6 @@ export type GraphQLBatchMigrationEmbeddableModelsInput = {
 /** Creating a simple field. */
 export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   apiId: Scalars["String"];
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   type: GraphQLSimpleFieldType;
@@ -4571,15 +4666,9 @@ export type GraphQLBatchMigrationCreateSimpleFieldInput = {
   validations?: Maybe<GraphQLSimpleFieldValidationsInput>;
   migrationValue?: Maybe<Scalars["String"]>;
   embedsEnabled?: Maybe<Scalars["Boolean"]>;
-  /** id's of embeddable models. Optional, but should be provided if embedsEnabled is true */
   embeddableModels?: Maybe<Array<Scalars["String"]>>;
 };
 
-/**
- * """
- * Creating a remote field.
- * """
- */
 export type GraphQLBatchMigrationCreateRemoteFieldInput = {
   apiId: Scalars["String"];
   parentApiId: Scalars["String"];
@@ -4620,7 +4709,6 @@ export type GraphQLBatchMigrationUpdateRemoteFieldInput = {
 /** Creating an enumerable field. */
 export type GraphQLBatchMigrationCreateEnumerableFieldInput = {
   apiId: Scalars["String"];
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   enumerationApiId: Scalars["String"];
@@ -4644,7 +4732,6 @@ export type GraphQLBatchMigrationCreateEnumerableFieldInput = {
 export type GraphQLBatchMigrationUpdateUnionFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
@@ -4656,7 +4743,6 @@ export type GraphQLBatchMigrationUpdateUnionFieldInput = {
 /** Creating a union field */
 export type GraphQLBatchMigrationCreateUnionFieldInput = {
   apiId: Scalars["String"];
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   displayName: Scalars["String"];
@@ -4699,9 +4785,9 @@ export type GraphQLBatchMigrationCreateComponentUnionFieldInput = {
 
 /** reverse field args */
 export type GraphQLBatchMigrationCreateReverseUnionFieldInput = {
-  apiId: Scalars["String"];
+  apiId?: Maybe<Scalars["String"]>;
   modelApiIds: Array<Scalars["String"]>;
-  displayName: Scalars["String"];
+  displayName?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
   isList?: Maybe<Scalars["Boolean"]>;
   isHidden?: Maybe<Scalars["Boolean"]>;
@@ -4716,7 +4802,6 @@ export type GraphQLBatchMigrationUpdateReverseUnionFieldInput = {
 /** Creating a relational field */
 export type GraphQLBatchMigrationCreateRelationalFieldInput = {
   apiId: Scalars["String"];
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   type: GraphQLRelationalFieldType;
@@ -4740,7 +4825,6 @@ export type GraphQLBatchMigrationCreateRelationalFieldInput = {
 /** Creating a component field */
 export type GraphQLBatchMigrationCreateComponentFieldInput = {
   apiId: Scalars["String"];
-  /** model or content */
   parentApiId: Scalars["String"];
   displayName: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
@@ -4771,7 +4855,6 @@ export type GraphQLBatchMigrationCreateReverseRelationalFieldInput = {
 export type GraphQLBatchMigrationUpdateRelationalFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
@@ -4803,7 +4886,6 @@ export type GraphQLBatchMigrationUpdateComponentFieldInput = {
 export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
@@ -4826,7 +4908,6 @@ export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
   formExtension?: Maybe<Scalars["String"]>;
   formConfig?: Maybe<Scalars["JSON"]>;
   tableConfig?: Maybe<Scalars["JSON"]>;
-  /** id's of embeddable models. */
   embeddableModels?: Maybe<GraphQLBatchMigrationEmbeddableModelsInput>;
 };
 
@@ -4834,7 +4915,6 @@ export type GraphQLBatchMigrationUpdateSimpleFieldInput = {
 export type GraphQLBatchMigrationUpdateEnumerableFieldInput = {
   apiId: Scalars["String"];
   newApiId?: Maybe<Scalars["String"]>;
-  /** either modelApiId or parentApiId needs to be set */
   modelApiId?: Maybe<Scalars["String"]>;
   parentApiId?: Maybe<Scalars["String"]>;
   displayName?: Maybe<Scalars["String"]>;
@@ -4986,16 +5066,40 @@ export type GraphQLBatchMigrationDeleteRemoteSourceInput = {
   prefix: Scalars["String"];
 };
 
+/** Creating a custom sidebar element with app element */
+export type GraphQLBatchMigrationCreateCustomSidebarElementInput = {
+  /** Api Id of the model associated with the custom sidebar element */
+  modelApiId: Scalars["String"];
+  /** Display name for the sidebar element */
+  displayName: Scalars["String"];
+  /** Description name for the sidebar element */
+  description?: Maybe<Scalars["String"]>;
+  /** Json metadata associated with the sidebar element */
+  config?: Maybe<Scalars["JSON"]>;
+  /** Api Id of the App element to create custom sidebar element with */
+  appElementApiId: Scalars["String"];
+  /** Api Id of the App */
+  appApiId: Scalars["String"];
+};
+
+/** Deleting a custom sidebar element created by app element */
+export type GraphQLBatchMigrationDeleteCustomSidebarElementInput = {
+  /** Api Id of the App */
+  appApiId: Scalars["String"];
+  /** Api Id of the App element associated with the custom sidebar element */
+  appElementApiId: Scalars["String"];
+  /** Api Id of the model associated with the custom sidebar element */
+  modelApiId: Scalars["String"];
+};
+
 export type GraphQLBatchMigrationChangeInput = {
-  /** Models */
+  /** creates a new model */
   createModel?: Maybe<GraphQLBatchMigrationCreateModelInput>;
   updateModel?: Maybe<GraphQLBatchMigrationUpdateModelInput>;
   deleteModel?: Maybe<GraphQLBatchMigrationDeleteModelInput>;
-  /** Components */
   createComponent?: Maybe<GraphQLBatchMigrationCreateComponentInput>;
   updateComponent?: Maybe<GraphQLBatchMigrationUpdateComponentInput>;
   deleteComponent?: Maybe<GraphQLBatchMigrationDeleteComponentInput>;
-  /** Fields */
   createSimpleField?: Maybe<GraphQLBatchMigrationCreateSimpleFieldInput>;
   updateSimpleField?: Maybe<GraphQLBatchMigrationUpdateSimpleFieldInput>;
   createRemoteField?: Maybe<GraphQLBatchMigrationCreateRemoteFieldInput>;
@@ -5023,19 +5127,21 @@ export type GraphQLBatchMigrationChangeInput = {
     GraphQLBatchMigrationUpdateEnumerableFieldInput
   >;
   deleteField?: Maybe<GraphQLBatchMigrationDeleteFieldInput>;
-  /** Enumerations */
+  createCustomSidebarElement?: Maybe<
+    GraphQLBatchMigrationCreateCustomSidebarElementInput
+  >;
+  deleteCustomSidebarElement?: Maybe<
+    GraphQLBatchMigrationDeleteCustomSidebarElementInput
+  >;
   createEnumeration?: Maybe<GraphQLBatchMigrationCreateEnumerationInput>;
   updateEnumeration?: Maybe<GraphQLBatchMigrationUpdateEnumerationInput>;
   deleteEnumeration?: Maybe<GraphQLBatchMigrationDeleteEnumerationInput>;
-  /** Stage */
   createStage?: Maybe<GraphQLBatchMigrationCreateStageInput>;
   deleteStage?: Maybe<GraphQLBatchMigrationDeleteStageInput>;
   updateStage?: Maybe<GraphQLBatchMigrationUpdateStageInput>;
-  /** Locale */
   createLocale?: Maybe<GraphQLBatchMigrationCreateLocaleInput>;
   deleteLocale?: Maybe<GraphQLBatchMigrationDeleteLocaleInput>;
   updateLocale?: Maybe<GraphQLBatchMigrationUpdateLocaleInput>;
-  /** Remote Sources */
   createGraphQLRemoteSource?: Maybe<
     GraphQLBatchMigrationCreateGraphQlRemoteSourceInput
   >;
@@ -5481,6 +5587,12 @@ export type GraphQLMutation = {
   moveSidebarElement: GraphQLMoveSidebarElementPayload;
   updateSidebarElement: GraphQLUpdateSidebarElementPayload;
   resetSidebarElements: GraphQLResetSidebarElementsPayload;
+  createApp: GraphQLCreateAppPayload;
+  updateApp: GraphQLUpdateAppPayload;
+  deleteApp: GraphQLDeleteAppPayload;
+  createAppInstallation: GraphQLCreateAppInstallationPayload;
+  updateAppInstallation: GraphQLUpdateAppInstallationPayload;
+  deleteAppInstallation: GraphQLDeleteAppInstallationPayload;
   createStage: GraphQLAsyncOperationPayload;
   updateStage: GraphQLAsyncOperationPayload;
   deleteStage: GraphQLAsyncOperationPayload;
@@ -5845,6 +5957,30 @@ export type GraphQLMutationResetSidebarElementsArgs = {
   data: GraphQLResetSidebarElementsInput;
 };
 
+export type GraphQLMutationCreateAppArgs = {
+  data: GraphQLCreateAppInput;
+};
+
+export type GraphQLMutationUpdateAppArgs = {
+  data: GraphQLUpdateAppInput;
+};
+
+export type GraphQLMutationDeleteAppArgs = {
+  data: GraphQLDeleteAppInput;
+};
+
+export type GraphQLMutationCreateAppInstallationArgs = {
+  data: GraphQLCreateAppInstallationInput;
+};
+
+export type GraphQLMutationUpdateAppInstallationArgs = {
+  data: GraphQLUpdateAppInstallationInput;
+};
+
+export type GraphQLMutationDeleteAppInstallationArgs = {
+  data: GraphQLDeleteAppInstallationInput;
+};
+
 export type GraphQLMutationCreateStageArgs = {
   data: GraphQLCreateStageInput;
 };
@@ -6064,7 +6200,6 @@ export type GraphQLVercelIntegrationCallbackPayload = {
   error?: Maybe<Scalars["String"]>;
 };
 
-/** Base pending project with common information */
 export type GraphQLIPendingProject = {
   id: Scalars["ID"];
   name: Scalars["String"];
@@ -6072,13 +6207,11 @@ export type GraphQLIPendingProject = {
   picture?: Maybe<Scalars["String"]>;
 };
 
-/** Can clone from project or template */
 export type GraphQLCloningFrom =
   | GraphQLProject
   | GraphQLTemplate
   | GraphQLStarterTemplate;
 
-/** Cloning project with source */
 export type GraphQLCloningProject = GraphQLIPendingProject & {
   __typename?: "CloningProject";
   id: Scalars["ID"];
@@ -6088,7 +6221,6 @@ export type GraphQLCloningProject = GraphQLIPendingProject & {
   cloningFrom: GraphQLCloningFrom;
 };
 
-/** Add subscription to notify about changes in projects */
 export type GraphQLProjectChangeCompletedCloning = {
   __typename?: "ProjectChangeCompletedCloning";
   clonedProject: GraphQLProject;
