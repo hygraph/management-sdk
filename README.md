@@ -1,26 +1,26 @@
-<h1 align="center">@graphcms/management</h1>
+<h1 align="center">@hygraph/management</h1>
 
-<p align="center">Programmatically manage GraphCMS project schema via migrations.</p>
+<p align="center">Programmatically manage Hygraph project schema via migrations.</p>
 
 <p align="center">
-  <a href="https://npmjs.org/package/@graphcms/management">
-    <img src="https://img.shields.io/npm/v/@graphcms/management.svg" alt="Version" />
+  <a href="https://npmjs.org/package/@hygraph/management-sdk">
+    <img src="https://img.shields.io/npm/v/@hygraph/management-sdk.svg" alt="Version" />
   </a>
-  <a href="https://npmjs.org/package/@graphcms/management">
-    <img src="https://img.shields.io/npm/dw/@graphcms/management.svg" alt="Downloads/week" />
+  <a href="https://npmjs.org/package/@hygraph/management-sdk">
+    <img src="https://img.shields.io/npm/dw/@hygraph/management-sdk.svg" alt="Downloads/week" />
   </a>
-  <a href="https://github.com/GraphCMS/management-sdk/blob/main/LICENSE">
-    <img src="https://img.shields.io/npm/l/@graphcms/management.svg" alt="License" />
+  <a href="https://github.com/hygraph/management-sdk/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@hygraph/management-sdk.svg" alt="License" />
   </a>
-  <a href="https://github.com/GraphCMS/management-sdk/stargazers">
-    <img src="https://img.shields.io/github/stars/GraphCMS/management-sdk" alt="Forks on GitHub" />
+  <a href="https://github.com/hygraph/management-sdk/stargazers">
+    <img src="https://img.shields.io/github/stars/hygraph/management-sdk" alt="Forks on GitHub" />
   </a>
   <img src="https://badgen.net/bundlephobia/minzip/@graphcms/management" alt="minified + gzip size" />
   <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
   <img src="https://img.shields.io/badge/all_contributors-1-purple.svg" alt="Contributors" />
   <!-- ALL-CONTRIBUTORS-BADGE:END -->
   <br/>
-  <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
+  <a href="https://slack.hygraph.com">Join us on Slack</a> • <a href="https://app.hygraph.com">Login to Hygraph</a> • <a href="https://x.com/hygraph">@hygraph</a>
 </p>
 
 ---
@@ -32,7 +32,7 @@
 ## Quickstart
 
 ```js
-const { newMigration, FieldType } = require("@graphcms/management");
+const { newMigration, FieldType } = require("@hygraph/management-sdk");
 
 const migration = newMigration({ endpoint: "...", authToken: "..." });
 
@@ -59,7 +59,7 @@ migration.run();
 ## Install
 
 ```bash
-npm install @graphcms/management --save-dev
+npm install @hygraph/management-sdk --save-dev
 ```
 
 ## Usage
@@ -72,11 +72,11 @@ A migration is scoped to an environment. To create a migration, the following pa
 
 - **Authentication Token `authToken`.**
 
-  Can be retrieved from `Settings > API Access` on https://app.graphcms.com
+  Can be retrieved from `Settings > API Access` on https://app.hygraph.com
 
 - **Environment URL `endpoint`.**
 
-  Can be retrieved from `Settings > Environments` on https://app.graphcms.com
+  Can be retrieved from `Settings > Environments` on https://app.hygraph.com
 
 - **Migration Name `name` [optional].**
 
@@ -85,7 +85,7 @@ A migration is scoped to an environment. To create a migration, the following pa
   Subsequent migrations with same name will fail.
 
 ```js
-const { newMigration } = require("@graphcms/management");
+const { newMigration } = require("@hygraph/management-sdk");
 
 const migration = newMigration({
   authToken,
@@ -132,7 +132,7 @@ To update the `apiId`, specify `newApiId`.
 
 ## Locales
 
-GraphCMS boasts a flexible localization API that you can use to publish content for all or specific locales in your project.
+Hygraph boasts a flexible localization API that you can use to publish content for all or specific locales in your project.
 
 ### Create a Locale
 
@@ -287,14 +287,14 @@ migration.deleteModel(apiId);
 
 ### Fields
 
-Your schema is built up of GraphQL types. If you’re familiar working with GraphQL, you should feel right at home. GraphCMS supports all of the common GraphQL types you are used to, as well as some of its own.
+Your schema is built up of GraphQL types. If you’re familiar working with GraphQL, you should feel right at home. Hygraph supports all of the common GraphQL types you are used to, as well as some of its own.
 
 #### Create a Field
 
 To create a simple field.
 
 ```js
-const { FieldType } = require("@graphcms/management");
+const { FieldType } = require("@hygraph/management-sdk");
 
 model.addSimpleField({
   apiId: '...',
@@ -306,7 +306,7 @@ model.addSimpleField({
 String fields have several [form renderers](/src/renderer.ts#L4-L10), including single line, multiline, markdown, and slug. You can set the form renderer as follows:
 
 ```js
-const { FieldType, Renderer } = require("@graphcms/management");
+const { FieldType, Renderer } = require("@hygraph/management-sdk");
 
 model.addSimpleField({
   apiId: '...',
@@ -329,7 +329,7 @@ model.addEnumerableField({
 To create a relational field.
 
 ```js
-const { RelationType } = require("@graphcms/management");
+const { RelationType } = require("@hygraph/management-sdk");
 
 model.addRelationalField({
   apiId,
@@ -364,7 +364,7 @@ model.addRelationalField({
 To create a union field.
 
 ```js
-const { RelationType } = require("@graphcms/management");
+const { RelationType } = require("@hygraph/management-sdk");
 
 model.addUnionField({
   apiId,
